@@ -40,6 +40,14 @@ namespace Erc.Households.Backend.Api
                 });
 
             services.AddTransient<IClaimsTransformation, Helpers.ClaimTransformation>();
+
+            services.AddCors(options => options.AddPolicy("Cors",
+                builder =>
+                {
+                    builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+                }));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -51,7 +59,9 @@ namespace Erc.Households.Backend.Api
             }
 
             app.UseRouting();
-            
+
+            app.UseCors("Cors");
+
             app.UseAuthentication();
             
             app.UseAuthorization();
