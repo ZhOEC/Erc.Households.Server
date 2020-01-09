@@ -14,7 +14,7 @@ namespace Erc.Households.Backend.Api.Helpers
             var ci = (ClaimsIdentity)principal.Identity;
 
             foreach (var c in principal.Claims.Where(c => c.Properties.Any(p => p.Value == "group")).ToList())
-                ci.AddClaim(new Claim("Group", c.Value.Substring(1)));
+                ci.AddClaim(new Claim("Group", c.Value.Substring(1).ToLower()));
 
             return Task.FromResult(principal);
         }

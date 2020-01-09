@@ -44,6 +44,93 @@ namespace Erc.Households.Backend.DataAccess.PostgreSql
             {
                 e.Property(p => p.Name).HasMaxLength(200).IsRequired();
             });
+
+            modelBuilder.Entity<City>(e =>
+            {
+                e.Property(p => p.Name)
+                    .HasMaxLength(200)
+                    .IsRequired();
+                
+                e.HasOne(p => p.District)
+                    .WithMany();
+            });
+
+            modelBuilder.Entity<Street>(e =>
+            {
+                e.Property(p => p.Name)
+                    .HasMaxLength(200)
+                    .IsRequired();
+
+                e.HasOne(p => p.City)
+                    .WithMany();
+            });
+
+            modelBuilder.Entity<Address>(e =>
+            {
+                e.Property(p => p.Building)
+                    .HasMaxLength(20)
+                    .IsRequired();
+
+                e.Property(p => p.Apt)
+                    .HasMaxLength(5);
+
+                e.HasOne(p => p.Street)
+                    .WithMany();
+            });
+
+            modelBuilder.Entity<Person>(e =>
+            {
+                e.Property(p => p.FirstName)
+                    .HasMaxLength(50)
+                    .IsRequired();
+
+                e.Property(p => p.LastName)
+                    .HasMaxLength(50)
+                    .IsRequired();
+
+                e.Property(p => p.Patronymic)
+                    .HasMaxLength(50);
+
+                e.Property(p => p.IdCardNumber)
+                    .HasMaxLength(9);
+
+                e.Property(p => p.MobilePhone1)
+                    .HasMaxLength(15);
+
+                e.Property(p => p.MobilePhone2)
+                    .HasMaxLength(15);
+
+                e.Property(p => p.TaxCode)
+                    .HasMaxLength(10);
+
+                e.HasOne(p => p.Address)
+                    .WithMany();
+
+                e.HasIndex(p => p.TaxCode).IsUnique();
+                e.HasIndex(p => p.IdCardNumber).IsUnique();
+            });
+
+            modelBuilder.Entity<AccountingPoint>(e =>
+            {
+                e.Property(p => p.Name)
+                    .HasMaxLength(16)
+                    .IsRequired();
+
+                e.Property(p => p.Eic)
+                    .HasMaxLength(16)
+                    .IsRequired();
+
+                e.HasOne(p => p.Person)
+                    .WithMany();
+
+                e.HasOne(p => p.Address)
+                    .WithMany();
+
+                e.Property(p => p.Id).HasIdentityOptions(10000000);
+
+                e.HasIndex(p => p.Name).IsUnique();
+                e.HasIndex(p => p.Eic).IsUnique();
+            });
         }
     }
 }

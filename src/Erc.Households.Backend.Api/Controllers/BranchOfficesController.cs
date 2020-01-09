@@ -24,7 +24,7 @@ namespace Erc.Households.Backend.Api.Controllers
         [HttpGet("")]
         public async Task<IActionResult> GetAll()
         {
-            var groups = User.Claims.Where(c => string.Equals(c.Type, "Group", StringComparison.InvariantCultureIgnoreCase)).Select(c => c.Value.ToLower());
+            var groups = User.Claims.Where(c => string.Equals(c.Type, "Group", StringComparison.InvariantCultureIgnoreCase)).Select(c => c.Value);
 
             return Ok(await _ercContext.BranchOffices.Where(bo => groups.Contains(bo.StringId)).ToListAsync());
         }
