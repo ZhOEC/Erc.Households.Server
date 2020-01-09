@@ -11,7 +11,7 @@ namespace Erc.Households.Backend.Api.Controllers
 {
     [Route("api/branch-offices")]
     [ApiController]
-    [Authorize(Roles = ApplicationRoles.User)]
+    [Authorize(Roles = ApplicationRoles.Operator)]
     public class BranchOfficesController : ControllerBase
     {
         private readonly ErcContext _ercContext;
