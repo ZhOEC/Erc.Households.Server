@@ -1,5 +1,6 @@
 ﻿using Erc.Households.Backend.Data;
 using Erc.Households.Backend.Data.Addresses;
+using Erc.Households.Backend.Data.Tariffs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -14,6 +15,9 @@ namespace Erc.Households.Backend.DataAccess.PostgreSql
         {
         }
 
+        public DbSet<AccountingPoint> AccountingPoints { get; set; }
+        public DbSet<DistributionSystemOperator> DistributionSystemOperators { get; set; }
+        public DbSet<Tariff> Tariffs { get; set; }
         public DbSet<BranchOffice> BranchOffices { get; set; }
         public DbSet<District> Districts { get; set; }
         public DbSet<Region> Regions { get; set; }
@@ -34,7 +38,7 @@ namespace Erc.Households.Backend.DataAccess.PostgreSql
 
             modelBuilder.Entity<District>(e =>
             {
-                e.Property(p => p.Name).HasMaxLength(200).IsRequired();
+                e.Property(p => p.Name).HasMaxLength(100).IsRequired();
                 e.HasOne(p => p.Region)
                     .WithMany(r => r.Districts)
                     .HasForeignKey(p => p.RegionId);
@@ -42,15 +46,15 @@ namespace Erc.Households.Backend.DataAccess.PostgreSql
 
             modelBuilder.Entity<Region>(e =>
             {
-                e.Property(p => p.Name).HasMaxLength(200).IsRequired();
+                e.Property(p => p.Name).HasMaxLength(100).IsRequired();
             });
 
             modelBuilder.Entity<City>(e =>
             {
                 e.Property(p => p.Name)
-                    .HasMaxLength(200)
+                    .HasMaxLength(100)
                     .IsRequired();
-                
+
                 e.HasOne(p => p.District)
                     .WithMany();
             });
@@ -58,7 +62,7 @@ namespace Erc.Households.Backend.DataAccess.PostgreSql
             modelBuilder.Entity<Street>(e =>
             {
                 e.Property(p => p.Name)
-                    .HasMaxLength(200)
+                    .HasMaxLength(100)
                     .IsRequired();
 
                 e.HasOne(p => p.City)
@@ -120,16 +124,41 @@ namespace Erc.Households.Backend.DataAccess.PostgreSql
                     .HasMaxLength(16)
                     .IsRequired();
 
-                e.HasOne(p => p.Person)
-                    .WithMany();
+                e.HasOne(p => p.Owner)
+                    .WithMany()
+                    .HasForeignKey(p => p.OwnerId);
+
+                e.HasOne(p => p.Tariff)
+                   .WithMany();
 
                 e.HasOne(p => p.Address)
                     .WithMany();
+
+                e.HasOne(p => p.Dso)
+                    .WithMany()
+                    .HasForeignKey(p => p.DistributionSystemOperatorId);
 
                 e.Property(p => p.Id).HasIdentityOptions(10000000);
 
                 e.HasIndex(p => p.Name).IsUnique();
                 e.HasIndex(p => p.Eic).IsUnique();
+            });
+
+            modelBuilder.Entity<DistributionSystemOperator>(e =>
+            {
+                e.Property(p => p.Name).HasMaxLength(200);
+            });
+
+            modelBuilder.Entity<Tariff>(e =>
+            {
+                e.Property(p => p.Name).HasMaxLength(200);
+                e.HasMany(p => p.Rates).WithOne();
+            });
+
+            modelBuilder.Entity<TariffRate>(e =>
+            {
+                e.ToTable("tariff_rates")
+                    .Property(p => p.Value).HasColumnType("decimal(8,5)");
             });
         }
     }

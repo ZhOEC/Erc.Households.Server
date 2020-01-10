@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Erc.Households.Backend.DataAccess.PostgreSql.Migrations
 {
     [DbContext(typeof(ErcContext))]
-    [Migration("20200109144226_Add_addresses_persons_ac")]
-    partial class Add_addresses_persons_ac
+    [Migration("20200110111403_Initial_create")]
+    partial class Initial_create
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -34,6 +34,10 @@ namespace Erc.Households.Backend.DataAccess.PostgreSql.Migrations
                         .HasColumnName("address_id")
                         .HasColumnType("integer");
 
+                    b.Property<int>("DistributionSystemOperatorId")
+                        .HasColumnName("distribution_system_operator_id")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Eic")
                         .IsRequired()
                         .HasColumnName("eic")
@@ -46,13 +50,19 @@ namespace Erc.Households.Backend.DataAccess.PostgreSql.Migrations
                         .HasColumnType("character varying(16)")
                         .HasMaxLength(16);
 
-                    b.Property<int>("PersonId")
-                        .HasColumnName("person_id")
+                    b.Property<int>("OwnerId")
+                        .HasColumnName("owner_id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TariffId")
+                        .HasColumnName("tariff_id")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AddressId");
+
+                    b.HasIndex("DistributionSystemOperatorId");
 
                     b.HasIndex("Eic")
                         .IsUnique();
@@ -60,9 +70,11 @@ namespace Erc.Households.Backend.DataAccess.PostgreSql.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.HasIndex("PersonId");
+                    b.HasIndex("OwnerId");
 
-                    b.ToTable("accounting_point");
+                    b.HasIndex("TariffId");
+
+                    b.ToTable("accounting_points");
                 });
 
             modelBuilder.Entity("Erc.Households.Backend.Data.Addresses.Address", b =>
@@ -118,8 +130,8 @@ namespace Erc.Households.Backend.DataAccess.PostgreSql.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnName("name")
-                        .HasColumnType("character varying(200)")
-                        .HasMaxLength(200);
+                        .HasColumnType("character varying(100)")
+                        .HasMaxLength(100);
 
                     b.HasKey("Id");
 
@@ -139,8 +151,8 @@ namespace Erc.Households.Backend.DataAccess.PostgreSql.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnName("name")
-                        .HasColumnType("character varying(200)")
-                        .HasMaxLength(200);
+                        .HasColumnType("character varying(100)")
+                        .HasMaxLength(100);
 
                     b.Property<int>("RegionId")
                         .HasColumnName("region_id")
@@ -164,8 +176,8 @@ namespace Erc.Households.Backend.DataAccess.PostgreSql.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnName("name")
-                        .HasColumnType("character varying(200)")
-                        .HasMaxLength(200);
+                        .HasColumnType("character varying(100)")
+                        .HasMaxLength(100);
 
                     b.HasKey("Id");
 
@@ -187,8 +199,8 @@ namespace Erc.Households.Backend.DataAccess.PostgreSql.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnName("name")
-                        .HasColumnType("character varying(200)")
-                        .HasMaxLength(200);
+                        .HasColumnType("character varying(100)")
+                        .HasMaxLength(100);
 
                     b.HasKey("Id");
 
@@ -226,6 +238,24 @@ namespace Erc.Households.Backend.DataAccess.PostgreSql.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("branch_offices");
+                });
+
+            modelBuilder.Entity("Erc.Households.Backend.Data.DistributionSystemOperator", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("id")
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("Name")
+                        .HasColumnName("name")
+                        .HasColumnType("character varying(200)")
+                        .HasMaxLength(200);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("distribution_system_operators");
                 });
 
             modelBuilder.Entity("Erc.Households.Backend.Data.Person", b =>
@@ -294,6 +324,75 @@ namespace Erc.Households.Backend.DataAccess.PostgreSql.Migrations
                     b.ToTable("person");
                 });
 
+            modelBuilder.Entity("Erc.Households.Backend.Data.Tariffs.Tariff", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("id")
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("Name")
+                        .HasColumnName("name")
+                        .HasColumnType("character varying(200)")
+                        .HasMaxLength(200);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("tariffs");
+                });
+
+            modelBuilder.Entity("Erc.Households.Backend.Data.Tariffs.TariffRate", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("id")
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int?>("ConsumptionLimit")
+                        .HasColumnName("consumption_limit")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("HeatingConsumptionLimit")
+                        .HasColumnName("heating_consumption_limit")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("HeatingEndDay")
+                        .HasColumnName("heating_end_day")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("HeatingEndMonth")
+                        .HasColumnName("heating_end_month")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("HeatingStartDay")
+                        .HasColumnName("heating_start_day")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("HeatingStartMonth")
+                        .HasColumnName("heating_start_month")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnName("start_date")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("TariffId")
+                        .HasColumnName("tariff_id")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnName("value")
+                        .HasColumnType("decimal(8,5)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TariffId");
+
+                    b.ToTable("tariff_rates");
+                });
+
             modelBuilder.Entity("Erc.Households.Backend.Data.AccountingPoint", b =>
                 {
                     b.HasOne("Erc.Households.Backend.Data.Addresses.Address", "Address")
@@ -302,9 +401,21 @@ namespace Erc.Households.Backend.DataAccess.PostgreSql.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Erc.Households.Backend.Data.Person", "Person")
+                    b.HasOne("Erc.Households.Backend.Data.DistributionSystemOperator", "Dso")
                         .WithMany()
-                        .HasForeignKey("PersonId")
+                        .HasForeignKey("DistributionSystemOperatorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Erc.Households.Backend.Data.Person", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Erc.Households.Backend.Data.Tariffs.Tariff", "Tariff")
+                        .WithMany()
+                        .HasForeignKey("TariffId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -350,6 +461,15 @@ namespace Erc.Households.Backend.DataAccess.PostgreSql.Migrations
                     b.HasOne("Erc.Households.Backend.Data.Addresses.Address", "Address")
                         .WithMany()
                         .HasForeignKey("AddressId");
+                });
+
+            modelBuilder.Entity("Erc.Households.Backend.Data.Tariffs.TariffRate", b =>
+                {
+                    b.HasOne("Erc.Households.Backend.Data.Tariffs.Tariff", null)
+                        .WithMany("Rates")
+                        .HasForeignKey("TariffId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
