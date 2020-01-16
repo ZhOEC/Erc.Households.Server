@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Erc.Households.Backend.DataAccess.PostgreSql.Migrations
 {
     [DbContext(typeof(ErcContext))]
-    [Migration("20200110111403_Initial_create")]
-    partial class Initial_create
+    [Migration("20200115065351_Initial_Create")]
+    partial class Initial_Create
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -358,21 +358,13 @@ namespace Erc.Households.Backend.DataAccess.PostgreSql.Migrations
                         .HasColumnName("heating_consumption_limit")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("HeatingEndDay")
+                    b.Property<DateTime?>("HeatingEndDay")
                         .HasColumnName("heating_end_day")
-                        .HasColumnType("integer");
+                        .HasColumnType("timestamp without time zone");
 
-                    b.Property<int?>("HeatingEndMonth")
-                        .HasColumnName("heating_end_month")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("HeatingStartDay")
+                    b.Property<DateTime?>("HeatingStartDay")
                         .HasColumnName("heating_start_day")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("HeatingStartMonth")
-                        .HasColumnName("heating_start_month")
-                        .HasColumnType("integer");
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnName("start_date")

@@ -20,7 +20,11 @@ namespace Erc.Households.Backend.Api.Controllers
         }
 
         [HttpGet("")]
-        public async Task<IActionResult> GetAll() => Ok(await _ercContext.Tariffs.OrderBy(t=>t.Id).ToListAsync());
+        public async Task<IActionResult> GetAll() 
+            => Ok(await _ercContext.Tariffs
+                .Include(t => t.Rates)
+                .OrderBy(t=>t.Id)
+                .ToListAsync());
 
         [HttpPost("")]
         public async Task<IActionResult> AddNew(Tariff tariff)
@@ -57,11 +61,12 @@ namespace Erc.Households.Backend.Api.Controllers
         {
             var tariff = await _ercContext.Tariffs.FindAsync(id);
             tariff.AddRate(tariffRate);
-
-            return Ok();
+            await _ercContext.SaveChangesAsync();
+            
+            return Ok(tariffRate);
         }
 
-        [HttpPost("{id}/rates/{rateId}")]
+        [HttpPut("{id}/rates/{rateId}")]
         public async Task<IActionResult> UpdateRate(int id, int rateId, TariffRate tariffRate)
         {
             if (rateId != tariffRate.Id || id == 0 || rateId == 0)
@@ -74,6 +79,22 @@ namespace Erc.Households.Backend.Api.Controllers
                 return NotFound();
 
             _ercContext.Entry(rate).CurrentValues.SetValues(tariffRate);
+
+            await _ercContext.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpDelete("{id}/rates/{rateId}")]
+        public async Task<IActionResult> DeleteRate(int id, int rateId)
+        {
+            var tariff = await _ercContext.Tariffs.Include(t => t.Rates).FirstOrDefaultAsync(t => t.Id == id);
+            var rate = tariff?.Rates.FirstOrDefault(tr => tr.Id == rateId);
+
+            if (rate is null)
+                return NotFound();
+
+            tariff.RemoveRate(rate);
 
             await _ercContext.SaveChangesAsync();
 

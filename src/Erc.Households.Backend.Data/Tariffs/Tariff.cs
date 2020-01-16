@@ -13,5 +13,6 @@ namespace Erc.Households.Backend.Data.Tariffs
         public IEnumerable<TariffRate> Rates => _rates;
 
         public void AddRate(TariffRate tariffRate) => _rates.Add(tariffRate);
+        public void RemoveRate(TariffRate tariffRate) => _rates.Remove(tariffRate);
     }
 }

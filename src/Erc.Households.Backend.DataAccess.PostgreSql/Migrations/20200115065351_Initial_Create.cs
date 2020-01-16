@@ -4,7 +4,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Erc.Households.Backend.DataAccess.PostgreSql.Migrations
 {
-    public partial class Initial_create : Migration
+    public partial class Initial_Create : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -92,10 +92,8 @@ namespace Erc.Households.Backend.DataAccess.PostgreSql.Migrations
                     value = table.Column<decimal>(type: "decimal(8,5)", nullable: false),
                     consumption_limit = table.Column<int>(nullable: true),
                     heating_consumption_limit = table.Column<int>(nullable: true),
-                    heating_start_day = table.Column<int>(nullable: true),
-                    heating_start_month = table.Column<int>(nullable: true),
-                    heating_end_day = table.Column<int>(nullable: true),
-                    heating_end_month = table.Column<int>(nullable: true),
+                    heating_start_day = table.Column<DateTime>(nullable: true),
+                    heating_end_day = table.Column<DateTime>(nullable: true),
                     tariff_id = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -242,63 +240,6 @@ namespace Erc.Households.Backend.DataAccess.PostgreSql.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.Sql(@"insert into branch_offices(name, string_id, address) values ('Андрушівський ЦОК', 'an', '')
-                                , ('Баранiвський ЦОК', 'bn', '')
-                                , ('Бердичiвський ЦОК', 'bd', '')
-                                , ('Брусилівський ЦОК', 'br', '')
-                                , ('Хорошівський ЦОК', 'hr', '')
-                                , ('Ємільчинський ЦОК', 'em', '')
-                                , ('Житомирський ЦОК', 'zt', '')
-                                , ('Зарічанський ЦОК', 'zr', '')
-                                , ('Коростенський ЦОК', 'kr', '')
-                                , ('Коростишiвський ЦОК', 'kt', '')
-                                , ('Любарський ЦОК', 'lb', '')
-                                , ('Малинський ЦОК', 'ml', '')
-                                , ('Народицький ЦОК', 'nr', '')
-                                , ('Новоград-Волинський ЦОК', 'nv', '')
-                                , ('Овруцький ЦОК', 'ov', '')
-                                , ('Олевський ЦОК', 'ol', '')
-                                , ('Попільнянський ЦОК', 'pp', '')
-                                , ('Радомишльський ЦОК', 'rd', '')
-                                , ('Романівський ЦОК', 'rm', '')
-                                , ('Пулинський ЦОК', 'pl', '')
-                                , ('Черняхівський ЦОК', 'ch', '')
-                                , ('Чуднівський ЦОК', 'cd', '')");
-
-            migrationBuilder.Sql(@"insert into regions(name) values ('Житомирська обл.')");
-
-            migrationBuilder.Sql(@"insert into districts(name, region_id) values ('Андрушівський р-н', 1)
-                                , ('Баранiвський р-н', 1)
-                                , ('Бердичiвський р-н', 1)
-                                , ('Брусилівський р-н', 1)
-                                , ('Хорошівський р-н', 1)
-                                , ('Ємільчинський р-н', 1)
-                                , ('Житомирський р-н', 1)
-                                , ('Зарічанський р-н', 1)
-                                , ('Коростенський р-н', 1)
-                                , ('Коростишiвський р-н', 1)
-				                , ('Лугинський р-н', 1)
-                                , ('Любарський р-н', 1)
-                                , ('Малинський р-н', 1)
-                                , ('Народицький р-н', 1)
-                                , ('Новоград-Волинський р-н', 1)
-                                , ('Овруцький р-н', 1)
-                                , ('Олевський р-н', 1)
-                                , ('Попільнянський р-н', 1)
-                                , ('Радомишльський р-н', 1)
-                                , ('Романівський р-н', 1)
-                                , ('Ружинський р-н', 1)
-                                , ('Пулинський р-н', 1)
-                                , ('Черняхівський р-н', 1)
-                                , ('Чуднівський р-н', 1)");
-
-            migrationBuilder.Sql(@"insert into distribution_system_operators(name) values ('АТ «Житомиробленерго»'), ('АТ «Укрзалізниця»')");
-
-            migrationBuilder.Sql(@"insert into tariffs(name) values ('Населення (загальний тариф)')
-                                    , ('Будинки з електроопалювальними установками')
-                                    , ('Будинки в не газифікованих населених пунктах')
-                                    , ('Багатодітні, прийомні сім''ї та дитячі будинкі сімейного типу')");
-
             migrationBuilder.CreateIndex(
                 name: "IX_accounting_points_address_id",
                 table: "accounting_points",
@@ -372,6 +313,72 @@ namespace Erc.Households.Backend.DataAccess.PostgreSql.Migrations
                 name: "IX_tariff_rates_tariff_id",
                 table: "tariff_rates",
                 column: "tariff_id");
+
+            migrationBuilder.Sql(@"insert into branch_offices(name, string_id, address) values ('Андрушівський ЦОК', 'an', '')
+                                , ('Баранiвський ЦОК', 'bn', '')
+                                , ('Бердичiвський ЦОК', 'bd', '')
+                                , ('Брусилівський ЦОК', 'br', '')
+                                , ('Хорошівський ЦОК', 'hr', '')
+                                , ('Ємільчинський ЦОК', 'em', '')
+                                , ('Житомирський ЦОК', 'zt', '')
+                                , ('Зарічанський ЦОК', 'zr', '')
+                                , ('Коростенський ЦОК', 'kr', '')
+                                , ('Коростишiвський ЦОК', 'kt', '')
+                                , ('Любарський ЦОК', 'lb', '')
+                                , ('Малинський ЦОК', 'ml', '')
+                                , ('Народицький ЦОК', 'nr', '')
+                                , ('Новоград-Волинський ЦОК', 'nv', '')
+                                , ('Овруцький ЦОК', 'ov', '')
+                                , ('Олевський ЦОК', 'ol', '')
+                                , ('Попільнянський ЦОК', 'pp', '')
+                                , ('Радомишльський ЦОК', 'rd', '')
+                                , ('Романівський ЦОК', 'rm', '')
+                                , ('Пулинський ЦОК', 'pl', '')
+                                , ('Черняхівський ЦОК', 'ch', '')
+                                , ('Чуднівський ЦОК', 'cd', '')");
+
+            migrationBuilder.Sql(@"insert into regions(name) values ('Житомирська обл.')");
+
+            migrationBuilder.Sql(@"insert into districts(name, region_id) values ('Андрушівський р-н', 1)
+                                , ('Баранiвський р-н', 1)
+                                , ('Бердичiвський р-н', 1)
+                                , ('Брусилівський р-н', 1)
+                                , ('Хорошівський р-н', 1)
+                                , ('Ємільчинський р-н', 1)
+                                , ('Житомирський р-н', 1)
+                                , ('Зарічанський р-н', 1)
+                                , ('Коростенський р-н', 1)
+                                , ('Коростишiвський р-н', 1)
+				                , ('Лугинський р-н', 1)
+                                , ('Любарський р-н', 1)
+                                , ('Малинський р-н', 1)
+                                , ('Народицький р-н', 1)
+                                , ('Новоград-Волинський р-н', 1)
+                                , ('Овруцький р-н', 1)
+                                , ('Олевський р-н', 1)
+                                , ('Попільнянський р-н', 1)
+                                , ('Радомишльський р-н', 1)
+                                , ('Романівський р-н', 1)
+                                , ('Ружинський р-н', 1)
+                                , ('Пулинський р-н', 1)
+                                , ('Черняхівський р-н', 1)
+                                , ('Чуднівський р-н', 1)");
+
+            migrationBuilder.Sql(@"insert into distribution_system_operators(name) values ('АТ «Житомиробленерго»'), ('АТ «Укрзалізниця»')");
+
+            migrationBuilder.Sql(@"insert into tariffs(name) values ('Населення (загальний тариф)')
+                                    , ('Будинки з електроопалювальними установками')
+                                    , ('Багатоквартирні негазифіковані будинки')
+                                    , ('Багатодітні, прийомні сім''ї та дитячі будинкі сімейного типу')");
+
+            migrationBuilder.Sql(@"insert into tariff_rates(start_date, value, consumption_limit, heating_consumption_limit, heating_start_day, heating_end_day, tariff_id) 
+                        values ('2017-03-01', 0.9, 100, NULL, NULL, NULL, 1)
+                        ,('2017-03-01', 1.68000, NULL, NULL, NULL, NULL, 1)
+                        ,('2017-03-01', 0.90000, 100, 3000, '2019-10-01','2020-04-30',2)
+                        ,('2017-03-01', 1.68000, NULL, NULL, NULL, NULL, 2)
+                        ,('2017-03-01', 0.90000, 100, 3000, '2019-10-01', '2020-04-30',3)
+                        ,('2017-03-01', 1.68000, NULL, NULL, NULL, NULL, 3)
+                        ,('2017-03-01', 0.90000, NULL, NULL, NULL, NULL, 4)");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
