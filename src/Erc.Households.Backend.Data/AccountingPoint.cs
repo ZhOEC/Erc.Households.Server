@@ -15,10 +15,12 @@ namespace Erc.Households.Backend.Data
         public int OwnerId { get; set; }
         public int TariffId { get; set; }
         public int DistributionSystemOperatorId { get; set; }
+        public int BranchOfficeId { get; set; }
 
         public DistributionSystemOperator Dso { get; set; }
         public Tariff Tariff { get; set; }
         public Address Address { get; set; }
         public Person Owner { get; set; }
+        public BranchOffice BranchOffice { get; set; }
     }
 }
