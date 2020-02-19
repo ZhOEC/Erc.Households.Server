@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="9.0.0" />
+    <PackageReference Include="MassTransit" Version="6.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Erc.Households.Backend.DataAccess.PostgreSql\Erc.Households.Backend.DataAccess.PostgreSql.csproj" />
+    <ProjectReference Include="..\Erc.Households.Backend.Requests\Erc.Households.Server.Requests.csproj" />
+    <ProjectReference Include="..\Erc.Households.Backend.Responses\Erc.Households.Server.Responses.csproj" />
+  </ItemGroup>
+
+</Project>
