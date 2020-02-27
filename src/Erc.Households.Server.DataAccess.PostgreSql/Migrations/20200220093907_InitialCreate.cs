@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using Erc.Households.Server.ModelLogs;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
-namespace Erc.Households.Backend.DataAccess.PostgreSql.Migrations
+namespace Erc.Households.Server.DataAccess.PostgreSql.Migrations
 {
-    public partial class Initial_Create : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -21,7 +23,7 @@ namespace Erc.Households.Backend.DataAccess.PostgreSql.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_branch_offices", x => x.id);
+                    table.PrimaryKey("pk_branch_offices", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -34,7 +36,7 @@ namespace Erc.Households.Backend.DataAccess.PostgreSql.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_distribution_system_operators", x => x.id);
+                    table.PrimaryKey("pk_distribution_system_operators", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -47,7 +49,7 @@ namespace Erc.Households.Backend.DataAccess.PostgreSql.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_regions", x => x.id);
+                    table.PrimaryKey("pk_regions", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -60,7 +62,7 @@ namespace Erc.Households.Backend.DataAccess.PostgreSql.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_tariffs", x => x.id);
+                    table.PrimaryKey("pk_tariffs", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -74,9 +76,9 @@ namespace Erc.Households.Backend.DataAccess.PostgreSql.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_districts", x => x.id);
+                    table.PrimaryKey("pk_districts", x => x.id);
                     table.ForeignKey(
-                        name: "FK_districts_regions_region_id",
+                        name: "fk_districts_regions_region_id",
                         column: x => x.region_id,
                         principalTable: "regions",
                         principalColumn: "id",
@@ -99,9 +101,9 @@ namespace Erc.Households.Backend.DataAccess.PostgreSql.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_tariff_rates", x => x.id);
+                    table.PrimaryKey("pk_tariff_rate", x => x.id);
                     table.ForeignKey(
-                        name: "FK_tariff_rates_tariffs_tariff_id",
+                        name: "fk_tariff_rate_tariffs_tariff_id",
                         column: x => x.tariff_id,
                         principalTable: "tariffs",
                         principalColumn: "id",
@@ -121,9 +123,9 @@ namespace Erc.Households.Backend.DataAccess.PostgreSql.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_cities", x => x.id);
+                    table.PrimaryKey("pk_cities", x => x.id);
                     table.ForeignKey(
-                        name: "FK_cities_districts_district_id",
+                        name: "fk_cities_districts_district_id",
                         column: x => x.district_id,
                         principalTable: "districts",
                         principalColumn: "id",
@@ -141,9 +143,9 @@ namespace Erc.Households.Backend.DataAccess.PostgreSql.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_streets", x => x.id);
+                    table.PrimaryKey("pk_streets", x => x.id);
                     table.ForeignKey(
-                        name: "FK_streets_cities_city_id",
+                        name: "fk_streets_cities_city_id",
                         column: x => x.city_id,
                         principalTable: "cities",
                         principalColumn: "id",
@@ -163,9 +165,9 @@ namespace Erc.Households.Backend.DataAccess.PostgreSql.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_addresses", x => x.id);
+                    table.PrimaryKey("pk_addresses", x => x.id);
                     table.ForeignKey(
-                        name: "FK_addresses_streets_street_id",
+                        name: "fk_addresses_streets_street_id",
                         column: x => x.street_id,
                         principalTable: "streets",
                         principalColumn: "id",
@@ -190,9 +192,9 @@ namespace Erc.Households.Backend.DataAccess.PostgreSql.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_people", x => x.id);
+                    table.PrimaryKey("pk_people", x => x.id);
                     table.ForeignKey(
-                        name: "FK_people_addresses_address_id",
+                        name: "fk_people_addresses_address_id",
                         column: x => x.address_id,
                         principalTable: "addresses",
                         principalColumn: "id",
@@ -210,41 +212,93 @@ namespace Erc.Households.Backend.DataAccess.PostgreSql.Migrations
                     eic = table.Column<string>(maxLength: 16, nullable: false),
                     address_id = table.Column<int>(nullable: false),
                     owner_id = table.Column<int>(nullable: false),
-                    tariff_id = table.Column<int>(nullable: false),
                     distribution_system_operator_id = table.Column<int>(nullable: false),
-                    branch_office_id = table.Column<int>(nullable: false)
+                    branch_office_id = table.Column<int>(nullable: false),
+                    debt = table.Column<decimal>(nullable: false),
+                    contract_is_signed = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_accounting_points", x => x.id);
+                    table.PrimaryKey("pk_accounting_points", x => x.id);
                     table.ForeignKey(
-                        name: "FK_accounting_points_addresses_address_id",
+                        name: "fk_accounting_points_addresses_address_id",
                         column: x => x.address_id,
                         principalTable: "addresses",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_accounting_points_branch_offices_branch_office_id",
+                        name: "fk_accounting_points_branch_offices_branch_office_id",
                         column: x => x.branch_office_id,
                         principalTable: "branch_offices",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_accounting_points_distribution_system_operators_distributio~",
+                        name: "fk_accounting_points_distribution_system_operators_distributio",
                         column: x => x.distribution_system_operator_id,
                         principalTable: "distribution_system_operators",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_accounting_points_people_owner_id",
+                        name: "fk_accounting_points_people_owner_id",
                         column: x => x.owner_id,
                         principalTable: "people",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "accounting_point_tariffs",
+                columns: table => new
+                {
+                    id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    logs = table.Column<IReadOnlyCollection<ObjectLog>>(type: "jsonb", nullable: true),
+                    start_date = table.Column<DateTime>(nullable: false),
+                    accounting_point_id = table.Column<int>(nullable: false),
+                    tariff_id = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_accounting_point_tariff", x => x.id);
                     table.ForeignKey(
-                        name: "FK_accounting_points_tariffs_tariff_id",
+                        name: "fk_accounting_point_tariff_accounting_points_accounting_point_id",
+                        column: x => x.accounting_point_id,
+                        principalTable: "accounting_points",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_accounting_point_tariff_tariffs_tariff_id",
                         column: x => x.tariff_id,
                         principalTable: "tariffs",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "contracts",
+                columns: table => new
+                {
+                    id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    logs = table.Column<IReadOnlyCollection<ObjectLog>>(type: "jsonb", nullable: true),
+                    accounting_point_id = table.Column<int>(nullable: false),
+                    customer_id = table.Column<int>(nullable: false),
+                    start_date = table.Column<DateTime>(nullable: false),
+                    end_date = table.Column<DateTime>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_contract", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_contract_accounting_points_accounting_point_id",
+                        column: x => x.accounting_point_id,
+                        principalTable: "accounting_points",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_contract_people_customer_id",
+                        column: x => x.customer_id,
+                        principalTable: "people",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -348,82 +402,97 @@ namespace Erc.Households.Backend.DataAccess.PostgreSql.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_accounting_points_address_id",
+                name: "ix_accounting_point_tariff_accounting_point_id",
+                table: "accounting_point_tariffs",
+                column: "accounting_point_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_accounting_point_tariff_tariff_id",
+                table: "accounting_point_tariffs",
+                column: "tariff_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_accounting_points_address_id",
                 table: "accounting_points",
                 column: "address_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_accounting_points_branch_office_id",
+                name: "ix_accounting_points_branch_office_id",
                 table: "accounting_points",
                 column: "branch_office_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_accounting_points_distribution_system_operator_id",
+                name: "ix_accounting_points_distribution_system_operator_id",
                 table: "accounting_points",
                 column: "distribution_system_operator_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_accounting_points_eic",
+                name: "ix_accounting_points_eic",
                 table: "accounting_points",
                 column: "eic",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_accounting_points_name",
+                name: "ix_accounting_points_name",
                 table: "accounting_points",
                 column: "name",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_accounting_points_owner_id",
+                name: "ix_accounting_points_owner_id",
                 table: "accounting_points",
                 column: "owner_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_accounting_points_tariff_id",
-                table: "accounting_points",
-                column: "tariff_id");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_addresses_street_id_building_apt",
+                name: "ix_addresses_street_id_building_apt",
                 table: "addresses",
                 columns: new[] { "street_id", "building", "apt" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_cities_district_id",
+                name: "ix_cities_district_id",
                 table: "cities",
                 column: "district_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_districts_region_id",
+                name: "ix_contract_accounting_point_id",
+                table: "contracts",
+                column: "accounting_point_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_contract_customer_id",
+                table: "contracts",
+                column: "customer_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_districts_region_id",
                 table: "districts",
                 column: "region_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_people_address_id",
+                name: "ix_people_address_id",
                 table: "people",
                 column: "address_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_people_id_card_number",
+                name: "ix_people_id_card_number",
                 table: "people",
                 column: "id_card_number",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_people_tax_code",
+                name: "ix_people_tax_code",
                 table: "people",
                 column: "tax_code",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_streets_city_id",
+                name: "ix_streets_city_id",
                 table: "streets",
                 column: "city_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_tariff_rates_tariff_id",
+                name: "ix_tariff_rate_tariff_id",
                 table: "tariff_rates",
                 column: "tariff_id");
         }
@@ -431,10 +500,19 @@ namespace Erc.Households.Backend.DataAccess.PostgreSql.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "accounting_points");
+                name: "accounting_point_tariffs");
+
+            migrationBuilder.DropTable(
+                name: "contracts");
 
             migrationBuilder.DropTable(
                 name: "tariff_rates");
+
+            migrationBuilder.DropTable(
+                name: "accounting_points");
+
+            migrationBuilder.DropTable(
+                name: "tariffs");
 
             migrationBuilder.DropTable(
                 name: "branch_offices");
@@ -444,9 +522,6 @@ namespace Erc.Households.Backend.DataAccess.PostgreSql.Migrations
 
             migrationBuilder.DropTable(
                 name: "people");
-
-            migrationBuilder.DropTable(
-                name: "tariffs");
 
             migrationBuilder.DropTable(
                 name: "addresses");

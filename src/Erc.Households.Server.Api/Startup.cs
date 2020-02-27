@@ -1,3 +1,6 @@
+using AutoMapper;
+using EErc.Households.Server.MapperProfiles;
+using Erc.Households.Backend.Responses;
 using Erc.Households.Server.DataAccess.PostgreSql;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -22,6 +25,7 @@ namespace Erc.Households.Server.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAutoMapper(typeof(AccountingPointProfile).Assembly);
             services.AddDbContext<ErcContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("ErcContext")));
 

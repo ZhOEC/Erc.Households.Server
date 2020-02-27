@@ -4,4 +4,8 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Erc.Households.Server.ModelLogs\Erc.Households.Server.ModelLogs.csproj" />
+  </ItemGroup>
+
 </Project>

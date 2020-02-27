@@ -30,10 +30,28 @@ namespace Erc.Households.Server.DataAccess.PostgreSql
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSnakeCaseNamingConvention().UseLoggerFactory(MyLoggerFactory);
+            //optionsBuilder.UseLazyLoadingProxies();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Contract>(e =>
+            {
+                e.ToTable("contracts")
+                    .Property(p => p.Logs).HasColumnType("jsonb");
+            });
+
+            modelBuilder.Entity<AccountingPointTariff>(e =>
+            {
+                e.ToTable("accounting_point_tariffs");
+                
+                e.Property(p => p.Logs).HasColumnType("jsonb");
+                
+                e.HasOne(p => p.Tariff)
+                    .WithMany()
+                    .HasForeignKey(p => p.TariffId);
+            });
+
             modelBuilder.Entity<BranchOffice>(e =>
             {
                 e.Property(p => p.StringId).HasMaxLength(2).IsRequired();
@@ -179,6 +197,14 @@ namespace Erc.Households.Server.DataAccess.PostgreSql
 
             modelBuilder.Entity<AccountingPoint>(e =>
             {
+                e.HasMany(p => p.TariffsHistory)
+                    .WithOne()
+                    .HasForeignKey(p => p.AccountingPointId);
+
+                e.HasMany(p => p.ContractsHistory)
+                    .WithOne()
+                    .HasForeignKey(p => p.AccountingPointId);
+
                 e.Property(p => p.Name)
                     .HasMaxLength(16)
                     .IsRequired();
@@ -190,9 +216,6 @@ namespace Erc.Households.Server.DataAccess.PostgreSql
                 e.HasOne(p => p.Owner)
                     .WithMany()
                     .HasForeignKey(p => p.OwnerId);
-
-                e.HasOne(p => p.Tariff)
-                   .WithMany();
 
                 e.HasOne(p => p.Address)
                     .WithMany();

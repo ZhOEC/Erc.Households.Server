@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Server.Api", "Erc.Households.Server.Api\Erc.Households.Server.Api.csproj", "{380164EE-A6F3-4C96-957C-202076B73CF8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Server.Data", "Erc.Households.Server.Domain\Erc.Households.Server.Domain.csproj", "{C9338418-B4B6-4287-9CA4-A587D7B57DC6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Server.Domain", "Erc.Households.Server.Domain\Erc.Households.Server.Domain.csproj", "{C9338418-B4B6-4287-9CA4-A587D7B57DC6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Server.DataAccess.PostgreSql", "Erc.Households.Server.DataAccess.PostgreSql\Erc.Households.Server.DataAccess.PostgreSql.csproj", "{20809DE9-C064-4585-B9CC-B213D3C9C997}"
 EndProject
@@ -13,7 +13,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Server.Reque
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Server.Responses", "Erc.Households.Server.Responses\Erc.Households.Server.Responses.csproj", "{F5E5B868-BCF3-496D-93A0-4547830FCA4D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Server.RequestConsumers", "Erc.Households.Server.RequestConsumers\Erc.Households.Server.RequestConsumers.csproj", "{769D76D5-E014-4812-8D30-7F5FF00E582E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Server.Core", "Erc.Households.Server.Core\Erc.Households.Server.Core.csproj", "{643227D8-29CB-487D-ADE4-EA4663A1F4F1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Server.ModelLogs", "Erc.Households.Server.ModelLogs\Erc.Households.Server.ModelLogs.csproj", "{FD420A68-C8A4-4BCA-A7CE-B7E9C40DFB17}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Server.MapperProfiles", "Erc.Households.Server.MapperProfiles\Erc.Households.Server.MapperProfiles.csproj", "{2486F307-0344-436F-853F-7E5DE2BE9611}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,10 +45,18 @@ Global
 		{F5E5B868-BCF3-496D-93A0-4547830FCA4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F5E5B868-BCF3-496D-93A0-4547830FCA4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F5E5B868-BCF3-496D-93A0-4547830FCA4D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{769D76D5-E014-4812-8D30-7F5FF00E582E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{769D76D5-E014-4812-8D30-7F5FF00E582E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{769D76D5-E014-4812-8D30-7F5FF00E582E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{769D76D5-E014-4812-8D30-7F5FF00E582E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{643227D8-29CB-487D-ADE4-EA4663A1F4F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{643227D8-29CB-487D-ADE4-EA4663A1F4F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{643227D8-29CB-487D-ADE4-EA4663A1F4F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{643227D8-29CB-487D-ADE4-EA4663A1F4F1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD420A68-C8A4-4BCA-A7CE-B7E9C40DFB17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD420A68-C8A4-4BCA-A7CE-B7E9C40DFB17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD420A68-C8A4-4BCA-A7CE-B7E9C40DFB17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD420A68-C8A4-4BCA-A7CE-B7E9C40DFB17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2486F307-0344-436F-853F-7E5DE2BE9611}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2486F307-0344-436F-853F-7E5DE2BE9611}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2486F307-0344-436F-853F-7E5DE2BE9611}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2486F307-0344-436F-853F-7E5DE2BE9611}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

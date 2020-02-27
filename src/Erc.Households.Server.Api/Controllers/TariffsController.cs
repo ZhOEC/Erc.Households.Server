@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Erc.Households.Server.Domain.Tariffs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Erc.Households.Server.DataAccess.PostgreSql;
+using Erc.Households.Server.Domain.Tariffs;
 
 namespace Erc.Households.Server.Api.Controllers
 {
