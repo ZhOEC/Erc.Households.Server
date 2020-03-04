@@ -1,0 +1,13 @@
+version: '3.4'
+
+services:
+  erc.households.indexing:
+    image: ${DOCKER_REGISTRY-}erchouseholdsindexing
+    build:
+      context: .
+      dockerfile: Erc.Households.Indexing/Dockerfile
+
+networks:
+  default:
+    external:
+      name: ztoec-erc
