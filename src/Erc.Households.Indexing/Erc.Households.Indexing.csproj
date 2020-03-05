@@ -1,11 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk.Worker">
-
+<Project Sdk="Microsoft.NET.Sdk.Worker;Microsoft.NET.Sdk.Publish">
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UserSecretsId>dotnet-Erc.Households.Indexing-B126AFB7-FDE4-467B-85DF-59182AAA6212</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="MassTransit" Version="6.2.0" />
     <PackageReference Include="MassTransit.RabbitMQ" Version="6.2.0" />
@@ -13,10 +11,12 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.8" />
     <PackageReference Include="NEST" Version="7.6.0" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\Erc.Households.Server.Domain\Erc.Households.Server.Domain.csproj" />
   </ItemGroup>
-
-  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties appsettings_1json__JsonSchema="" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>
