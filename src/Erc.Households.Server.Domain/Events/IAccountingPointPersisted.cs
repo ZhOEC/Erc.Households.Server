@@ -7,7 +7,7 @@
     {
         int Id { get; }
         string BranchOfficeStringId { get; }
-        string AccountingPointName { get; }
+        string Name { get; }
         string Eic { get; }
         string PersonFirstName { get; }
         string PersonLastName { get; }
