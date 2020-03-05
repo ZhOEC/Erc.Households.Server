@@ -21,10 +21,6 @@ namespace Erc.Households.Indexing
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-            .ConfigureAppConfiguration((hostingContext, config) =>
-            {
-                config.AddEnvironmentVariables().AddJsonFile("appsettings.json");
-            })
             .ConfigureServices((hostContext, services) =>
             {
                 services.AddSingleton<IElasticClient>(provider => new ElasticClient(new Uri(hostContext.Configuration.GetConnectionString("Elasticsearch"))));
@@ -35,7 +31,13 @@ namespace Erc.Households.Indexing
 
                     x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(cfg =>
                     {
-                        cfg.Host(hostContext.Configuration.GetConnectionString("RabbitMQ"));
+                        var rabbitMq = hostContext.Configuration.GetSection("RabbitMQ");
+                        cfg.Host(rabbitMq["ConnectionString"], c =>
+                        {
+                            c.Username(rabbitMq["Username"]);
+                            c.Password(rabbitMq["Password"]);
+                        });
+                        
                         cfg.ConfigureEndpoints(provider);
                     }));
                         
