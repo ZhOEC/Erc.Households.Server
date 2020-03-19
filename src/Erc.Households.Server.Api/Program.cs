@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using MassTransit;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -13,7 +11,29 @@ namespace Erc.Households.Server.Api
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var host = CreateHostBuilder(args).Build();
+            using (var serviceScope = host.Services.CreateScope())
+            {
+                var services = serviceScope.ServiceProvider;
+
+                try
+                {
+                    var busControl = services.GetRequiredService<IBusControl>();
+                    var hostApplicationLifetime = services.GetRequiredService<IHostApplicationLifetime>();
+                    
+                    hostApplicationLifetime.ApplicationStarted.Register(() =>
+                    {
+                        busControl.Start();
+                        busControl.CreateClientFactory();
+                    });
+                }
+                catch (Exception ex)
+                {
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "An error occurred.");
+                }
+            }
+            host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

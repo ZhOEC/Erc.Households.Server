@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Erc.Households.Backend.Responses
+namespace Erc.Households.Server.Responses
 {
     public class AccountingPointListItem
     {
@@ -9,7 +9,5 @@ namespace Erc.Households.Backend.Responses
         public string Eic { get; set; }
         public string Address { get; set;}
         public string Owner { get; set;}
-        public string TariffName { get; set;}
-        public string BranchOfficeName { get; set;}
     }
 }

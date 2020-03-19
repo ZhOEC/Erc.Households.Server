@@ -2,6 +2,8 @@ using AutoMapper;
 using EErc.Households.Server.MapperProfiles;
 using Erc.Households.Backend.Responses;
 using Erc.Households.Server.DataAccess.PostgreSql;
+using Erc.Households.Server.Requests;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -10,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Nest;
 
 namespace Erc.Households.Server.Api
 {
@@ -38,10 +41,29 @@ namespace Erc.Households.Server.Api
                 });
 
             services.AddTransient<IClaimsTransformation, Helpers.ClaimTransformation>();
+
+            services.AddSingleton<IElasticClient>(provider => new ElasticClient(new System.Uri(Configuration.GetConnectionString("Elasticsearch"))));
+
+            services.AddMassTransit(x =>
+            {
+                x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(cfg =>
+                {
+                    var rabbitMq = Configuration.GetSection("RabbitMQ");
+                    cfg.Host(rabbitMq["ConnectionString"], c =>
+                    {
+                        c.Username(rabbitMq["Username"]);
+                        c.Password(rabbitMq["Password"]);
+                    });
+
+                    cfg.ConfigureEndpoints(provider);
+                }));
+
+                x.AddRequestClient<SearchAccountingPointRequest>();
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IHostApplicationLifetime hostApplicationLifetime)
         {
             if (env.IsDevelopment())
             {
