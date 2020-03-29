@@ -21,8 +21,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Server.Mappe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Indexing", "Erc.Households.Indexing\Erc.Households.Indexing.csproj", "{0B2CA81D-4CD2-44B5-B114-2C424214223A}"
 EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{9295181B-49AD-437B-8366-1AE8900716CF}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,10 +63,6 @@ Global
 		{0B2CA81D-4CD2-44B5-B114-2C424214223A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B2CA81D-4CD2-44B5-B114-2C424214223A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B2CA81D-4CD2-44B5-B114-2C424214223A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9295181B-49AD-437B-8366-1AE8900716CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9295181B-49AD-437B-8366-1AE8900716CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9295181B-49AD-437B-8366-1AE8900716CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9295181B-49AD-437B-8366-1AE8900716CF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

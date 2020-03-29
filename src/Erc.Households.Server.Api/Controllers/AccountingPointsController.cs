@@ -7,9 +7,8 @@ using AutoMapper.QueryableExtensions;
 using Erc.Households.Backend.Responses;
 using Erc.Households.Server.Api.Authorization;
 using Erc.Households.Server.DataAccess.PostgreSql;
-
+using Erc.Households.Server.Domain.AccountingPoints;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,7 +33,7 @@ namespace Erc.Households.Server.Api.Controllers
         {
             var keyWords = search.ToLower().Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
-            System.Linq.Expressions.Expression<Func<Domain.AccountingPoints.AccountingPoint, bool>> predicate = (a) => keyWords.Length > 1
+            System.Linq.Expressions.Expression<Func<AccountingPoint, bool>> predicate = (a) => keyWords.Length > 1
                ? keyWords.Contains(a.Owner.LastName.ToLower()) && keyWords.Contains(a.Owner.FirstName.ToLower())
                : (
                    EF.Functions.ILike(a.Owner.LastName, $"{search}%")
@@ -55,6 +54,13 @@ namespace Erc.Households.Server.Api.Controllers
             //.Select(a=> new { a.Id, a.Name, a.Owner.LastName, a.Address.Street })
 
             return Ok(res);
+        }
+
+        [HttpGet("add-accounting-point")]
+        public async Task<IActionResult> AddAsync(AccountingPoint accountingPoint)
+        {
+            await _ercContext.AccountingPoints.AddAsync(accountingPoint);
+            return Ok();
         }
     }
 }
