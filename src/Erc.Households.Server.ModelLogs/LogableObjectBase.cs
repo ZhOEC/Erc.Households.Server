@@ -9,6 +9,6 @@ namespace Erc.Households.Server.ModelLogs
 
         public IReadOnlyCollection<ObjectLog> Logs => _logs.AsReadOnly();
 
-        protected void AddLog(string operation, DateTime date, string user) => _logs.Add(new ObjectLog("Open", DateTime.Now, user));
+        protected void AddLog(string operation, string user) => _logs.Add(new ObjectLog(operation, DateTime.Now, user));
     }
 }

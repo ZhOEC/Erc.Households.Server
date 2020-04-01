@@ -1,17 +1,19 @@
 ﻿using Erc.Households.Server.Domain.Addresses;
-using Erc.Households.Server.Domain.Extensions;
 using Erc.Households.Server.Domain.Tariffs;
+using Erc.Households.Server.Events;
+using Erc.Households.Server.Events.AccountingPoints;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Erc.Households.Server.Domain.AccountingPoints
 {
-    public class AccountingPoint
+    public class AccountingPoint:IEntity
     {
         readonly List<Contract> _contractsHistory = new List<Contract>();
         private List<AccountingPointTariff> _tariffsHistory = new List<AccountingPointTariff>();
+        public ICollection<IEvent> Events { get; } = new List<IEvent>();
+
 
         protected AccountingPoint()
         {
@@ -48,6 +50,7 @@ namespace Erc.Households.Server.Domain.AccountingPoints
         public IReadOnlyCollection<Contract> ContractsHistory => _contractsHistory.AsReadOnly();
 
         public IReadOnlyCollection<AccountingPointTariff> TariffsHistory => _tariffsHistory.AsReadOnly();
+
 
         public void CloseCurrentContract(DateTime closeDate, string currentUser)
         {

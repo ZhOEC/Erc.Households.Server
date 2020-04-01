@@ -17,7 +17,7 @@ namespace Erc.Households.Server.Domain.AccountingPoints
         {
             TariffId = tariffId;
             StartDate = date;
-            AddLog("create record", DateTime.Now, user);
+            AddLog("create record", user);
         }
 
         public int Id { get; private set; }

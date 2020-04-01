@@ -4,6 +4,7 @@ namespace Erc.Households.Server.Core
 {
     public interface IUnitOfWork
     {
-       Task<int> SaveWorkAsync();
+        IAccountingPointRepository AccountingPointRepository { get; }
+        Task<int> SaveWorkAsync();
     }
 }

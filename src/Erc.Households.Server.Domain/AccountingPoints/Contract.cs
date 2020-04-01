@@ -14,7 +14,7 @@ namespace Erc.Households.Server.Domain.AccountingPoints
         {
             StartDate = startDate;
             Customer = customer;
-            AddLog("Open", DateTime.Now, openUser);
+            AddLog("open", openUser);
         }
 
         public int Id { get; private set; }
@@ -28,7 +28,7 @@ namespace Erc.Households.Server.Domain.AccountingPoints
         public void Close(DateTime closeDate, string closeUser)
         {
             EndDate = closeDate;
-            AddLog("Close", DateTime.Now, closeUser);
+            AddLog("close", closeUser);
         }
     }
 }

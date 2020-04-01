@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Erc.Households.Server.Events\Erc.Households.Server.Events.csproj" />
     <ProjectReference Include="..\Erc.Households.Server.ModelLogs\Erc.Households.Server.ModelLogs.csproj" />
   </ItemGroup>
 

@@ -13,7 +13,9 @@
     <PackageReference Include="NEST" Version="7.6.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Erc.Households.Server.DomainEvents\Erc.Households.Server.Events.csproj" />
     <ProjectReference Include="..\Erc.Households.Server.Domain\Erc.Households.Server.Domain.csproj" />
+    <ProjectReference Include="..\Erc.Households.Server.Events\Erc.Households.Server.Events.csproj" />
   </ItemGroup>
   <ProjectExtensions>
     <VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio>

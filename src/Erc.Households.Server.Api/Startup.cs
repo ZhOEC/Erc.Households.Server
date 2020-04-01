@@ -1,6 +1,7 @@
 using AutoMapper;
 using EErc.Households.Server.MapperProfiles;
-using Erc.Households.Backend.Responses;
+using Erc.Households.Server.Core;
+using Erc.Households.Server.DataAccess;
 using Erc.Households.Server.DataAccess.PostgreSql;
 using Erc.Households.Server.Requests;
 using MassTransit;
@@ -41,6 +42,8 @@ namespace Erc.Households.Server.Api
                 });
 
             services.AddTransient<IClaimsTransformation, Helpers.ClaimTransformation>();
+
+            services.AddTransient<IUnitOfWork>(factory => new UnitOfWork(factory.GetService<ErcContext>(), factory.GetService<IBus>()));
 
             services.AddSingleton<IElasticClient>(provider => new ElasticClient(new System.Uri(Configuration.GetConnectionString("Elasticsearch"))));
 

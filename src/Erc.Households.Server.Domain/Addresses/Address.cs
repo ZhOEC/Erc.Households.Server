@@ -12,6 +12,8 @@ namespace Erc.Households.Server.Domain.Addresses
         public string Building { get; set; }
         public string Apt { get; set; }
         public Street Street { get; set; }
+        public override string ToString() => 
+            $"{(Street.City.IsRegionCity ? string.Empty : Street.City.District.Name)} {Street.City.Name} {Street.Name} {Building}{(string.IsNullOrEmpty(Apt) ? string.Empty : "кв. " + Apt)}";
     }
 
 }

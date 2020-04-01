@@ -21,7 +21,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Erc.Households.Server.Core\Erc.Households.Server.Core.csproj" />
     <ProjectReference Include="..\Erc.Households.Server.DataAccess.PostgreSql\Erc.Households.Server.DataAccess.PostgreSql.csproj" />
+    <ProjectReference Include="..\Erc.Households.Server.DataAccess\Erc.Households.Server.DataAccess.csproj" />
     <ProjectReference Include="..\Erc.Households.Server.Domain\Erc.Households.Server.Domain.csproj" />
     <ProjectReference Include="..\Erc.Households.Server.MapperProfiles\Erc.Households.Server.MapperProfiles.csproj" />
     <ProjectReference Include="..\Erc.Households.Server.Requests\Erc.Households.Server.Requests.csproj" />
