@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Worker;Microsoft.NET.Sdk.Publish">
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker;Microsoft.NET.Sdk.Publish">
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UserSecretsId>dotnet-Erc.Households.Indexing-B126AFB7-FDE4-467B-85DF-59182AAA6212</UserSecretsId>
@@ -13,7 +13,6 @@
     <PackageReference Include="NEST" Version="7.6.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Erc.Households.Server.DomainEvents\Erc.Households.Server.Events.csproj" />
     <ProjectReference Include="..\Erc.Households.Server.Domain\Erc.Households.Server.Domain.csproj" />
     <ProjectReference Include="..\Erc.Households.Server.Events\Erc.Households.Server.Events.csproj" />
   </ItemGroup>

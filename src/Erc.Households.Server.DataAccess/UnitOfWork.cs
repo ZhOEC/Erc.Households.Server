@@ -35,7 +35,7 @@ namespace Erc.Households.Server.DataAccess
                 entity.Events.Clear();
                 foreach (var @event in events)
                 {
-                    await _bus.Send(@event);
+                    await _bus.Publish(@event);
                 }
             }
 

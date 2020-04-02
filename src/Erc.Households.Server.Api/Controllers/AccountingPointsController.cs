@@ -93,10 +93,10 @@ namespace Erc.Households.Server.Api.Controllers
             await _unitOfWork.AccountingPointRepository.AddNewAsync(accountingPoint);
             await _unitOfWork.SaveWorkAsync();
 
-            return CreatedAtRoute("GetAccountingPoint", new { accountingPoint.Id });
+            return CreatedAtRoute("GetAccountingPoint", new { accountingPoint.Id }, null);
         }
 
-        [HttpPost("{id}", Name= "GetAccountingPoint")]
+        [HttpGet("{id}", Name= "GetAccountingPoint")]
         public async Task<IActionResult> Get(int id)
         {
             return Ok(await _unitOfWork.AccountingPointRepository.GetAsync(id));

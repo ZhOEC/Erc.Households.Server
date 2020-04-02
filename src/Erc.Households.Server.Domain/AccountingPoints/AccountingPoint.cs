@@ -1,4 +1,5 @@
 ﻿using Erc.Households.Server.Domain.Addresses;
+using Erc.Households.Server.Domain.Extensions;
 using Erc.Households.Server.Domain.Tariffs;
 using Erc.Households.Server.Events;
 using Erc.Households.Server.Events.AccountingPoints;
@@ -8,16 +9,21 @@ using System.Linq;
 
 namespace Erc.Households.Server.Domain.AccountingPoints
 {
-    public class AccountingPoint:IEntity
+    public class AccountingPoint : IEntity
     {
         readonly List<Contract> _contractsHistory = new List<Contract>();
         private List<AccountingPointTariff> _tariffsHistory = new List<AccountingPointTariff>();
+        BranchOffice _branchOffice;
+        Person _owner;
+
         public ICollection<IEvent> Events { get; } = new List<IEvent>();
 
+        private Action<object, string> LazyLoader { get; set; }
 
-        protected AccountingPoint()
+
+        protected AccountingPoint(Action<object, string> lazyLoader)
         {
-            
+            LazyLoader = lazyLoader;
         }
 
         public AccountingPoint(string eic, string name, DateTime contractStartDate, int tariffId, Address address, Person owner, int branchOfficeId, int dsoId, string currentUser)
@@ -25,7 +31,11 @@ namespace Erc.Households.Server.Domain.AccountingPoints
             Eic = eic;
             Name = name;
             Address = address;
-            Owner = owner;
+            if (owner.Id > 0)
+                OwnerId = owner.Id;
+            else
+                _owner = owner;
+
             BranchOfficeId = branchOfficeId;
             DistributionSystemOperatorId = dsoId;
             OpenNewContract(contractStartDate, owner, currentUser);
@@ -43,8 +53,17 @@ namespace Erc.Households.Server.Domain.AccountingPoints
         public DistributionSystemOperator Dso { get; private set; }
         public Tariff CurrentTariff => _tariffsHistory.FirstOrDefault(t => t.StartDate <= DateTime.Today).Tariff;
         public Address Address { get; private set; }
-        public Person Owner { get; private set; }
-        public BranchOffice BranchOffice { get; private set; }
+        public Person Owner
+        {
+            get => LazyLoader.Load(this, ref _owner);
+            private set { _owner = value; }
+        }
+
+        public BranchOffice BranchOffice
+        {
+            get => LazyLoader.Load(this, ref _branchOffice);
+            private set { _branchOffice = value; }
+        }
         public bool ContractIsSigned { get; private set; }
 
         public IReadOnlyCollection<Contract> ContractsHistory => _contractsHistory.AsReadOnly();
