@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Erc.Households.Server.DataAccess.PostgreSql;
+using Erc.Households.Server.DataAccess.EF;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 

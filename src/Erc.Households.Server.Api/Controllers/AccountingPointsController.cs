@@ -7,7 +7,7 @@ using AutoMapper.QueryableExtensions;
 using Erc.Households.Backend.Responses;
 using Erc.Households.Server.Api.Authorization;
 using Erc.Households.Server.Core;
-using Erc.Households.Server.DataAccess.PostgreSql;
+using Erc.Households.Server.DataAccess.EF;
 using Erc.Households.Server.Domain.AccountingPoints;
 using Erc.Households.Server.Domain.Addresses;
 using Erc.Households.Server.Requests;

@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Erc.Households.Server.Api.Authorization;
-using Erc.Households.Server.DataAccess.PostgreSql;
+using Erc.Households.Server.DataAccess.EF;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

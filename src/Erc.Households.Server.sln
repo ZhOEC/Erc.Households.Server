@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Server.Api",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Server.Domain", "Erc.Households.Server.Domain\Erc.Households.Server.Domain.csproj", "{C9338418-B4B6-4287-9CA4-A587D7B57DC6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Server.DataAccess.PostgreSql", "Erc.Households.Server.DataAccess.PostgreSql\Erc.Households.Server.DataAccess.PostgreSql.csproj", "{20809DE9-C064-4585-B9CC-B213D3C9C997}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Server.DataAccess.EF", "Erc.Households.Server.DataAccess.EF\Erc.Households.Server.DataAccess.EF.csproj", "{20809DE9-C064-4585-B9CC-B213D3C9C997}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Server.Requests", "Erc.Households.Server.Requests\Erc.Households.Server.Requests.csproj", "{EC44209F-4B5C-4991-AA7B-1C8BFDB7F11A}"
 EndProject
@@ -27,9 +27,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BackendServices", "BackendS
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Searching", "Erc.Households.Searching\Erc.Households.Searching.csproj", "{734D7A5B-E06D-4DDD-A8C3-62DDFE00D54E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Erc.Households.Server.DataAccess", "Erc.Households.Server.DataAccess\Erc.Households.Server.DataAccess.csproj", "{8B84B448-6B51-47D5-87A8-262A168E08B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Server.DataAccess", "Erc.Households.Server.DataAccess\Erc.Households.Server.DataAccess.csproj", "{8B84B448-6B51-47D5-87A8-262A168E08B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Erc.Households.Server.Events", "Erc.Households.Server.Events\Erc.Households.Server.Events.csproj", "{2BACAD3C-E570-4C9C-B8E7-77FBAD124F41}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Server.Events", "Erc.Households.Server.Events\Erc.Households.Server.Events.csproj", "{2BACAD3C-E570-4C9C-B8E7-77FBAD124F41}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

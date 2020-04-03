@@ -2,7 +2,7 @@ using AutoMapper;
 using EErc.Households.Server.MapperProfiles;
 using Erc.Households.Server.Core;
 using Erc.Households.Server.DataAccess;
-using Erc.Households.Server.DataAccess.PostgreSql;
+using Erc.Households.Server.DataAccess.EF;
 using Erc.Households.Server.Requests;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication;
@@ -54,7 +54,7 @@ namespace Erc.Households.Server.Api
                     var rabbitMq = Configuration.GetSection("RabbitMQ");
                     cfg.Host(rabbitMq["ConnectionString"], c =>
                     {
-                        c.Username(rabbitMq["Username"]);
+                        c.Username(rabbitMq["UserName"]);
                         c.Password(rabbitMq["Password"]);
                     });
 

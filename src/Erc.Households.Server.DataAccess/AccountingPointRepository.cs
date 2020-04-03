@@ -1,5 +1,5 @@
 ﻿using Erc.Households.Server.Core;
-using Erc.Households.Server.DataAccess.PostgreSql;
+using Erc.Households.Server.DataAccess.EF;
 using Erc.Households.Server.Domain.AccountingPoints;
 using Erc.Households.Server.Events.AccountingPoints;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +17,17 @@ namespace Erc.Households.Server.DataAccess
         public async Task AddNewAsync(AccountingPoint accountingPoint)
         {
             await _ercContext.AccountingPoints.AddAsync(accountingPoint);
-            _ercContext.Entry(accountingPoint.Owner).State = accountingPoint.Owner.Id == 0 ? EntityState.Added : EntityState.Unchanged;
+            if (accountingPoint.Owner.Id == 0)
+                _ercContext.Entry(accountingPoint.Owner).State = EntityState.Added;
+            else
+            {
+                _ercContext.Entry(accountingPoint.Owner).State = EntityState.Unchanged;
+                _ercContext.Entry(accountingPoint.Owner).Property(p => p.IdCardExpDate).IsModified = true;
+                _ercContext.Entry(accountingPoint.Owner).Property(p => p.IdCardNumber).IsModified = true;
+                _ercContext.Entry(accountingPoint.Owner).Property(p => p.IdCardIssuanceDate).IsModified = true;
+                _ercContext.Entry(accountingPoint.Owner).Property(p => p.MobilePhones).IsModified = true;
+            }
+            
             if (accountingPoint.AddressId == 0)
             {
                 _ercContext.Entry(accountingPoint.Address).State = EntityState.Added;
@@ -25,7 +35,7 @@ namespace Erc.Households.Server.DataAccess
 
             accountingPoint.Events.Add(new AccountingPointCreated
             {
-                //Address = accountingPoint.Address.ToString(),
+                Address = accountingPoint.Address.ToString(),
                 Eic = accountingPoint.Eic,
                 Name = accountingPoint.Name,
                 PersonFirstName = accountingPoint.Owner.FirstName,

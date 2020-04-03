@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 
-namespace Erc.Households.Server.DataAccess.PostgreSql
+namespace Erc.Households.Server.DataAccess.EF
 {
     public class ErcContext : DbContext
     {
@@ -30,7 +30,6 @@ namespace Erc.Households.Server.DataAccess.PostgreSql
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSnakeCaseNamingConvention().UseLoggerFactory(MyLoggerFactory);
-            //optionsBuilder.UseLazyLoadingProxies();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -157,9 +156,6 @@ namespace Erc.Households.Server.DataAccess.PostgreSql
 
                 e.HasOne(p => p.Street)
                     .WithMany();
-
-                e.HasIndex(p => new { p.StreetId, p.Building, p.Apt })
-                .IsUnique();
             });
 
             modelBuilder.Entity<Person>(e =>
@@ -179,11 +175,8 @@ namespace Erc.Households.Server.DataAccess.PostgreSql
                     .IsRequired()
                     .HasMaxLength(9);
 
-                e.Property(p => p.MobilePhone1)
-                    .HasMaxLength(15);
-
-                e.Property(p => p.MobilePhone2)
-                    .HasMaxLength(15);
+                e.Property(p => p.MobilePhones)
+                    .HasColumnType("varchar(15)[]");
 
                 e.Property(p => p.TaxCode)
                     .HasMaxLength(10);
@@ -244,7 +237,7 @@ namespace Erc.Households.Server.DataAccess.PostgreSql
                      new { Id = 1, Name = "Населення (загальний тариф)" },
                      new { Id = 2, Name = "Будинки з електроопалювальними установками" },
                      new { Id = 3, Name = "Багатоквартирні негазифіковані будинки" },
-                     new { Id = 4, Name = "Багатодітні, прийомні сім''ї та дитячі будинкі сімейного типу" }
+                     new { Id = 4, Name = "Багатодітні, прийомні сім''ї та дитячі будинки сімейного типу" }
                     );
             });
 

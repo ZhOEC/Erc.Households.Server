@@ -3,6 +3,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <UserSecretsId>dotnet-Erc.Households.Indexing-B126AFB7-FDE4-467B-85DF-59182AAA6212</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    <DockerfileTag>erc/households/indexing</DockerfileTag>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="MassTransit" Version="6.2.0" />

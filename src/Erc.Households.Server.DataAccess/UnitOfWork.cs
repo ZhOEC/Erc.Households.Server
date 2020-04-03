@@ -1,5 +1,5 @@
 ﻿using Erc.Households.Server.Core;
-using Erc.Households.Server.DataAccess.PostgreSql;
+using Erc.Households.Server.DataAccess.EF;
 using Erc.Households.Server.Domain;
 using MassTransit;
 using System.Linq;
@@ -35,7 +35,7 @@ namespace Erc.Households.Server.DataAccess
                 entity.Events.Clear();
                 foreach (var @event in events)
                 {
-                    await _bus.Publish(@event);
+                    await _bus.Publish(@event, @event.GetType());
                 }
             }
 

@@ -4,9 +4,9 @@ using Erc.Households.Server.ModelLogs;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
-namespace Erc.Households.Server.DataAccess.PostgreSql.Migrations
+namespace Erc.Households.Server.DataAccess.EF.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class Initial_Create : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -185,10 +185,10 @@ namespace Erc.Households.Server.DataAccess.PostgreSql.Migrations
                     patronymic = table.Column<string>(maxLength: 50, nullable: true),
                     tax_code = table.Column<string>(maxLength: 10, nullable: true),
                     id_card_number = table.Column<string>(maxLength: 9, nullable: false),
+                    id_card_issuance_date = table.Column<DateTime>(nullable: false),
                     id_card_exp_date = table.Column<DateTime>(nullable: true),
                     address_id = table.Column<int>(nullable: true),
-                    mobile_phone1 = table.Column<string>(maxLength: 15, nullable: true),
-                    mobile_phone2 = table.Column<string>(maxLength: 15, nullable: true)
+                    mobile_phones = table.Column<string[]>(type: "varchar(15)[]", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -354,7 +354,7 @@ namespace Erc.Households.Server.DataAccess.PostgreSql.Migrations
                     { 1, "Населення (загальний тариф)" },
                     { 2, "Будинки з електроопалювальними установками" },
                     { 3, "Багатоквартирні негазифіковані будинки" },
-                    { 4, "Багатодітні, прийомні сім''ї та дитячі будинкі сімейного типу" }
+                    { 4, "Багатодітні, прийомні сім''ї та дитячі будинки сімейного типу" }
                 });
 
             migrationBuilder.InsertData(
@@ -444,10 +444,9 @@ namespace Erc.Households.Server.DataAccess.PostgreSql.Migrations
                 column: "owner_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_addresses_street_id_building_apt",
+                name: "ix_addresses_street_id",
                 table: "addresses",
-                columns: new[] { "street_id", "building", "apt" },
-                unique: true);
+                column: "street_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_cities_district_id",
@@ -495,6 +494,10 @@ namespace Erc.Households.Server.DataAccess.PostgreSql.Migrations
                 name: "ix_tariff_rate_tariff_id",
                 table: "tariff_rates",
                 column: "tariff_id");
+
+            migrationBuilder.Sql(@"CREATE UNIQUE INDEX uix_address_strret_id_building_apt
+    ON public.addresses USING btree
+    (street_id ASC NULLS LAST, lower(building) ASC NULLS LAST, coalesce(apt,'') ASC NULLS LAST)");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

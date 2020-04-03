@@ -13,10 +13,10 @@ namespace Erc.Households.Server.Domain
         public string Patronymic { get; set; }
         public string TaxCode { get; set; }
         public string IdCardNumber { get; set; }
+        public DateTime IdCardIssuanceDate { get; set; }
         public DateTime? IdCardExpDate { get; set; }
         public int? AddressId { get; set; }
-        public string MobilePhone1 { get; set; }
-        public string MobilePhone2 { get; set; }
+        public string[] MobilePhones { get; set; }
         public Address Address { get; set; }
     }
 }
