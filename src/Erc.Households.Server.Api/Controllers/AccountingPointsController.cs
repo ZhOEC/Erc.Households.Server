@@ -6,7 +6,6 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Erc.Households.Backend.Responses;
 using Erc.Households.Server.Api.Authorization;
-<<<<<<< .mine
 using Erc.Households.Server.Core;
 using Erc.Households.Server.DataAccess.EF;
 using Erc.Households.Server.Domain.AccountingPoints;
@@ -14,16 +13,8 @@ using Erc.Households.Server.Domain.Addresses;
 using Erc.Households.Server.Requests;
 using Erc.Households.Server.Responses;
 using MassTransit;
-=======
-using Erc.Households.Server.DataAccess.PostgreSql;
-using Erc.Households.Server.Domain.AccountingPoints;
-
-
-
-
-
->>>>>>> .theirs
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Nest;
@@ -57,33 +48,15 @@ namespace Erc.Households.Server.Api.Controllers
         [HttpGet("")]
         public async Task<IActionResult> Search(string search)
         {
-<<<<<<< .mine
             var indices = string.Join(',',
                 User.Claims.Where(c => string.Equals(c.Type, "Group", StringComparison.InvariantCultureIgnoreCase))
                 .Where(c => c.Value != "bn")
                 .Select(c => c.Value + "_accounting_points")
                 );
 
-
-
-
-
-=======
-            var keyWords = search.ToLower().Split(' ', StringSplitOptions.RemoveEmptyEntries);
-
-            System.Linq.Expressions.Expression<Func<AccountingPoint, bool>> predicate = (a) => keyWords.Length > 1
-               ? keyWords.Contains(a.Owner.LastName.ToLower()) && keyWords.Contains(a.Owner.FirstName.ToLower())
-               : (
-                   EF.Functions.ILike(a.Owner.LastName, $"{search}%")
-                   || EF.Functions.ILike(a.Name, $"%{search}%")
-                   || a.Owner.TaxCode.Contains(search)
-                   || a.Owner.IdCardNumber.Contains(search)
-               ) && (search.Length < 5 ? EF.Functions.ILike(a.Owner.LastName, search) : true);
->>>>>>> .theirs
-            
             //var response = await _searchClient.GetResponse<AccountingPointListItem[]>(new { SearchString = search, BranchOffices = groups });
 
-           
+
             var searchResponse = await _elasticClient.SearchAsync<SearchResult>(s => s
                 .Index(indices).Query(q => q
                     .MultiMatch(m => m
@@ -94,7 +67,7 @@ namespace Erc.Households.Server.Api.Controllers
                     )
                 );
 
-           
+
             var searchResults = searchResponse.Hits.Select(h =>
                 new AccountingPointListItem
                 {
@@ -104,12 +77,11 @@ namespace Erc.Households.Server.Api.Controllers
                     Name = h.Source.Name,
                     Owner = $"{h.Source.PersonLastName} {h.Source.PersonFirstName} {h.Source.PersonPatronymic}"
                 });
-          
+
 
 
             return Ok(searchResults);
         }
-<<<<<<< .mine
 
         [HttpPost("")]
         public async Task<IActionResult> AddNew(NewAccountingPoint newAccountingPoint)
@@ -124,7 +96,7 @@ namespace Erc.Households.Server.Api.Controllers
             return CreatedAtRoute("GetAccountingPoint", new { accountingPoint.Id }, null);
         }
 
-        [HttpGet("{id}", Name= "GetAccountingPoint")]
+        [HttpGet("{id}", Name = "GetAccountingPoint")]
         public async Task<IActionResult> Get(int id)
         {
             return Ok(await _unitOfWork.AccountingPointRepository.GetAsync(id));
@@ -133,13 +105,13 @@ namespace Erc.Households.Server.Api.Controllers
         public class NewAccountingPoint
         {
             public string Eic { get; set; }
-                public string Name {get;set;}
-                public DateTime ContractStartDate {get;set;}
-                public int TariffId {get;set;}
-                public Address Address {get;set;}
-                public Domain.Person Owner {get;set;}
-                public int BranchOfficeId {get;set;}
-                public int DsoId {get;set;}
+            public string Name { get; set; }
+            public DateTime ContractStartDate { get; set; }
+            public int TariffId { get; set; }
+            public Address Address { get; set; }
+            public Domain.Person Owner { get; set; }
+            public int BranchOfficeId { get; set; }
+            public int DsoId { get; set; }
         }
 
         class SearchResult
@@ -155,52 +127,5 @@ namespace Erc.Households.Server.Api.Controllers
             public string PersonIdCardNumber { get; set; }
             public string Address { get; set; }
         }
-=======
-
-        [HttpGet("add-accounting-point")]
-        public async Task<IActionResult> AddAsync(AccountingPoint accountingPoint)
-        {
-            await _ercContext.AccountingPoints.AddAsync(accountingPoint);
-            return Ok();
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
->>>>>>> .theirs
     }
 }
