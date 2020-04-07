@@ -1,4 +1,4 @@
-﻿using Erc.Households.Server.DataAccess.PostgreSql;
+﻿using Erc.Households.Server.DataAccess.EF;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -21,8 +21,11 @@ namespace Erc.Households.Server.Api.Controllers
         [HttpGet("cities")]
         public async Task<IActionResult> Cities(int branchOfficeId)
         {
-            var boIds = _ercContext.BranchOffices.Where(x => x.Id == branchOfficeId).Select(g => g.DistrictIds);
-            return Ok(await _ercContext.Cities.Where(x => boIds.Any(t => t.Contains(x.DistrictId))).ToListAsync());
+            var boIds = await _ercContext.BranchOffices.Where(x => x.Id == branchOfficeId).Select(g => g.DistrictIds).FirstAsync();
+            return Ok(await _ercContext.Cities
+                .Where(x => boIds.Contains(x.DistrictId))
+                .Select(c => new { c.Id, c.Name, DistrictName = c.District.Name, c.IsRegionCity })
+                .ToArrayAsync());
         }
 
         [HttpGet("streets")]

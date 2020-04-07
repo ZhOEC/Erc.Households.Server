@@ -6,7 +6,6 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Erc.Households.Backend.Responses;
 using Erc.Households.Server.Api.Authorization;
-<<<<<<< .mine
 using Erc.Households.Server.Core;
 using Erc.Households.Server.DataAccess.EF;
 using Erc.Households.Server.Domain.AccountingPoints;
@@ -14,15 +13,6 @@ using Erc.Households.Server.Domain.Addresses;
 using Erc.Households.Server.Requests;
 using Erc.Households.Server.Responses;
 using MassTransit;
-=======
-using Erc.Households.Server.DataAccess.PostgreSql;
-using Erc.Households.Server.Domain.AccountingPoints;
-
-
-
-
-
->>>>>>> .theirs
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -58,7 +48,6 @@ namespace Erc.Households.Server.Api.Controllers
         [HttpGet("")]
         public async Task<IActionResult> Search(string search)
         {
-<<<<<<< .mine
             var indices = string.Join(',',
                 User.Claims.Where(c => string.Equals(c.Type, "Group", StringComparison.InvariantCultureIgnoreCase))
                 .Where(c => c.Value != "bn")
@@ -69,18 +58,6 @@ namespace Erc.Households.Server.Api.Controllers
 
 
 
-=======
-            var keyWords = search.ToLower().Split(' ', StringSplitOptions.RemoveEmptyEntries);
-
-            System.Linq.Expressions.Expression<Func<AccountingPoint, bool>> predicate = (a) => keyWords.Length > 1
-               ? keyWords.Contains(a.Owner.LastName.ToLower()) && keyWords.Contains(a.Owner.FirstName.ToLower())
-               : (
-                   EF.Functions.ILike(a.Owner.LastName, $"{search}%")
-                   || EF.Functions.ILike(a.Name, $"%{search}%")
-                   || a.Owner.TaxCode.Contains(search)
-                   || a.Owner.IdCardNumber.Contains(search)
-               ) && (search.Length < 5 ? EF.Functions.ILike(a.Owner.LastName, search) : true);
->>>>>>> .theirs
             
             //var response = await _searchClient.GetResponse<AccountingPointListItem[]>(new { SearchString = search, BranchOffices = groups });
 
@@ -110,7 +87,6 @@ namespace Erc.Households.Server.Api.Controllers
 
             return Ok(searchResults);
         }
-<<<<<<< .mine
 
         [HttpPost("")]
         public async Task<IActionResult> AddNew(NewAccountingPoint newAccountingPoint)
@@ -164,52 +140,5 @@ namespace Erc.Households.Server.Api.Controllers
             public string PersonIdCardNumber { get; set; }
             public string Address { get; set; }
         }
-=======
-
-        [HttpGet("add-accounting-point")]
-        public async Task<IActionResult> AddAsync(AccountingPoint accountingPoint)
-        {
-            await _ercContext.AccountingPoints.AddAsync(accountingPoint);
-            return Ok();
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
->>>>>>> .theirs
     }
 }
