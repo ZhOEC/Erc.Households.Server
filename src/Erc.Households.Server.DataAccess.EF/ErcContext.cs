@@ -34,6 +34,8 @@ namespace Erc.Households.Server.DataAccess.EF
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.HasPostgresExtension("citext");
+
             modelBuilder.Entity<Contract>(e =>
             {
                 e.ToTable("contracts")
@@ -53,9 +55,17 @@ namespace Erc.Households.Server.DataAccess.EF
 
             modelBuilder.Entity<BranchOffice>(e =>
             {
-                e.Property(p => p.StringId).HasMaxLength(2).IsRequired();
-                e.Property(p => p.Address).HasMaxLength(500).IsRequired();
-                e.Property(p => p.Name).HasMaxLength(200).IsRequired();
+                e.Property(p => p.StringId)
+                    .HasColumnType("citext")
+                    .HasMaxLength(2).IsRequired();
+
+                e.Property(p => p.Address)
+                    .HasColumnType("citext")
+                    .HasMaxLength(500).IsRequired();
+
+                e.Property(p => p.Name)
+                    .HasColumnType("citext")
+                    .HasMaxLength(200).IsRequired();
                 e.HasData(
                     new { Id = 1, Name = "Андрушівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "an", DistrictIds = new[] { 1 } },
                     new { Id = 2, Name = "Баранiвський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "bn", DistrictIds = new[] { 2 } },
@@ -84,41 +94,49 @@ namespace Erc.Households.Server.DataAccess.EF
 
             modelBuilder.Entity<District>(e =>
             {
-                e.Property(p => p.Name).HasMaxLength(100).IsRequired();
+                e.Property(p => p.Name)
+                    .HasColumnType("citext")
+                    .HasMaxLength(100)
+                    .IsRequired();
+                
                 e.HasOne(p => p.Region)
-                    .WithMany(r => r.Districts)
+                    .WithMany()
                     .HasForeignKey(p => p.RegionId);
 
                 e.HasData(
-                    new { Id = 1, Name = "Андрушівський р-н", RegionId = 1 },
-                    new { Id = 2, Name = "Баранiвський р-н", RegionId = 1 },
-                    new { Id = 3, Name = "Бердичiвський р-н", RegionId = 1 },
-                    new { Id = 4, Name = "Брусилівський р-н", RegionId = 1 },
-                    new { Id = 5, Name = "Хорошівський р-н", RegionId = 1 },
-                    new { Id = 6, Name = "Ємільчинський р-н", RegionId = 1 },
-                    new { Id = 7, Name = "Житомирський р-н", RegionId = 1 },
-                    new { Id = 8, Name = "Коростенський р-н", RegionId = 1 },
-                    new { Id = 9, Name = "Коростишiвський р-н", RegionId = 1 },
-                    new { Id = 10, Name = "Лугинський р-н", RegionId = 1 },
-                    new { Id = 11, Name = "Любарський р-н", RegionId = 1 },
-                    new { Id = 12, Name = "Малинський р-н", RegionId = 1 },
-                    new { Id = 13, Name = "Народицький р-н", RegionId = 1 },
-                    new { Id = 14, Name = "Новоград-Волинський р-н", RegionId = 1 },
-                    new { Id = 15, Name = "Овруцький р-н", RegionId = 1 },
-                    new { Id = 16, Name = "Олевський р-н", RegionId = 1 },
-                    new { Id = 17, Name = "Попільнянський р-н", RegionId = 1 },
-                    new { Id = 18, Name = "Радомишльський р-н", RegionId = 1 },
-                    new { Id = 19, Name = "Романівський р-н", RegionId = 1 },
-                    new { Id = 20, Name = "Ружинський р-н", RegionId = 1 },
-                    new { Id = 21, Name = "Пулинський р-н", RegionId = 1 },
-                    new { Id = 22, Name = "Черняхівський р-н", RegionId = 1 },
-                    new { Id = 23, Name = "Чуднівський р-н", RegionId = 1 }
+                    new { Id = 1, Name = "Андрушівський район", RegionId = 1 },
+                    new { Id = 2, Name = "Баранiвський район", RegionId = 1 },
+                    new { Id = 3, Name = "Бердичiвський район", RegionId = 1 },
+                    new { Id = 4, Name = "Брусилівський район", RegionId = 1 },
+                    new { Id = 5, Name = "Хорошівський район", RegionId = 1 },
+                    new { Id = 6, Name = "Ємільчинський район", RegionId = 1 },
+                    new { Id = 7, Name = "Житомирський район", RegionId = 1 },
+                    new { Id = 8, Name = "Коростенський район", RegionId = 1 },
+                    new { Id = 9, Name = "Коростишiвський район", RegionId = 1 },
+                    new { Id = 10, Name = "Лугинський район", RegionId = 1 },
+                    new { Id = 11, Name = "Любарський район", RegionId = 1 },
+                    new { Id = 12, Name = "Малинський район", RegionId = 1 },
+                    new { Id = 13, Name = "Народицький район", RegionId = 1 },
+                    new { Id = 14, Name = "Новоград-Волинський район", RegionId = 1 },
+                    new { Id = 15, Name = "Овруцький район", RegionId = 1 },
+                    new { Id = 16, Name = "Олевський район", RegionId = 1 },
+                    new { Id = 17, Name = "Попільнянський район", RegionId = 1 },
+                    new { Id = 18, Name = "Радомишльський район", RegionId = 1 },
+                    new { Id = 19, Name = "Романівський район", RegionId = 1 },
+                    new { Id = 20, Name = "Ружинський район", RegionId = 1 },
+                    new { Id = 21, Name = "Пулинський район", RegionId = 1 },
+                    new { Id = 22, Name = "Черняхівський район", RegionId = 1 },
+                    new { Id = 23, Name = "Чуднівський район", RegionId = 1 }
                     );
             });
 
             modelBuilder.Entity<Region>(e =>
             {
-                e.Property(p => p.Name).HasMaxLength(100).IsRequired();
+                e.Property(p => p.Name)
+                    .HasMaxLength(100)
+                    .HasColumnType("citext")
+                    .IsRequired();
+
                 e.HasData(new { Id = 1, Name = "Житомирська обл." });
             });
 
@@ -126,6 +144,7 @@ namespace Erc.Households.Server.DataAccess.EF
             {
                 e.Property(p => p.Name)
                     .HasMaxLength(100)
+                    .HasColumnType("citext")
                     .IsRequired();
 
                 e.HasOne(p => p.District)
@@ -138,6 +157,7 @@ namespace Erc.Households.Server.DataAccess.EF
             modelBuilder.Entity<Street>(e =>
             {
                 e.Property(p => p.Name)
+                    .HasColumnType("citext")
                     .HasMaxLength(100)
                     .IsRequired();
 
@@ -148,31 +168,41 @@ namespace Erc.Households.Server.DataAccess.EF
             modelBuilder.Entity<Address>(e =>
             {
                 e.Property(p => p.Building)
-                    .HasMaxLength(20)
+                    .HasColumnType("citext")
+                    .HasMaxLength(10)
                     .IsRequired();
 
                 e.Property(p => p.Apt)
+                    .HasColumnType("citext")
                     .HasMaxLength(5);
 
                 e.HasOne(p => p.Street)
                     .WithMany();
+
+                //e.HasCheckConstraint("ck_address_building", "length(building) <= 10");
+                //e.HasCheckConstraint("ck_address_apt", "length[apt] <= 5");
+                e.HasCheckConstraint("ck_address_zip", "zip ~ '^(\\d){5}$'");
             });
 
             modelBuilder.Entity<Person>(e =>
             {
                 e.Property(p => p.FirstName)
+                    .HasColumnType("citext")
                     .HasMaxLength(50)
                     .IsRequired();
 
                 e.Property(p => p.LastName)
                     .HasMaxLength(50)
+                    .HasColumnType("citext")
                     .IsRequired();
 
                 e.Property(p => p.Patronymic)
+                    .HasColumnType("citext")
                     .HasMaxLength(50);
 
                 e.Property(p => p.IdCardNumber)
                     .IsRequired()
+                    .HasColumnType("citext")
                     .HasMaxLength(9);
 
                 e.Property(p => p.MobilePhones)
@@ -199,10 +229,12 @@ namespace Erc.Households.Server.DataAccess.EF
                     .HasForeignKey(p => p.AccountingPointId);
 
                 e.Property(p => p.Name)
+                    .HasColumnType("citext")
                     .HasMaxLength(16)
                     .IsRequired();
 
                 e.Property(p => p.Eic)
+                    .HasColumnType("citext")
                     .HasMaxLength(16)
                     .IsRequired();
 
@@ -221,6 +253,7 @@ namespace Erc.Households.Server.DataAccess.EF
 
                 e.HasIndex(p => p.Name).IsUnique();
                 e.HasIndex(p => p.Eic).IsUnique();
+                e.HasCheckConstraint("CK_accounting_point_eic", "length(eic) = 16");
             });
 
             modelBuilder.Entity<DistributionSystemOperator>(e =>
@@ -231,8 +264,12 @@ namespace Erc.Households.Server.DataAccess.EF
 
             modelBuilder.Entity<Tariff>(e =>
             {
-                e.Property(p => p.Name).HasMaxLength(200);
+                e.Property(p => p.Name)
+                    .HasColumnType("citext")
+                    .HasMaxLength(200);
+                
                 e.HasMany(p => p.Rates).WithOne();
+                
                 e.HasData(
                      new { Id = 1, Name = "Населення (загальний тариф)" },
                      new { Id = 2, Name = "Будинки з електроопалювальними установками" },

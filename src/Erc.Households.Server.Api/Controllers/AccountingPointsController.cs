@@ -32,16 +32,17 @@ namespace Erc.Households.Server.Api.Controllers
         private readonly IElasticClient _elasticClient;
         readonly IUnitOfWork _unitOfWork;
 
-        public AccountingPointsController(IElasticClient elasticClient, IUnitOfWork unitOfWork)
+        public AccountingPointsController(IElasticClient elasticClient, IUnitOfWork unitOfWork, ErcContext ercContext)
         {
             _elasticClient = elasticClient ?? throw new ArgumentNullException(nameof(elasticClient));
             _unitOfWork = unitOfWork;
+            _ercContext = ercContext ?? throw new ArgumentNullException(nameof(ercContext));
         }
 
         //public AccountingPointsController(ErcContext ercContext, IMapper mapper, IRequestClient<SearchAccountingPointRequest> searchClient)
         //{
         //    _mapper = mapper;
-        //    _ercContext = ercContext ?? throw new ArgumentNullException(nameof(ercContext));
+
         //    _searchClient = searchClient ?? throw new ArgumentNullException(nameof(searchClient));
         //}
 
@@ -99,19 +100,27 @@ namespace Erc.Households.Server.Api.Controllers
         [HttpGet("{id}", Name= "GetAccountingPoint")]
         public async Task<IActionResult> Get(int id)
         {
-            return Ok(await _unitOfWork.AccountingPointRepository.GetAsync(id));
+            var ap = await _unitOfWork.AccountingPointRepository.GetAsync(id);
+            return Ok(new 
+            {
+                ap.Id,
+                ap.Name,
+                Address = ap.Address.ToString(),
+                ap.Owner,
+                Dso = ap.Dso.Name
+            });
         }
 
         public class NewAccountingPoint
         {
             public string Eic { get; set; }
-                public string Name {get;set;}
-                public DateTime ContractStartDate {get;set;}
-                public int TariffId {get;set;}
-                public Address Address {get;set;}
-                public Domain.Person Owner {get;set;}
-                public int BranchOfficeId {get;set;}
-                public int DsoId {get;set;}
+            public string Name { get; set; }
+            public DateTime ContractStartDate { get; set; }
+            public int TariffId { get; set; }
+            public Address Address { get; set; }
+            public Domain.Person Owner { get; set; }
+            public int BranchOfficeId { get; set; }
+            public int DsoId { get; set; }
         }
 
         class SearchResult

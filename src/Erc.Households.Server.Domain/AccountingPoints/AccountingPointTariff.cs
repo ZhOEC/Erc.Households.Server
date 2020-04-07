@@ -10,7 +10,7 @@ namespace Erc.Households.Server.Domain.AccountingPoints
     {
         protected AccountingPointTariff()
         {
-
+            
         }
 
         public AccountingPointTariff(int tariffId, DateTime date, string user)

@@ -10,16 +10,19 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterDatabase()
+                .Annotation("Npgsql:PostgresExtension:citext", ",,");
+
             migrationBuilder.CreateTable(
                 name: "branch_offices",
                 columns: table => new
                 {
                     id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    name = table.Column<string>(maxLength: 200, nullable: false),
-                    string_id = table.Column<string>(maxLength: 2, nullable: false),
+                    name = table.Column<string>(type: "citext", maxLength: 200, nullable: false),
+                    string_id = table.Column<string>(type: "citext", maxLength: 2, nullable: false),
                     district_ids = table.Column<int[]>(nullable: true),
-                    address = table.Column<string>(maxLength: 500, nullable: false)
+                    address = table.Column<string>(type: "citext", maxLength: 500, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -45,7 +48,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                 {
                     id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    name = table.Column<string>(maxLength: 100, nullable: false)
+                    name = table.Column<string>(type: "citext", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -58,7 +61,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                 {
                     id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    name = table.Column<string>(maxLength: 200, nullable: true)
+                    name = table.Column<string>(type: "citext", maxLength: 200, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -71,7 +74,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                 {
                     id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    name = table.Column<string>(maxLength: 100, nullable: false),
+                    name = table.Column<string>(type: "citext", maxLength: 100, nullable: false),
                     region_id = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -116,7 +119,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                 {
                     id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    name = table.Column<string>(maxLength: 100, nullable: false),
+                    name = table.Column<string>(type: "citext", maxLength: 100, nullable: false),
                     district_id = table.Column<int>(nullable: false),
                     is_district_city = table.Column<bool>(nullable: false, defaultValue: false),
                     is_region_city = table.Column<bool>(nullable: false, defaultValue: false)
@@ -138,7 +141,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                 {
                     id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    name = table.Column<string>(maxLength: 100, nullable: false),
+                    name = table.Column<string>(type: "citext", maxLength: 100, nullable: false),
                     city_id = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -160,12 +163,13 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     zip = table.Column<string>(nullable: true),
                     street_id = table.Column<int>(nullable: false),
-                    building = table.Column<string>(maxLength: 20, nullable: false),
-                    apt = table.Column<string>(maxLength: 5, nullable: true)
+                    building = table.Column<string>(type: "citext", maxLength: 10, nullable: false),
+                    apt = table.Column<string>(type: "citext", maxLength: 5, nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_addresses", x => x.id);
+                    table.CheckConstraint("ck_address_zip", "zip ~ '^(\\d){5}$'");
                     table.ForeignKey(
                         name: "fk_addresses_streets_street_id",
                         column: x => x.street_id,
@@ -180,11 +184,11 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                 {
                     id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    first_name = table.Column<string>(maxLength: 50, nullable: false),
-                    last_name = table.Column<string>(maxLength: 50, nullable: false),
-                    patronymic = table.Column<string>(maxLength: 50, nullable: true),
+                    first_name = table.Column<string>(type: "citext", maxLength: 50, nullable: false),
+                    last_name = table.Column<string>(type: "citext", maxLength: 50, nullable: false),
+                    patronymic = table.Column<string>(type: "citext", maxLength: 50, nullable: true),
                     tax_code = table.Column<string>(maxLength: 10, nullable: true),
-                    id_card_number = table.Column<string>(maxLength: 9, nullable: false),
+                    id_card_number = table.Column<string>(type: "citext", maxLength: 9, nullable: false),
                     id_card_issuance_date = table.Column<DateTime>(nullable: false),
                     id_card_exp_date = table.Column<DateTime>(nullable: true),
                     address_id = table.Column<int>(nullable: true),
@@ -208,8 +212,8 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                     id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:IdentitySequenceOptions", "'10000000', '1', '', '', 'False', '1'")
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    name = table.Column<string>(maxLength: 16, nullable: false),
-                    eic = table.Column<string>(maxLength: 16, nullable: false),
+                    name = table.Column<string>(type: "citext", maxLength: 16, nullable: false),
+                    eic = table.Column<string>(type: "citext", maxLength: 16, nullable: false),
                     address_id = table.Column<int>(nullable: false),
                     owner_id = table.Column<int>(nullable: false),
                     distribution_system_operator_id = table.Column<int>(nullable: false),
@@ -220,6 +224,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_accounting_points", x => x.id);
+                    table.CheckConstraint("CK_accounting_point_eic", "length(eic) = 16");
                     table.ForeignKey(
                         name: "fk_accounting_points_addresses_address_id",
                         column: x => x.address_id,
@@ -362,29 +367,29 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                 columns: new[] { "id", "name", "region_id" },
                 values: new object[,]
                 {
-                    { 1, "Андрушівський р-н", 1 },
-                    { 23, "Чуднівський р-н", 1 },
-                    { 22, "Черняхівський р-н", 1 },
-                    { 21, "Пулинський р-н", 1 },
-                    { 20, "Ружинський р-н", 1 },
-                    { 19, "Романівський р-н", 1 },
-                    { 18, "Радомишльський р-н", 1 },
-                    { 17, "Попільнянський р-н", 1 },
-                    { 16, "Олевський р-н", 1 },
-                    { 14, "Новоград-Волинський р-н", 1 },
-                    { 13, "Народицький р-н", 1 },
-                    { 15, "Овруцький р-н", 1 },
-                    { 11, "Любарський р-н", 1 },
-                    { 2, "Баранiвський р-н", 1 },
-                    { 3, "Бердичiвський р-н", 1 },
-                    { 12, "Малинський р-н", 1 },
-                    { 5, "Хорошівський р-н", 1 },
-                    { 6, "Ємільчинський р-н", 1 },
-                    { 4, "Брусилівський р-н", 1 },
-                    { 8, "Коростенський р-н", 1 },
-                    { 9, "Коростишiвський р-н", 1 },
-                    { 10, "Лугинський р-н", 1 },
-                    { 7, "Житомирський р-н", 1 }
+                    { 1, "Андрушівський район", 1 },
+                    { 23, "Чуднівський район", 1 },
+                    { 22, "Черняхівський район", 1 },
+                    { 21, "Пулинський район", 1 },
+                    { 20, "Ружинський район", 1 },
+                    { 19, "Романівський район", 1 },
+                    { 18, "Радомишльський район", 1 },
+                    { 17, "Попільнянський район", 1 },
+                    { 16, "Олевський район", 1 },
+                    { 14, "Новоград-Волинський район", 1 },
+                    { 13, "Народицький район", 1 },
+                    { 15, "Овруцький район", 1 },
+                    { 11, "Любарський район", 1 },
+                    { 2, "Баранiвський район", 1 },
+                    { 3, "Бердичiвський район", 1 },
+                    { 12, "Малинський район", 1 },
+                    { 5, "Хорошівський район", 1 },
+                    { 6, "Ємільчинський район", 1 },
+                    { 4, "Брусилівський район", 1 },
+                    { 8, "Коростенський район", 1 },
+                    { 9, "Коростишiвський район", 1 },
+                    { 10, "Лугинський район", 1 },
+                    { 7, "Житомирський район", 1 }
                 });
 
             migrationBuilder.InsertData(
@@ -495,9 +500,9 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                 table: "tariff_rates",
                 column: "tariff_id");
 
-            migrationBuilder.Sql(@"CREATE UNIQUE INDEX uix_address_strret_id_building_apt
-    ON public.addresses USING btree
-    (street_id ASC NULLS LAST, lower(building) ASC NULLS LAST, coalesce(apt,'') ASC NULLS LAST)");
+            migrationBuilder.Sql(
+                @"CREATE UNIQUE INDEX uix_addresses_street_id_building_apt ON public.addresses 
+                USING btree (street_id, building, coalesce(apt,'') ASC NULLS LAST)");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
