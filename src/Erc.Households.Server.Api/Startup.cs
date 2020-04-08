@@ -1,9 +1,6 @@
-using AutoMapper;
-using EErc.Households.Server.MapperProfiles;
 using Erc.Households.Server.Core;
 using Erc.Households.Server.DataAccess;
 using Erc.Households.Server.DataAccess.EF;
-using Erc.Households.Server.Requests;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -29,7 +26,6 @@ namespace Erc.Households.Server.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAutoMapper(typeof(AccountingPointProfile).Assembly);
             services.AddDbContext<ErcContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("ErcContext")));
 
@@ -45,7 +41,7 @@ namespace Erc.Households.Server.Api
 
             services.AddTransient<IUnitOfWork>(factory => new UnitOfWork(factory.GetService<ErcContext>(), factory.GetService<IBus>()));
 
-            services.AddSingleton<IElasticClient>(provider => new ElasticClient(new System.Uri(Configuration.GetConnectionString("Elasticsearch"))));
+            services.AddSingleton<IElasticClient>(_ => new ElasticClient(new System.Uri(Configuration.GetConnectionString("Elasticsearch"))));
 
             services.AddMassTransit(x =>
             {

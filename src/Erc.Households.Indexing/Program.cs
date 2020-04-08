@@ -27,7 +27,7 @@ namespace Erc.Households.Indexing
 
                 services.AddMassTransit(x =>
                 {
-                    x.AddConsumer<AccountingPointPersistedEventHandler>();
+                    x.AddConsumer<AccountingPointEventHandler>();
 
                     x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(cfg =>
                     {

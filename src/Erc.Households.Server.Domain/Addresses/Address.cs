@@ -31,8 +31,10 @@ namespace Erc.Households.Server.Domain.Addresses
             get => LazyLoader.Load(this, ref _street);
             private set { _street = value; }
         }
-        public override string ToString() => 
-            $"{Street.Name}, {Building}{(string.IsNullOrEmpty(Apt) ? string.Empty : ", кв. " + Apt)}, {Street.City.Name}, {(Street.City.IsRegionCity ? string.Empty : Street.City.District.Name)}";
+
+        public string StreetAddress => $"{Street.Name} {Building}{(string.IsNullOrEmpty(Apt) ? string.Empty : ", кв. " + Apt)}";
+        public string CityName => Street.City.ToString();
+        public override string ToString() => $"{StreetAddress}, {Street.City}";
     }
 
 }

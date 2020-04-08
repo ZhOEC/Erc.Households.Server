@@ -9,15 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Server.Domai
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Server.DataAccess.EF", "Erc.Households.Server.DataAccess.EF\Erc.Households.Server.DataAccess.EF.csproj", "{20809DE9-C064-4585-B9CC-B213D3C9C997}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Server.Requests", "Erc.Households.Server.Requests\Erc.Households.Server.Requests.csproj", "{EC44209F-4B5C-4991-AA7B-1C8BFDB7F11A}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Server.Responses", "Erc.Households.Server.Responses\Erc.Households.Server.Responses.csproj", "{F5E5B868-BCF3-496D-93A0-4547830FCA4D}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Server.Core", "Erc.Households.Server.Core\Erc.Households.Server.Core.csproj", "{643227D8-29CB-487D-ADE4-EA4663A1F4F1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Server.ModelLogs", "Erc.Households.Server.ModelLogs\Erc.Households.Server.ModelLogs.csproj", "{FD420A68-C8A4-4BCA-A7CE-B7E9C40DFB17}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Server.MapperProfiles", "Erc.Households.Server.MapperProfiles\Erc.Households.Server.MapperProfiles.csproj", "{2486F307-0344-436F-853F-7E5DE2BE9611}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Indexing", "Erc.Households.Indexing\Erc.Households.Indexing.csproj", "{0B2CA81D-4CD2-44B5-B114-2C424214223A}"
 EndProject
@@ -47,14 +41,6 @@ Global
 		{20809DE9-C064-4585-B9CC-B213D3C9C997}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{20809DE9-C064-4585-B9CC-B213D3C9C997}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{20809DE9-C064-4585-B9CC-B213D3C9C997}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EC44209F-4B5C-4991-AA7B-1C8BFDB7F11A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EC44209F-4B5C-4991-AA7B-1C8BFDB7F11A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EC44209F-4B5C-4991-AA7B-1C8BFDB7F11A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EC44209F-4B5C-4991-AA7B-1C8BFDB7F11A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F5E5B868-BCF3-496D-93A0-4547830FCA4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F5E5B868-BCF3-496D-93A0-4547830FCA4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F5E5B868-BCF3-496D-93A0-4547830FCA4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F5E5B868-BCF3-496D-93A0-4547830FCA4D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{643227D8-29CB-487D-ADE4-EA4663A1F4F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{643227D8-29CB-487D-ADE4-EA4663A1F4F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{643227D8-29CB-487D-ADE4-EA4663A1F4F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -63,10 +49,6 @@ Global
 		{FD420A68-C8A4-4BCA-A7CE-B7E9C40DFB17}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FD420A68-C8A4-4BCA-A7CE-B7E9C40DFB17}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FD420A68-C8A4-4BCA-A7CE-B7E9C40DFB17}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2486F307-0344-436F-853F-7E5DE2BE9611}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2486F307-0344-436F-853F-7E5DE2BE9611}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2486F307-0344-436F-853F-7E5DE2BE9611}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2486F307-0344-436F-853F-7E5DE2BE9611}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0B2CA81D-4CD2-44B5-B114-2C424214223A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0B2CA81D-4CD2-44B5-B114-2C424214223A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B2CA81D-4CD2-44B5-B114-2C424214223A}.Release|Any CPU.ActiveCfg = Release|Any CPU

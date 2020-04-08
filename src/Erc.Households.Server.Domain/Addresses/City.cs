@@ -26,5 +26,7 @@ namespace Erc.Households.Server.Domain.Addresses
         }
         public bool IsDistrictCity { get; set; }
         public bool IsRegionCity { get; set; }
+
+        public override string ToString() => $"{Name}{(IsRegionCity ? string.Empty : ", " + District.Name)}";
     }
 }

@@ -1,8 +1,6 @@
 ﻿using Erc.Households.Server.Core;
 using Erc.Households.Server.DataAccess.EF;
-using Erc.Households.Server.Domain;
 using Erc.Households.Server.Domain.AccountingPoints;
-using Erc.Households.Server.Domain.Addresses;
 using Erc.Households.Server.Events.AccountingPoints;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -29,10 +27,11 @@ namespace Erc.Households.Server.DataAccess
             _ercContext.Entry(accountingPoint.Address).State = accountingPoint.Address.Id == 0 ? EntityState.Added : EntityState.Unchanged;
 
             await _ercContext.AccountingPoints.AddAsync(accountingPoint);
-           
+
             accountingPoint.Events.Add(new AccountingPointCreated
             {
-                Address = accountingPoint.Address.ToString(),
+                StreetAddress = accountingPoint.Address.StreetAddress,
+                CityName = accountingPoint.Address.CityName,
                 Eic = accountingPoint.Eic,
                 Name = accountingPoint.Name,
                 PersonFirstName = accountingPoint.Owner.FirstName,
