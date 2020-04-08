@@ -16,6 +16,7 @@ namespace Erc.Households.Server.Events.AccountingPoints
         public string PersonPatronymic { get; set;}
         public string PersonTaxCode { get; set;}
         public string PersonIdCardNumber { get; set;}
-        public string Address { get; set;}
+        public string CityName { get; set; }
+        public string StreetAddress { get; set; }
     }
 }
