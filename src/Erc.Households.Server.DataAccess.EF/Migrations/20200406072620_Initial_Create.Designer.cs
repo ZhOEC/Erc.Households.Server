@@ -12,13 +12,14 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Erc.Households.Server.DataAccess.EF.Migrations
 {
     [DbContext(typeof(ErcContext))]
-    [Migration("20200403121630_Initial_Create")]
+    [Migration("20200406072620_Initial_Create")]
     partial class Initial_Create
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
+                .HasAnnotation("Npgsql:PostgresExtension:citext", ",,")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
                 .HasAnnotation("ProductVersion", "3.1.2")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
@@ -55,13 +56,13 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                     b.Property<string>("Eic")
                         .IsRequired()
                         .HasColumnName("eic")
-                        .HasColumnType("character varying(16)")
+                        .HasColumnType("citext")
                         .HasMaxLength(16);
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnName("name")
-                        .HasColumnType("character varying(16)")
+                        .HasColumnType("citext")
                         .HasMaxLength(16);
 
                     b.Property<int>("OwnerId")
@@ -92,6 +93,8 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         .HasName("ix_accounting_points_owner_id");
 
                     b.ToTable("accounting_points");
+
+                    b.HasCheckConstraint("CK_accounting_point_eic", "length(eic) = 16");
                 });
 
             modelBuilder.Entity("Erc.Households.Server.Domain.AccountingPoints.AccountingPointTariff", b =>
@@ -180,14 +183,14 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
 
                     b.Property<string>("Apt")
                         .HasColumnName("apt")
-                        .HasColumnType("character varying(5)")
+                        .HasColumnType("citext")
                         .HasMaxLength(5);
 
                     b.Property<string>("Building")
                         .IsRequired()
                         .HasColumnName("building")
-                        .HasColumnType("character varying(20)")
-                        .HasMaxLength(20);
+                        .HasColumnType("citext")
+                        .HasMaxLength(10);
 
                     b.Property<int>("StreetId")
                         .HasColumnName("street_id")
@@ -204,6 +207,8 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         .HasName("ix_addresses_street_id");
 
                     b.ToTable("addresses");
+
+                    b.HasCheckConstraint("ck_address_zip", "zip ~ '^(\\d){5}$'");
                 });
 
             modelBuilder.Entity("Erc.Households.Server.Domain.Addresses.City", b =>
@@ -233,7 +238,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnName("name")
-                        .HasColumnType("character varying(100)")
+                        .HasColumnType("citext")
                         .HasMaxLength(100);
 
                     b.HasKey("Id")
@@ -256,7 +261,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnName("name")
-                        .HasColumnType("character varying(100)")
+                        .HasColumnType("citext")
                         .HasMaxLength(100);
 
                     b.Property<int>("RegionId")
@@ -275,139 +280,139 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "Андрушівський р-н",
+                            Name = "Андрушівський район",
                             RegionId = 1
                         },
                         new
                         {
                             Id = 2,
-                            Name = "Баранiвський р-н",
+                            Name = "Баранiвський район",
                             RegionId = 1
                         },
                         new
                         {
                             Id = 3,
-                            Name = "Бердичiвський р-н",
+                            Name = "Бердичiвський район",
                             RegionId = 1
                         },
                         new
                         {
                             Id = 4,
-                            Name = "Брусилівський р-н",
+                            Name = "Брусилівський район",
                             RegionId = 1
                         },
                         new
                         {
                             Id = 5,
-                            Name = "Хорошівський р-н",
+                            Name = "Хорошівський район",
                             RegionId = 1
                         },
                         new
                         {
                             Id = 6,
-                            Name = "Ємільчинський р-н",
+                            Name = "Ємільчинський район",
                             RegionId = 1
                         },
                         new
                         {
                             Id = 7,
-                            Name = "Житомирський р-н",
+                            Name = "Житомирський район",
                             RegionId = 1
                         },
                         new
                         {
                             Id = 8,
-                            Name = "Коростенський р-н",
+                            Name = "Коростенський район",
                             RegionId = 1
                         },
                         new
                         {
                             Id = 9,
-                            Name = "Коростишiвський р-н",
+                            Name = "Коростишiвський район",
                             RegionId = 1
                         },
                         new
                         {
                             Id = 10,
-                            Name = "Лугинський р-н",
+                            Name = "Лугинський район",
                             RegionId = 1
                         },
                         new
                         {
                             Id = 11,
-                            Name = "Любарський р-н",
+                            Name = "Любарський район",
                             RegionId = 1
                         },
                         new
                         {
                             Id = 12,
-                            Name = "Малинський р-н",
+                            Name = "Малинський район",
                             RegionId = 1
                         },
                         new
                         {
                             Id = 13,
-                            Name = "Народицький р-н",
+                            Name = "Народицький район",
                             RegionId = 1
                         },
                         new
                         {
                             Id = 14,
-                            Name = "Новоград-Волинський р-н",
+                            Name = "Новоград-Волинський район",
                             RegionId = 1
                         },
                         new
                         {
                             Id = 15,
-                            Name = "Овруцький р-н",
+                            Name = "Овруцький район",
                             RegionId = 1
                         },
                         new
                         {
                             Id = 16,
-                            Name = "Олевський р-н",
+                            Name = "Олевський район",
                             RegionId = 1
                         },
                         new
                         {
                             Id = 17,
-                            Name = "Попільнянський р-н",
+                            Name = "Попільнянський район",
                             RegionId = 1
                         },
                         new
                         {
                             Id = 18,
-                            Name = "Радомишльський р-н",
+                            Name = "Радомишльський район",
                             RegionId = 1
                         },
                         new
                         {
                             Id = 19,
-                            Name = "Романівський р-н",
+                            Name = "Романівський район",
                             RegionId = 1
                         },
                         new
                         {
                             Id = 20,
-                            Name = "Ружинський р-н",
+                            Name = "Ружинський район",
                             RegionId = 1
                         },
                         new
                         {
                             Id = 21,
-                            Name = "Пулинський р-н",
+                            Name = "Пулинський район",
                             RegionId = 1
                         },
                         new
                         {
                             Id = 22,
-                            Name = "Черняхівський р-н",
+                            Name = "Черняхівський район",
                             RegionId = 1
                         },
                         new
                         {
                             Id = 23,
-                            Name = "Чуднівський р-н",
+                            Name = "Чуднівський район",
                             RegionId = 1
                         });
                 });
@@ -423,7 +428,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnName("name")
-                        .HasColumnType("character varying(100)")
+                        .HasColumnType("citext")
                         .HasMaxLength(100);
 
                     b.HasKey("Id")
@@ -454,7 +459,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnName("name")
-                        .HasColumnType("character varying(100)")
+                        .HasColumnType("citext")
                         .HasMaxLength(100);
 
                     b.HasKey("Id")
@@ -477,7 +482,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                     b.Property<string>("Address")
                         .IsRequired()
                         .HasColumnName("address")
-                        .HasColumnType("character varying(500)")
+                        .HasColumnType("citext")
                         .HasMaxLength(500);
 
                     b.Property<int[]>("DistrictIds")
@@ -487,13 +492,13 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnName("name")
-                        .HasColumnType("character varying(200)")
+                        .HasColumnType("citext")
                         .HasMaxLength(200);
 
                     b.Property<string>("StringId")
                         .IsRequired()
                         .HasColumnName("string_id")
-                        .HasColumnType("character varying(2)")
+                        .HasColumnType("citext")
                         .HasMaxLength(2);
 
                     b.HasKey("Id")
@@ -726,7 +731,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnName("first_name")
-                        .HasColumnType("character varying(50)")
+                        .HasColumnType("citext")
                         .HasMaxLength(50);
 
                     b.Property<DateTime?>("IdCardExpDate")
@@ -740,13 +745,13 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                     b.Property<string>("IdCardNumber")
                         .IsRequired()
                         .HasColumnName("id_card_number")
-                        .HasColumnType("character varying(9)")
+                        .HasColumnType("citext")
                         .HasMaxLength(9);
 
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnName("last_name")
-                        .HasColumnType("character varying(50)")
+                        .HasColumnType("citext")
                         .HasMaxLength(50);
 
                     b.Property<string[]>("MobilePhones")
@@ -755,7 +760,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
 
                     b.Property<string>("Patronymic")
                         .HasColumnName("patronymic")
-                        .HasColumnType("character varying(50)")
+                        .HasColumnType("citext")
                         .HasMaxLength(50);
 
                     b.Property<string>("TaxCode")
@@ -790,7 +795,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnName("name")
-                        .HasColumnType("character varying(200)")
+                        .HasColumnType("citext")
                         .HasMaxLength(200);
 
                     b.HasKey("Id")

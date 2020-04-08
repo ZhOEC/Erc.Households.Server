@@ -60,8 +60,6 @@ namespace Erc.Households.Server.Api
 
                     cfg.ConfigureEndpoints(provider);
                 }));
-
-                x.AddRequestClient<SearchAccountingPointRequest>();
             });
         }
 
