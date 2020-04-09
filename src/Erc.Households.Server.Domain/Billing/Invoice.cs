@@ -22,7 +22,7 @@ namespace Erc.Households.Server.Domain.Billing
         public decimal T1Sales { get; set; }
         public decimal T2Sales { get; set; }
         public decimal T3Sales { get; set; }
-
+        public int  TariffId { get; set; }
         public ZoneRecord ZoneRecord { get; set; }
         public Guid DsoConsumptionId { get; set; }
     }

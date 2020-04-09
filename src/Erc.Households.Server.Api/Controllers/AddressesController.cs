@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace Erc.Households.Server.Api.Controllers
 {
-    [Route("api/address")]
+    [Route("api/[controller]")]
     [ApiController]
-    public class AddressController : ControllerBase
+    public class AddressesController : ControllerBase
     {
         private readonly ErcContext _ercContext;
 
-        public AddressController(ErcContext ercContext)
+        public AddressesController(ErcContext ercContext)
         {
             _ercContext = ercContext ?? throw new ArgumentNullException(nameof(ercContext));
         }
@@ -31,7 +31,7 @@ namespace Erc.Households.Server.Api.Controllers
         [HttpGet("streets")]
         public async Task<IActionResult> Streets(int cityId)
         {
-            return Ok(await _ercContext.Streets.Where(x => x.CityId == cityId).ToListAsync());
+            return Ok(await _ercContext.Streets.Where(x => x.CityId == cityId).ToArrayAsync());
         }
     }
 }

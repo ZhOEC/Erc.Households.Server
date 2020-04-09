@@ -53,7 +53,7 @@ namespace Erc.Households.Server.Api
                         c.Username(rabbitMq["UserName"]);
                         c.Password(rabbitMq["Password"]);
                     });
-
+                    
                     cfg.ConfigureEndpoints(provider);
                 }));
             });

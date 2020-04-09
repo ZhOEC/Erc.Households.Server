@@ -1,6 +1,7 @@
 ﻿using Erc.Households.Server.Domain;
 using Erc.Households.Server.Domain.AccountingPoints;
 using Erc.Households.Server.Domain.Addresses;
+using Erc.Households.Server.Domain.Billing;
 using Erc.Households.Server.Domain.Tariffs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -26,6 +27,7 @@ namespace Erc.Households.Server.DataAccess.EF
         public DbSet<Street> Streets { get; set; }
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Person> People { get; set; }
+        public DbSet<ZoneCoeff> ZoneCoeffs { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -36,6 +38,18 @@ namespace Erc.Households.Server.DataAccess.EF
         {
             modelBuilder.HasPostgresExtension("citext");
 
+            modelBuilder.Entity<ZoneCoeff>(e =>
+            {
+                e.HasData(
+                    new { Id = 1, ZoneNumber = 1, ZoneRecord = 1, Value = 1, DiscountWeight = 1 },
+                    new { Id = 2, ZoneNumber = 1, ZoneRecord = 2, Value = 0.5m, DiscountWeight = 0.67m },
+                    new { Id = 1, ZoneNumber = 2, ZoneRecord = 2, Value = 1, DiscountWeight = 0.33m },
+                    new { Id = 1, ZoneNumber = 1, ZoneRecord = 3, Value = 0.4m, DiscountWeight = 0.46m },
+                    new { Id = 1, ZoneNumber = 2, ZoneRecord = 3, Value = 1, DiscountWeight = 0.33m },
+                    new { Id = 1, ZoneNumber = 3, ZoneRecord = 3, Value = 1.5m, DiscountWeight = 0.21m }
+                    );
+            });
+            
             modelBuilder.Entity<Contract>(e =>
             {
                 e.ToTable("contracts")

@@ -21,10 +21,11 @@ namespace Erc.Households.Server.Api.Controllers
         [HttpGet("")]
         public async Task<IActionResult> SearchPeople(string searchString)
         {
-            if (!string.IsNullOrEmpty(searchString) && searchString.Length > 0)
+            if (!string.IsNullOrEmpty(searchString))
             {
-                return Ok(await _ercContext.People.Where(x => EF.Functions.ILike(x.TaxCode, $"{searchString}%") || EF.Functions.ILike(x.IdCardNumber, $"{searchString}")).Take(10).ToListAsync());
-            } else
+                return Ok(await _ercContext.People.Where(x => x.TaxCode.Contains(searchString) || x.IdCardNumber.Contains(searchString)).Take(10).ToArrayAsync());
+            }
+            else
             {
                 return BadRequest();
             }

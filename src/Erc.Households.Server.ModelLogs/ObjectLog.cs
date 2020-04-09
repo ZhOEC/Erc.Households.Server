@@ -16,8 +16,8 @@ namespace Erc.Households.Server.ModelLogs
             User = user;
         }
 
-        public string Operation { get; set; }
-        public DateTime Time { get; set; }
-        public string User { get; set; }
+        public string Operation { get; private set; }
+        public DateTime Time { get; private set; }
+        public string User { get; private set; }
     }
 }

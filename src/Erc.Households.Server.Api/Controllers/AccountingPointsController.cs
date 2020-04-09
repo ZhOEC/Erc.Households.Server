@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Erc.Households.Server.Api.Authorization;
 using Erc.Households.Server.Core;
-using Erc.Households.Server.DataAccess.EF;
 using Erc.Households.Server.Domain.AccountingPoints;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Nest;
 
@@ -13,14 +14,12 @@ namespace Erc.Households.Server.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     //[Authorize(Roles = ApplicationRoles.User)]
-    public partial class AccountingPointsController : ControllerBase
+    public partial class AccountingPointsController: ErcControllerBase
     {
         private readonly IElasticClient _elasticClient;
         readonly IUnitOfWork _unitOfWork;
 
-        protected IEnumerable<string> UserGroups => User.Claims.Where(c => string.Equals(c.Type, "Group", StringComparison.InvariantCultureIgnoreCase)).Select(c => c.Value);
-
-        public AccountingPointsController(IElasticClient elasticClient, IUnitOfWork unitOfWork, ErcContext ercContext)
+        public AccountingPointsController(IElasticClient elasticClient, IUnitOfWork unitOfWork)
         {
             _elasticClient = elasticClient ?? throw new ArgumentNullException(nameof(elasticClient));
             _unitOfWork = unitOfWork;
