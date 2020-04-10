@@ -16,6 +16,7 @@ namespace Erc.Households.Server.Domain.AccountingPoints
         BranchOffice _branchOffice;
         Person _owner;
         Address _address;
+        DistributionSystemOperator _distributionSystemOperator;
 
         public ICollection<IEvent> Events { get; } = new List<IEvent>();
 
@@ -46,7 +47,13 @@ namespace Erc.Households.Server.Domain.AccountingPoints
         public int DistributionSystemOperatorId { get; private set; }
         public int BranchOfficeId { get; private set; }
         public decimal Debt { get; private set; }
-        public DistributionSystemOperator Dso { get; private set; }
+        public DistributionSystemOperator DistributionSystemOperator
+        {
+
+            get => LazyLoader.Load(this, ref _distributionSystemOperator);
+            private set { _distributionSystemOperator = value; }
+        }
+        public Contract CurrentContract => _contractsHistory.OrderByDescending(c => c.StartDate).ThenByDescending(c => c.Id).FirstOrDefault();
         public Tariff CurrentTariff => _tariffsHistory.FirstOrDefault(t => t.StartDate <= DateTime.Today).Tariff;
         
         public Address Address

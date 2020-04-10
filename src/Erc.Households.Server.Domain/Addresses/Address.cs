@@ -32,9 +32,9 @@ namespace Erc.Households.Server.Domain.Addresses
             private set { _street = value; }
         }
 
-        public string StreetAddress => $"{Street.Name} {Building}{(string.IsNullOrEmpty(Apt) ? string.Empty : ", кв. " + Apt)}";
+        public string StreetLocation => $"{Street.Name} {Building}{(string.IsNullOrEmpty(Apt) ? string.Empty : ", кв. " + Apt)}";
         public string CityName => Street.City.ToString();
-        public override string ToString() => $"{StreetAddress}, {Street.City}";
+        public override string ToString() => $"{StreetLocation}, {Street.City}";
     }
 
 }

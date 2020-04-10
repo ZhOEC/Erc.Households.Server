@@ -30,7 +30,7 @@ namespace Erc.Households.Server.DataAccess
 
             accountingPoint.Events.Add(new AccountingPointCreated
             {
-                StreetAddress = accountingPoint.Address.StreetAddress,
+                StreetAddress = accountingPoint.Address.StreetLocation,
                 CityName = accountingPoint.Address.CityName,
                 Eic = accountingPoint.Eic,
                 Name = accountingPoint.Name,
@@ -47,9 +47,12 @@ namespace Erc.Households.Server.DataAccess
         {
             return await _ercContext.AccountingPoints
                 .Include(a => a.TariffsHistory)
+                    .ThenInclude(th => th.Tariff)
                 .Include(a => a.ContractsHistory)
                      .ThenInclude(c => c.Customer)
                 .Include(a => a.Address.Street.City.District.Region)
+                .Include(a => a.DistributionSystemOperator)
+                .Include(a => a.BranchOffice)
                 .FirstAsync(a => a.Id == id);
         }
 

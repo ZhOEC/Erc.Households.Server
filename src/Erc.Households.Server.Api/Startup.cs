@@ -1,3 +1,4 @@
+using AutoMapper;
 using Erc.Households.Server.Core;
 using Erc.Households.Server.DataAccess;
 using Erc.Households.Server.DataAccess.EF;
@@ -26,6 +27,8 @@ namespace Erc.Households.Server.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAutoMapper(System.Reflection.Assembly.GetExecutingAssembly());
+
             services.AddDbContext<ErcContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("ErcContext")));
 

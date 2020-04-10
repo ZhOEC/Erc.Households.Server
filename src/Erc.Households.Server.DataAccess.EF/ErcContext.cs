@@ -41,12 +41,12 @@ namespace Erc.Households.Server.DataAccess.EF
             modelBuilder.Entity<ZoneCoeff>(e =>
             {
                 e.HasData(
-                    new { Id = 1, ZoneNumber = 1, ZoneRecord = 1, Value = 1, DiscountWeight = 1 },
-                    new { Id = 2, ZoneNumber = 1, ZoneRecord = 2, Value = 0.5m, DiscountWeight = 0.67m },
-                    new { Id = 1, ZoneNumber = 2, ZoneRecord = 2, Value = 1, DiscountWeight = 0.33m },
-                    new { Id = 1, ZoneNumber = 1, ZoneRecord = 3, Value = 0.4m, DiscountWeight = 0.46m },
-                    new { Id = 1, ZoneNumber = 2, ZoneRecord = 3, Value = 1, DiscountWeight = 0.33m },
-                    new { Id = 1, ZoneNumber = 3, ZoneRecord = 3, Value = 1.5m, DiscountWeight = 0.21m }
+                    new { Id = 1, ZoneNumber = ZoneNumber.T1, ZoneRecord = ZoneRecord.None, Value = 1m, DiscountWeight = 1, StartDate = new DateTime(2019, 1, 1) },
+                    new { Id = 2, ZoneNumber = ZoneNumber.T1, ZoneRecord = ZoneRecord.Two, Value = 0.5m, DiscountWeight = 0.67m, StartDate = new DateTime(2019, 1, 1) },
+                    new { Id = 3, ZoneNumber = ZoneNumber.T2, ZoneRecord = ZoneRecord.Two, Value = 1m, DiscountWeight = 0.33m, StartDate = new DateTime(2019, 1, 1) },
+                    new { Id = 4, ZoneNumber = ZoneNumber.T1, ZoneRecord = ZoneRecord.Three, Value = 0.4m, DiscountWeight = 0.46m, StartDate = new DateTime(2019, 1, 1) },
+                    new { Id = 5, ZoneNumber = ZoneNumber.T2, ZoneRecord = ZoneRecord.Three, Value = 1m, DiscountWeight = 0.33m, StartDate = new DateTime(2019, 1, 1) },
+                    new { Id = 6, ZoneNumber = ZoneNumber.T3, ZoneRecord = ZoneRecord.Three, Value = 1.5m, DiscountWeight = 0.21m, StartDate = new DateTime(2019, 1, 1) }
                     );
             });
             
@@ -259,7 +259,7 @@ namespace Erc.Households.Server.DataAccess.EF
                 e.HasOne(p => p.Address)
                     .WithMany();
 
-                e.HasOne(p => p.Dso)
+                e.HasOne(p => p.DistributionSystemOperator)
                     .WithMany()
                     .HasForeignKey(p => p.DistributionSystemOperatorId);
 

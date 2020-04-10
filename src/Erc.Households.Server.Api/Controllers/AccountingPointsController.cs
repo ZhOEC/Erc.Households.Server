@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Erc.Households.Server.Api.Authorization;
 using Erc.Households.Server.Core;
-using Erc.Households.Server.Domain.AccountingPoints;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Nest;
@@ -13,22 +13,24 @@ namespace Erc.Households.Server.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize(Roles = ApplicationRoles.User)]
+    [Authorize(Roles = ApplicationRoles.User)]
     public partial class AccountingPointsController: ErcControllerBase
     {
         private readonly IElasticClient _elasticClient;
         readonly IUnitOfWork _unitOfWork;
+        readonly IMapper _mapper;
 
-        public AccountingPointsController(IElasticClient elasticClient, IUnitOfWork unitOfWork)
+        public AccountingPointsController(IElasticClient elasticClient, IUnitOfWork unitOfWork, IMapper mapper)
         {
             _elasticClient = elasticClient ?? throw new ArgumentNullException(nameof(elasticClient));
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         [HttpGet("_search")]
         public async Task<IActionResult> Search(string q)
         {
-            var indices = string.Join(',', UserGroups.Select(c => c + "_accounting_points"));
+          var indices = string.Join(',', UserGroups.Select(c => c + "_accounting_points"));
            
             var searchResponse = await _elasticClient.SearchAsync<SearchResult>(s => s
                 .Index(indices).Query(query => query
@@ -58,10 +60,11 @@ namespace Erc.Households.Server.Api.Controllers
         [HttpPost("")]
         public async Task<IActionResult> AddNew(Requests.NewAccountingPoint newAccountingPoint)
         {
-            var accountingPoint = new AccountingPoint(
-                newAccountingPoint.Eic, newAccountingPoint.Name, newAccountingPoint.ContractStartDate, newAccountingPoint.TariffId,
-                newAccountingPoint.Address, newAccountingPoint.Owner, newAccountingPoint.BranchOfficeId, newAccountingPoint.DsoId, User.Identity.Name
-                );
+            var accountingPoint = new Domain.AccountingPoints.AccountingPoint(
+                newAccountingPoint.Eic, newAccountingPoint.Name, newAccountingPoint.ContractStartDate,
+                newAccountingPoint.TariffId, newAccountingPoint.Address, newAccountingPoint.Owner,
+                newAccountingPoint.BranchOfficeId, newAccountingPoint.DsoId, User.Identity.Name);
+
             await _unitOfWork.AccountingPointRepository.AddNewAsync(accountingPoint);
             await _unitOfWork.SaveWorkAsync();
 
@@ -72,14 +75,7 @@ namespace Erc.Households.Server.Api.Controllers
         public async Task<IActionResult> Get(int id)
         {
             var ap = await _unitOfWork.AccountingPointRepository.GetAsync(id);
-            return Ok(new 
-            {
-                ap.Id,
-                ap.Name,
-                Address = ap.Address.ToString(),
-                ap.Owner,
-                Dso = ap.Dso.Name
-            });
+            return Ok(_mapper.Map<Reponses.AccountingPoint>(ap));
         }
 
         class SearchResult
