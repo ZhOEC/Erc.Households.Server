@@ -38,6 +38,12 @@ namespace Erc.Households.Server.DataAccess.EF
         {
             modelBuilder.HasPostgresExtension("citext");
 
+            modelBuilder.Entity<Period>(entity =>
+            {
+                entity.HasIndex(e => e.StartDate).IsUnique();
+                //entity.HasData(new Period(new DateTime(2019, 1, 1), new DateTime(2019, 1, 31)));
+            });
+            
             modelBuilder.Entity<ZoneCoeff>(e =>
             {
                 e.HasData(
@@ -49,7 +55,15 @@ namespace Erc.Households.Server.DataAccess.EF
                     new { Id = 6, ZoneNumber = ZoneNumber.T3, ZoneRecord = ZoneRecord.Three, Value = 1.5m, DiscountWeight = 0.21m, StartDate = new DateTime(2019, 1, 1) }
                     );
             });
-            
+
+            modelBuilder.Entity<Invoice>(entity =>
+            {
+                entity.Property(p => p.SalesT1).HasColumnType("decimal(8,5)");
+                entity.Property(p => p.SalesT2).HasColumnType("decimal(8,5)");
+                entity.Property(p => p.SalesT3).HasColumnType("decimal(8,5)");
+                entity.OwnsMany(e => e.InvoiceDetails, a => { a.WithOwner().HasForeignKey(d => d.InvoiceId); a.HasKey(d => d.Id); });
+            });
+
             modelBuilder.Entity<Contract>(e =>
             {
                 e.ToTable("contracts")
@@ -81,28 +95,28 @@ namespace Erc.Households.Server.DataAccess.EF
                     .HasColumnType("citext")
                     .HasMaxLength(200).IsRequired();
                 e.HasData(
-                    new { Id = 1, Name = "Андрушівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "an", DistrictIds = new[] { 1 } },
-                    new { Id = 2, Name = "Баранiвський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "bn", DistrictIds = new[] { 2 } },
-                    new { Id = 3, Name = "Бердичiвський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "bd", DistrictIds = new[] { 3 } },
-                    new { Id = 4, Name = "Брусилівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "br", DistrictIds = new[] { 4 } },
-                    new { Id = 5, Name = "Хорошівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "hr", DistrictIds = new[] { 5 } },
-                    new { Id = 6, Name = "Ємільчинський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "em", DistrictIds = new[] { 6 } },
-                    new { Id = 7, Name = "Житомирський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "zt", DistrictIds = new[] { 7 } },
-                    new { Id = 8, Name = "Зарічанський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "zr", DistrictIds = new[] { 7 } },
-                    new { Id = 9, Name = "Коростенський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "kr", DistrictIds = new[] { 8, 10 } },
-                    new { Id = 10, Name = "Коростишiвський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "kt", DistrictIds = new[] { 9 } },
-                    new { Id = 11, Name = "Любарський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "lb", DistrictIds = new[] { 11 } },
-                    new { Id = 12, Name = "Малинський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "ml", DistrictIds = new[] { 12 } },
-                    new { Id = 13, Name = "Народицький ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "nr", DistrictIds = new[] { 13 } },
-                    new { Id = 14, Name = "Новоград-Волинський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "nv", DistrictIds = new[] { 14 } },
-                    new { Id = 15, Name = "Овруцький ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "ov", DistrictIds = new[] { 15 } },
-                    new { Id = 16, Name = "Олевський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "ol", DistrictIds = new[] { 16 } },
-                    new { Id = 17, Name = "Попільнянський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "pp", DistrictIds = new[] { 17, 20 } },
-                    new { Id = 18, Name = "Радомишльський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "rd", DistrictIds = new[] { 18 } },
-                    new { Id = 19, Name = "Романівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "rm", DistrictIds = new[] { 19 } },
-                    new { Id = 20, Name = "Пулинський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "pl", DistrictIds = new[] { 21 } },
-                    new { Id = 21, Name = "Черняхівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "ch", DistrictIds = new[] { 22 } },
-                    new { Id = 22, Name = "Чуднівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "cd", DistrictIds = new[] { 23 } }
+                    new { Id = 1, /*CurrentPeriodId = 1,*/ Name = "Андрушівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "an", DistrictIds = new[] { 1 } },
+                    new { Id = 2, /*CurrentPeriodId = 1,*/ Name = "Баранiвський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "bn", DistrictIds = new[] { 2 } },
+                    new { Id = 3, /*CurrentPeriodId = 1,*/ Name = "Бердичiвський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "bd", DistrictIds = new[] { 3 } },
+                    new { Id = 4, /*CurrentPeriodId = 1,*/ Name = "Брусилівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "br", DistrictIds = new[] { 4 } },
+                    new { Id = 5, /*CurrentPeriodId = 1,*/ Name = "Хорошівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "hr", DistrictIds = new[] { 5 } },
+                    new { Id = 6, /*CurrentPeriodId = 1,*/ Name = "Ємільчинський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "em", DistrictIds = new[] { 6 } },
+                    new { Id = 7, /*CurrentPeriodId = 1,*/ Name = "Житомирський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "zt", DistrictIds = new[] { 7 } },
+                    new { Id = 8, /*CurrentPeriodId = 1,*/ Name = "Зарічанський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "zr", DistrictIds = new[] { 7 } },
+                    new { Id = 9, /*CurrentPeriodId = 1,*/ Name = "Коростенський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "kr", DistrictIds = new[] { 8, 10 } },
+                    new { Id = 10, /*CurrentPeriodId = 1,*/ Name = "Коростишiвський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "kt", DistrictIds = new[] { 9 } },
+                    new { Id = 11, /*CurrentPeriodId = 1,*/ Name = "Любарський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "lb", DistrictIds = new[] { 11 } },
+                    new { Id = 12, /*CurrentPeriodId = 1,*/ Name = "Малинський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "ml", DistrictIds = new[] { 12 } },
+                    new { Id = 13, /*CurrentPeriodId = 1,*/ Name = "Народицький ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "nr", DistrictIds = new[] { 13 } },
+                    new { Id = 14, /*CurrentPeriodId = 1,*/ Name = "Новоград-Волинський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "nv", DistrictIds = new[] { 14 } },
+                    new { Id = 15, /*CurrentPeriodId = 1,*/ Name = "Овруцький ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "ov", DistrictIds = new[] { 15 } },
+                    new { Id = 16, /*CurrentPeriodId = 1,*/ Name = "Олевський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "ol", DistrictIds = new[] { 16 } },
+                    new { Id = 17, /*CurrentPeriodId = 1,*/ Name = "Попільнянський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "pp", DistrictIds = new[] { 17, 20 } },
+                    new { Id = 18, /*CurrentPeriodId = 1,*/ Name = "Радомишльський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "rd", DistrictIds = new[] { 18 } },
+                    new { Id = 19, /*CurrentPeriodId = 1,*/ Name = "Романівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "rm", DistrictIds = new[] { 19 } },
+                    new { Id = 20, /*CurrentPeriodId = 1,*/ Name = "Пулинський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "pl", DistrictIds = new[] { 21 } },
+                    new { Id = 21, /*CurrentPeriodId = 1,*/ Name = "Черняхівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "ch", DistrictIds = new[] { 22 } },
+                    new { Id = 22, /*CurrentPeriodId = 1,*/ Name = "Чуднівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "cd", DistrictIds = new[] { 23 } }
                     );
             });
 

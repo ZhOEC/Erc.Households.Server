@@ -9,6 +9,8 @@ namespace Erc.Households.Server.Domain
         public string StringId { get; set; }
         public int[] DistrictIds { get; private set; }
         public string Address { get; set; }
+        //public int CurrentPeriodId { get; private set; }
+        //public Billing.Period CurrentPeriod { get; private set; }
 
         public void AddDistrict(int districtId)
         {

@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Nest;
+using System.Globalization;
 
 namespace Erc.Households.Server.Api
 {
@@ -27,6 +28,10 @@ namespace Erc.Households.Server.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var cultureInfo = new CultureInfo(Configuration["Culture"]);
+            CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+            CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
+
             services.AddAutoMapper(System.Reflection.Assembly.GetExecutingAssembly());
 
             services.AddDbContext<ErcContext>(options =>
