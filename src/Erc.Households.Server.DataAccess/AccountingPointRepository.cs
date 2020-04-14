@@ -4,6 +4,7 @@ using Erc.Households.Server.Domain.AccountingPoints;
 using Erc.Households.Server.Events.AccountingPoints;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Erc.Households.Server.DataAccess
@@ -16,26 +17,21 @@ namespace Erc.Households.Server.DataAccess
 
         public async Task AddNewAsync(AccountingPoint accountingPoint)
         {
-            await _ercContext.AccountingPoints.AddAsync(accountingPoint);
-            if (accountingPoint.Owner.Id == 0)
-                _ercContext.Entry(accountingPoint.Owner).State = EntityState.Added;
-            else
-            {
-                _ercContext.Entry(accountingPoint.Owner).State = EntityState.Unchanged;
-                _ercContext.Entry(accountingPoint.Owner).Property(p => p.IdCardExpDate).IsModified = true;
-                _ercContext.Entry(accountingPoint.Owner).Property(p => p.IdCardNumber).IsModified = true;
-                _ercContext.Entry(accountingPoint.Owner).Property(p => p.IdCardIssuanceDate).IsModified = true;
-                _ercContext.Entry(accountingPoint.Owner).Property(p => p.MobilePhones).IsModified = true;
-            }
+            _ercContext.Entry(accountingPoint.Owner).State = accountingPoint.Owner.Id == 0 ? EntityState.Added : EntityState.Modified;
             
-            if (accountingPoint.AddressId == 0)
-            {
-                _ercContext.Entry(accountingPoint.Address).State = EntityState.Added;
-            }
+            accountingPoint.Address.Id = (await _ercContext.Addresses
+                .Where(a => a.StreetId == accountingPoint.Address.StreetId && a.Building == accountingPoint.Address.Building && ((a.Apt ?? string.Empty) == (accountingPoint.Address.Apt ?? string.Empty)))
+                .Select(a => (int?)a.Id)
+                .FirstOrDefaultAsync()) ?? 0;
+
+            _ercContext.Entry(accountingPoint.Address).State = accountingPoint.Address.Id == 0 ? EntityState.Added : EntityState.Unchanged;
+
+            await _ercContext.AccountingPoints.AddAsync(accountingPoint);
 
             accountingPoint.Events.Add(new AccountingPointCreated
             {
-                Address = accountingPoint.Address.ToString(),
+                StreetAddress = accountingPoint.Address.StreetLocation,
+                CityName = accountingPoint.Address.CityName,
                 Eic = accountingPoint.Eic,
                 Name = accountingPoint.Name,
                 PersonFirstName = accountingPoint.Owner.FirstName,
@@ -46,10 +42,18 @@ namespace Erc.Households.Server.DataAccess
                 BranchOfficeStringId = accountingPoint.BranchOffice.StringId
             });
         }
-
-        public Task<AccountingPoint> GetAsync(int id)
+        
+        public async Task<AccountingPoint> GetAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _ercContext.AccountingPoints
+                .Include(a => a.TariffsHistory)
+                    .ThenInclude(th => th.Tariff)
+                .Include(a => a.ContractsHistory)
+                     .ThenInclude(c => c.Customer)
+                .Include(a => a.Address.Street.City.District.Region)
+                .Include(a => a.DistributionSystemOperator)
+                .Include(a => a.BranchOffice)
+                .FirstAsync(a => a.Id == id);
         }
 
         public Task<AccountingPoint> GetAsync(string eic)

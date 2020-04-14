@@ -1,9 +1,7 @@
 using AutoMapper;
-using EErc.Households.Server.MapperProfiles;
 using Erc.Households.Server.Core;
 using Erc.Households.Server.DataAccess;
 using Erc.Households.Server.DataAccess.EF;
-using Erc.Households.Server.Requests;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -14,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Nest;
+using System.Globalization;
 
 namespace Erc.Households.Server.Api
 {
@@ -29,7 +28,12 @@ namespace Erc.Households.Server.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddAutoMapper(typeof(AccountingPointProfile).Assembly);
+            var cultureInfo = new CultureInfo(Configuration["Culture"]);
+            CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+            CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
+
+            services.AddAutoMapper(System.Reflection.Assembly.GetExecutingAssembly());
+
             services.AddDbContext<ErcContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("ErcContext")));
 
@@ -45,7 +49,7 @@ namespace Erc.Households.Server.Api
 
             services.AddTransient<IUnitOfWork>(factory => new UnitOfWork(factory.GetService<ErcContext>(), factory.GetService<IBus>()));
 
-            services.AddSingleton<IElasticClient>(provider => new ElasticClient(new System.Uri(Configuration.GetConnectionString("Elasticsearch"))));
+            services.AddSingleton<IElasticClient>(_ => new ElasticClient(new System.Uri(Configuration.GetConnectionString("Elasticsearch"))));
 
             services.AddMassTransit(x =>
             {
@@ -57,11 +61,9 @@ namespace Erc.Households.Server.Api
                         c.Username(rabbitMq["UserName"]);
                         c.Password(rabbitMq["Password"]);
                     });
-
+                    
                     cfg.ConfigureEndpoints(provider);
                 }));
-
-                x.AddRequestClient<SearchAccountingPointRequest>();
             });
         }
 

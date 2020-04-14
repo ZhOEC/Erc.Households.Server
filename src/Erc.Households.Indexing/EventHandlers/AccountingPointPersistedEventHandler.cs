@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 
 namespace Erc.Households.Indexing.EventHandlers
 {
-    public class AccountingPointPersistedEventHandler: IConsumer<AccountingPointCreated>, IConsumer<AccountingPointUpdated>
+    public class AccountingPointEventHandler: IConsumer<AccountingPointCreated>, IConsumer<AccountingPointUpdated>
     {
         readonly IElasticClient _elasticClient;
 
-        public AccountingPointPersistedEventHandler(IElasticClient elasticClient)
+        public AccountingPointEventHandler(IElasticClient elasticClient)
         {
             _elasticClient = elasticClient;
         }

@@ -4,6 +4,11 @@ namespace Erc.Households.Server.ModelLogs
 {
     public class ObjectLog
     {
+        protected ObjectLog()
+        {
+
+        }
+
         public ObjectLog(string operation, DateTime time, string user)
         {
             Operation = operation;

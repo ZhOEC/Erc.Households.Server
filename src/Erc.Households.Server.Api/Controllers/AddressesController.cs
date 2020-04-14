@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace Erc.Households.Server.Api.Controllers
 {
-    [Route("api/address")]
+    [Route("api/[controller]")]
     [ApiController]
-    public class AddressController : ControllerBase
+    public class AddressesController : ControllerBase
     {
         private readonly ErcContext _ercContext;
 
-        public AddressController(ErcContext ercContext)
+        public AddressesController(ErcContext ercContext)
         {
             _ercContext = ercContext ?? throw new ArgumentNullException(nameof(ercContext));
         }
@@ -21,14 +21,17 @@ namespace Erc.Households.Server.Api.Controllers
         [HttpGet("cities")]
         public async Task<IActionResult> Cities(int branchOfficeId)
         {
-            var boIds = _ercContext.BranchOffices.Where(x => x.Id == branchOfficeId).Select(g => g.DistrictIds);
-            return Ok(await _ercContext.Cities.Where(x => boIds.Any(t => t.Contains(x.DistrictId))).ToListAsync());
+            var boIds = await _ercContext.BranchOffices.Where(x => x.Id == branchOfficeId).Select(g => g.DistrictIds).FirstAsync();
+            return Ok(await _ercContext.Cities
+                .Where(x => boIds.Contains(x.DistrictId))
+                .Select(c => new { c.Id, c.Name, DistrictName = c.District.Name, c.IsRegionCity })
+                .ToArrayAsync());
         }
 
         [HttpGet("streets")]
         public async Task<IActionResult> Streets(int cityId)
         {
-            return Ok(await _ercContext.Streets.Where(x => x.CityId == cityId).ToListAsync());
+            return Ok(await _ercContext.Streets.Where(x => x.CityId == cityId).ToArrayAsync());
         }
     }
 }

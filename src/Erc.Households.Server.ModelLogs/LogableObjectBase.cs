@@ -1,13 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Erc.Households.Server.ModelLogs
 {
     public abstract class LogableObjectBase : ILogable
     {
-        readonly List<ObjectLog> _logs = new List<ObjectLog>();
+        protected List<ObjectLog> _logs;
 
-        public IReadOnlyCollection<ObjectLog> Logs => _logs.AsReadOnly();
+        protected LogableObjectBase()
+        {
+            _logs = new List<ObjectLog>();
+        }
+
+        public IReadOnlyCollection<ObjectLog> Logs 
+        { 
+            get => _logs;
+            private set { _logs = value.ToList(); } 
+        }
+        
 
         protected void AddLog(string operation, string user) => _logs.Add(new ObjectLog(operation, DateTime.Now, user));
     }
