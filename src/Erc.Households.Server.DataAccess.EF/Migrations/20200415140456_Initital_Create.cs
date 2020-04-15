@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Erc.Households.Server.DataAccess.EF.Migrations
 {
-    public partial class Initial_Create : Migration
+    public partial class Initital_Create : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -43,6 +43,21 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "period",
+                columns: table => new
+                {
+                    id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    start_date = table.Column<DateTime>(nullable: false),
+                    end_date = table.Column<DateTime>(nullable: false),
+                    name = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_period", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "regions",
                 columns: table => new
                 {
@@ -69,6 +84,22 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "zone_coeffs",
+                columns: table => new
+                {
+                    id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    zone_number = table.Column<int>(nullable: false),
+                    zone_record = table.Column<int>(nullable: false),
+                    value = table.Column<decimal>(nullable: false),
+                    start_date = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_zone_coeffs", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "districts",
                 columns: table => new
                 {
@@ -84,6 +115,44 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         name: "fk_districts_regions_region_id",
                         column: x => x.region_id,
                         principalTable: "regions",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "invoice",
+                columns: table => new
+                {
+                    id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    from = table.Column<DateTime>(nullable: false),
+                    to = table.Column<DateTime>(nullable: false),
+                    previous_meter_reading_t1 = table.Column<int>(nullable: false),
+                    present_meter_reading_t1 = table.Column<int>(nullable: false),
+                    previous_meter_reading_t2 = table.Column<int>(nullable: false),
+                    present_meter_reading_t2 = table.Column<int>(nullable: false),
+                    previous_meter_reading_t3 = table.Column<int>(nullable: false),
+                    present_meter_reading_t3 = table.Column<int>(nullable: false),
+                    consumption_t1 = table.Column<int>(nullable: false),
+                    consumption_t2 = table.Column<int>(nullable: false),
+                    consumption_t3 = table.Column<int>(nullable: false),
+                    sales_t1 = table.Column<decimal>(type: "decimal(8,5)", nullable: false),
+                    sales_t2 = table.Column<decimal>(type: "decimal(8,5)", nullable: false),
+                    sales_t3 = table.Column<decimal>(type: "decimal(8,5)", nullable: false),
+                    total_sum = table.Column<decimal>(nullable: false),
+                    paid_sum = table.Column<decimal>(nullable: false),
+                    tariff_id = table.Column<int>(nullable: false),
+                    note = table.Column<string>(nullable: true),
+                    zone_record = table.Column<int>(nullable: false),
+                    dso_consumption_id = table.Column<Guid>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_invoice", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_invoice_tariffs_tariff_id",
+                        column: x => x.tariff_id,
+                        principalTable: "tariffs",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -131,6 +200,32 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         name: "fk_cities_districts_district_id",
                         column: x => x.district_id,
                         principalTable: "districts",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "InvoiceDetail",
+                columns: table => new
+                {
+                    id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    invoice_id = table.Column<int>(nullable: false),
+                    from = table.Column<DateTime>(nullable: false),
+                    to = table.Column<DateTime>(nullable: false),
+                    price_value = table.Column<decimal>(nullable: false),
+                    consumption = table.Column<int>(nullable: false),
+                    sales = table.Column<decimal>(nullable: false),
+                    kz = table.Column<decimal>(nullable: false),
+                    zone_number = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_invoice_detail", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_invoice_detail_invoice_invoice_id",
+                        column: x => x.invoice_id,
+                        principalTable: "invoice",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -219,6 +314,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                     distribution_system_operator_id = table.Column<int>(nullable: false),
                     branch_office_id = table.Column<int>(nullable: false),
                     debt = table.Column<decimal>(nullable: false),
+                    zone_record = table.Column<int>(nullable: false),
                     contract_is_signed = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
@@ -313,18 +409,13 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                 columns: new[] { "id", "address", "district_ids", "name", "string_id" },
                 values: new object[,]
                 {
-                    { 14, "10003, м. Житомир, майдан Перемоги, 10", new[] { 14 }, "Новоград-Волинський ЦОК", "nv" },
-                    { 21, "10003, м. Житомир, майдан Перемоги, 10", new[] { 22 }, "Черняхівський ЦОК", "ch" },
-                    { 20, "10003, м. Житомир, майдан Перемоги, 10", new[] { 21 }, "Пулинський ЦОК", "pl" },
-                    { 19, "10003, м. Житомир, майдан Перемоги, 10", new[] { 19 }, "Романівський ЦОК", "rm" },
-                    { 18, "10003, м. Житомир, майдан Перемоги, 10", new[] { 18 }, "Радомишльський ЦОК", "rd" },
-                    { 17, "10003, м. Житомир, майдан Перемоги, 10", new[] { 17, 20 }, "Попільнянський ЦОК", "pp" },
-                    { 16, "10003, м. Житомир, майдан Перемоги, 10", new[] { 16 }, "Олевський ЦОК", "ol" },
+                    { 11, "10003, м. Житомир, майдан Перемоги, 10", new[] { 11 }, "Любарський ЦОК", "lb" },
                     { 15, "10003, м. Житомир, майдан Перемоги, 10", new[] { 15 }, "Овруцький ЦОК", "ov" },
+                    { 14, "10003, м. Житомир, майдан Перемоги, 10", new[] { 14 }, "Новоград-Волинський ЦОК", "nv" },
                     { 13, "10003, м. Житомир, майдан Перемоги, 10", new[] { 13 }, "Народицький ЦОК", "nr" },
                     { 12, "10003, м. Житомир, майдан Перемоги, 10", new[] { 12 }, "Малинський ЦОК", "ml" },
-                    { 22, "10003, м. Житомир, майдан Перемоги, 10", new[] { 23 }, "Чуднівський ЦОК", "cd" },
-                    { 11, "10003, м. Житомир, майдан Перемоги, 10", new[] { 11 }, "Любарський ЦОК", "lb" },
+                    { 18, "10003, м. Житомир, майдан Перемоги, 10", new[] { 18 }, "Радомишльський ЦОК", "rd" },
+                    { 10, "10003, м. Житомир, майдан Перемоги, 10", new[] { 9 }, "Коростишiвський ЦОК", "kt" },
                     { 9, "10003, м. Житомир, майдан Перемоги, 10", new[] { 8, 10 }, "Коростенський ЦОК", "kr" },
                     { 8, "10003, м. Житомир, майдан Перемоги, 10", new[] { 7 }, "Зарічанський ЦОК", "zr" },
                     { 7, "10003, м. Житомир, майдан Перемоги, 10", new[] { 7 }, "Житомирський ЦОК", "zt" },
@@ -334,7 +425,12 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                     { 3, "10003, м. Житомир, майдан Перемоги, 10", new[] { 3 }, "Бердичiвський ЦОК", "bd" },
                     { 2, "10003, м. Житомир, майдан Перемоги, 10", new[] { 2 }, "Баранiвський ЦОК", "bn" },
                     { 1, "10003, м. Житомир, майдан Перемоги, 10", new[] { 1 }, "Андрушівський ЦОК", "an" },
-                    { 10, "10003, м. Житомир, майдан Перемоги, 10", new[] { 9 }, "Коростишiвський ЦОК", "kt" }
+                    { 19, "10003, м. Житомир, майдан Перемоги, 10", new[] { 19 }, "Романівський ЦОК", "rm" },
+                    { 20, "10003, м. Житомир, майдан Перемоги, 10", new[] { 21 }, "Пулинський ЦОК", "pl" },
+                    { 21, "10003, м. Житомир, майдан Перемоги, 10", new[] { 22 }, "Черняхівський ЦОК", "ch" },
+                    { 22, "10003, м. Житомир, майдан Перемоги, 10", new[] { 23 }, "Чуднівський ЦОК", "cd" },
+                    { 16, "10003, м. Житомир, майдан Перемоги, 10", new[] { 16 }, "Олевський ЦОК", "ol" },
+                    { 17, "10003, м. Житомир, майдан Перемоги, 10", new[] { 17, 20 }, "Попільнянський ЦОК", "pp" }
                 });
 
             migrationBuilder.InsertData(
@@ -342,8 +438,8 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                 columns: new[] { "id", "name" },
                 values: new object[,]
                 {
-                    { 2, "АТ «Укрзалізниця»" },
-                    { 1, "АТ «Житомиробленерго»" }
+                    { 1, "АТ «Житомиробленерго»" },
+                    { 2, "АТ «Укрзалізниця»" }
                 });
 
             migrationBuilder.InsertData(
@@ -359,7 +455,20 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                     { 1, "Населення (загальний тариф)" },
                     { 2, "Будинки з електроопалювальними установками" },
                     { 3, "Багатоквартирні негазифіковані будинки" },
-                    { 4, "Багатодітні, прийомні сім''ї та дитячі будинки сімейного типу" }
+                    { 4, "Багатодітні, прийомні сім'ї та дитячі будинки сімейного типу" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "zone_coeffs",
+                columns: new[] { "id", "start_date", "value", "zone_number", "zone_record" },
+                values: new object[,]
+                {
+                    { 6, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1.5m, 3, 3 },
+                    { 5, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1m, 2, 3 },
+                    { 4, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0.4m, 1, 3 },
+                    { 3, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1m, 2, 2 },
+                    { 2, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0.5m, 1, 2 },
+                    { 1, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1m, 1, 1 }
                 });
 
             migrationBuilder.InsertData(
@@ -474,6 +583,16 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                 column: "region_id");
 
             migrationBuilder.CreateIndex(
+                name: "ix_invoice_tariff_id",
+                table: "invoice",
+                column: "tariff_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_invoice_detail_invoice_id",
+                table: "InvoiceDetail",
+                column: "invoice_id");
+
+            migrationBuilder.CreateIndex(
                 name: "ix_people_address_id",
                 table: "people",
                 column: "address_id");
@@ -491,6 +610,12 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "ix_period_start_date",
+                table: "period",
+                column: "start_date",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "ix_streets_city_id",
                 table: "streets",
                 column: "city_id");
@@ -499,10 +624,6 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                 name: "ix_tariff_rate_tariff_id",
                 table: "tariff_rates",
                 column: "tariff_id");
-
-            migrationBuilder.Sql(
-                @"CREATE UNIQUE INDEX uix_addresses_street_id_building_apt ON public.addresses 
-                USING btree (street_id, building, coalesce(apt,'') ASC NULLS LAST)");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -514,13 +635,22 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                 name: "contracts");
 
             migrationBuilder.DropTable(
+                name: "InvoiceDetail");
+
+            migrationBuilder.DropTable(
+                name: "period");
+
+            migrationBuilder.DropTable(
                 name: "tariff_rates");
+
+            migrationBuilder.DropTable(
+                name: "zone_coeffs");
 
             migrationBuilder.DropTable(
                 name: "accounting_points");
 
             migrationBuilder.DropTable(
-                name: "tariffs");
+                name: "invoice");
 
             migrationBuilder.DropTable(
                 name: "branch_offices");
@@ -530,6 +660,9 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
 
             migrationBuilder.DropTable(
                 name: "people");
+
+            migrationBuilder.DropTable(
+                name: "tariffs");
 
             migrationBuilder.DropTable(
                 name: "addresses");

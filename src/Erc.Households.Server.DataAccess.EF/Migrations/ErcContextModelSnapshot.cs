@@ -19,7 +19,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
             modelBuilder
                 .HasAnnotation("Npgsql:PostgresExtension:citext", ",,")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
-                .HasAnnotation("ProductVersion", "3.1.2")
+                .HasAnnotation("ProductVersion", "3.1.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             modelBuilder.Entity("Erc.Households.Server.Domain.AccountingPoints.AccountingPoint", b =>
@@ -65,6 +65,10 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
 
                     b.Property<int>("OwnerId")
                         .HasColumnName("owner_id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ZoneRecord")
+                        .HasColumnName("zone_record")
                         .HasColumnType("integer");
 
                     b.HasKey("Id")
@@ -469,6 +473,213 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                     b.ToTable("streets");
                 });
 
+            modelBuilder.Entity("Erc.Households.Server.Domain.Billing.Invoice", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("id")
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("ConsumptionT1")
+                        .HasColumnName("consumption_t1")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ConsumptionT2")
+                        .HasColumnName("consumption_t2")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ConsumptionT3")
+                        .HasColumnName("consumption_t3")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("DsoConsumptionId")
+                        .HasColumnName("dso_consumption_id")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("From")
+                        .HasColumnName("from")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Note")
+                        .HasColumnName("note")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("PaidSum")
+                        .HasColumnName("paid_sum")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("PresentMeterReadingT1")
+                        .HasColumnName("present_meter_reading_t1")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PresentMeterReadingT2")
+                        .HasColumnName("present_meter_reading_t2")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PresentMeterReadingT3")
+                        .HasColumnName("present_meter_reading_t3")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PreviousMeterReadingT1")
+                        .HasColumnName("previous_meter_reading_t1")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PreviousMeterReadingT2")
+                        .HasColumnName("previous_meter_reading_t2")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PreviousMeterReadingT3")
+                        .HasColumnName("previous_meter_reading_t3")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("SalesT1")
+                        .HasColumnName("sales_t1")
+                        .HasColumnType("decimal(8,5)");
+
+                    b.Property<decimal>("SalesT2")
+                        .HasColumnName("sales_t2")
+                        .HasColumnType("decimal(8,5)");
+
+                    b.Property<decimal>("SalesT3")
+                        .HasColumnName("sales_t3")
+                        .HasColumnType("decimal(8,5)");
+
+                    b.Property<int>("TariffId")
+                        .HasColumnName("tariff_id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("To")
+                        .HasColumnName("to")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<decimal>("TotalSum")
+                        .HasColumnName("total_sum")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("ZoneRecord")
+                        .HasColumnName("zone_record")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id")
+                        .HasName("pk_invoice");
+
+                    b.HasIndex("TariffId")
+                        .HasName("ix_invoice_tariff_id");
+
+                    b.ToTable("invoice");
+                });
+
+            modelBuilder.Entity("Erc.Households.Server.Domain.Billing.Period", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("id")
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnName("end_date")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("Name")
+                        .HasColumnName("name")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnName("start_date")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.HasKey("Id")
+                        .HasName("pk_period");
+
+                    b.HasIndex("StartDate")
+                        .IsUnique()
+                        .HasName("ix_period_start_date");
+
+                    b.ToTable("period");
+                });
+
+            modelBuilder.Entity("Erc.Households.Server.Domain.Billing.ZoneCoeff", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("id")
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnName("start_date")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<decimal>("Value")
+                        .HasColumnName("value")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("ZoneNumber")
+                        .HasColumnName("zone_number")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ZoneRecord")
+                        .HasColumnName("zone_record")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id")
+                        .HasName("pk_zone_coeffs");
+
+                    b.ToTable("zone_coeffs");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            StartDate = new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Value = 1m,
+                            ZoneNumber = 1,
+                            ZoneRecord = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            StartDate = new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Value = 0.5m,
+                            ZoneNumber = 1,
+                            ZoneRecord = 2
+                        },
+                        new
+                        {
+                            Id = 3,
+                            StartDate = new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Value = 1m,
+                            ZoneNumber = 2,
+                            ZoneRecord = 2
+                        },
+                        new
+                        {
+                            Id = 4,
+                            StartDate = new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Value = 0.4m,
+                            ZoneNumber = 1,
+                            ZoneRecord = 3
+                        },
+                        new
+                        {
+                            Id = 5,
+                            StartDate = new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Value = 1m,
+                            ZoneNumber = 2,
+                            ZoneRecord = 3
+                        },
+                        new
+                        {
+                            Id = 6,
+                            StartDate = new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Value = 1.5m,
+                            ZoneNumber = 3,
+                            ZoneRecord = 3
+                        });
+                });
+
             modelBuilder.Entity("Erc.Households.Server.Domain.BranchOffice", b =>
                 {
                     b.Property<int>("Id")
@@ -820,7 +1031,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         new
                         {
                             Id = 4,
-                            Name = "Багатодітні, прийомні сім''ї та дитячі будинки сімейного типу"
+                            Name = "Багатодітні, прийомні сім'ї та дитячі будинки сімейного типу"
                         });
                 });
 
@@ -945,7 +1156,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Erc.Households.Server.Domain.DistributionSystemOperator", "Dso")
+                    b.HasOne("Erc.Households.Server.Domain.DistributionSystemOperator", "DistributionSystemOperator")
                         .WithMany()
                         .HasForeignKey("DistributionSystemOperatorId")
                         .HasConstraintName("fk_accounting_points_distribution_system_operators_distributio")
@@ -1017,7 +1228,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
             modelBuilder.Entity("Erc.Households.Server.Domain.Addresses.District", b =>
                 {
                     b.HasOne("Erc.Households.Server.Domain.Addresses.Region", "Region")
-                        .WithMany("Districts")
+                        .WithMany()
                         .HasForeignKey("RegionId")
                         .HasConstraintName("fk_districts_regions_region_id")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1032,6 +1243,69 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         .HasConstraintName("fk_streets_cities_city_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Erc.Households.Server.Domain.Billing.Invoice", b =>
+                {
+                    b.HasOne("Erc.Households.Server.Domain.Tariffs.Tariff", "Tariff")
+                        .WithMany()
+                        .HasForeignKey("TariffId")
+                        .HasConstraintName("fk_invoice_tariffs_tariff_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsMany("Erc.Households.Server.Domain.Billing.InvoiceDetail", "InvoiceDetails", b1 =>
+                        {
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnName("id")
+                                .HasColumnType("integer")
+                                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                            b1.Property<int>("Consumption")
+                                .HasColumnName("consumption")
+                                .HasColumnType("integer");
+
+                            b1.Property<DateTime>("From")
+                                .HasColumnName("from")
+                                .HasColumnType("timestamp without time zone");
+
+                            b1.Property<int>("InvoiceId")
+                                .HasColumnName("invoice_id")
+                                .HasColumnType("integer");
+
+                            b1.Property<decimal>("Kz")
+                                .HasColumnName("kz")
+                                .HasColumnType("numeric");
+
+                            b1.Property<decimal>("PriceValue")
+                                .HasColumnName("price_value")
+                                .HasColumnType("numeric");
+
+                            b1.Property<decimal>("Sales")
+                                .HasColumnName("sales")
+                                .HasColumnType("numeric");
+
+                            b1.Property<DateTime>("To")
+                                .HasColumnName("to")
+                                .HasColumnType("timestamp without time zone");
+
+                            b1.Property<int>("ZoneNumber")
+                                .HasColumnName("zone_number")
+                                .HasColumnType("integer");
+
+                            b1.HasKey("Id")
+                                .HasName("pk_invoice_detail");
+
+                            b1.HasIndex("InvoiceId")
+                                .HasName("ix_invoice_detail_invoice_id");
+
+                            b1.ToTable("InvoiceDetail");
+
+                            b1.WithOwner()
+                                .HasForeignKey("InvoiceId")
+                                .HasConstraintName("fk_invoice_detail_invoice_invoice_id");
+                        });
                 });
 
             modelBuilder.Entity("Erc.Households.Server.Domain.Person", b =>

@@ -26,7 +26,8 @@ namespace Erc.Households.Server.Domain.AccountingPoints
             LazyLoader = lazyLoader;
         }
 
-        public AccountingPoint(string eic, string name, DateTime contractStartDate, int tariffId, Address address, Person owner, int branchOfficeId, int dsoId, string currentUser)
+        public AccountingPoint(string eic, string name, ZoneRecord zoneRecord, DateTime contractStartDate, int tariffId, Address address,
+                               Person owner, int branchOfficeId, int dsoId, string currentUser)
         {
             Eic = eic;
             Name = name;
@@ -34,6 +35,7 @@ namespace Erc.Households.Server.Domain.AccountingPoints
             Owner = owner;
             BranchOfficeId = branchOfficeId;
             DistributionSystemOperatorId = dsoId;
+            ZoneRecord = zoneRecord;
             OpenNewContract(contractStartDate, Owner, currentUser);
             SetTariff(tariffId, contractStartDate, currentUser);
         }
@@ -46,6 +48,7 @@ namespace Erc.Households.Server.Domain.AccountingPoints
         public int DistributionSystemOperatorId { get; private set; }
         public int BranchOfficeId { get; private set; }
         public decimal Debt { get; private set; }
+        public ZoneRecord ZoneRecord { get; private set; }
         public DistributionSystemOperator DistributionSystemOperator
         {
 
@@ -79,7 +82,6 @@ namespace Erc.Households.Server.Domain.AccountingPoints
         public IReadOnlyCollection<Contract> ContractsHistory => _contractsHistory.AsReadOnly();
 
         public IReadOnlyCollection<AccountingPointTariff> TariffsHistory => _tariffsHistory.AsReadOnly();
-
 
         public void CloseCurrentContract(DateTime closeDate, string currentUser)
         {
