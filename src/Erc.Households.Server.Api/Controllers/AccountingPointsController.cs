@@ -13,7 +13,7 @@ namespace Erc.Households.Server.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Roles = ApplicationRoles.User)]
+    [Authorize(Roles = ApplicationRoles.Operator)]
     public partial class AccountingPointsController: ErcControllerBase
     {
         private readonly IElasticClient _elasticClient;
@@ -61,14 +61,14 @@ namespace Erc.Households.Server.Api.Controllers
         public async Task<IActionResult> AddNew(Requests.NewAccountingPoint newAccountingPoint)
         {
             var accountingPoint = new Domain.AccountingPoints.AccountingPoint(
-                newAccountingPoint.Eic, newAccountingPoint.Name, newAccountingPoint.ContractStartDate,
+                newAccountingPoint.Eic, newAccountingPoint.Name, newAccountingPoint.ZoneRecord, newAccountingPoint.ContractStartDate,
                 newAccountingPoint.TariffId, newAccountingPoint.Address, newAccountingPoint.Owner,
                 newAccountingPoint.BranchOfficeId, newAccountingPoint.DsoId, User.Identity.Name);
 
             await _unitOfWork.AccountingPointRepository.AddNewAsync(accountingPoint);
             await _unitOfWork.SaveWorkAsync();
 
-            return CreatedAtRoute("GetAccountingPoint", new { accountingPoint.Id }, null);
+            return CreatedAtRoute("GetAccountingPoint", new { accountingPoint.Id }, new { accountingPoint.Id });
         }
 
         [HttpGet("{id}", Name= "GetAccountingPoint")]

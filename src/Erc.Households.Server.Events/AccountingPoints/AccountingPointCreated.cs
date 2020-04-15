@@ -3,7 +3,7 @@
     /// <summary>
     /// Event rises after accounting point persisted in database.
     /// </summary>
-    public class AccountingPointCreated: IEvent
+    public class AccountingPointCreated: IEntityEvent
     {
         public int Id { get; set; }
         public string BranchOfficeStringId { get; set;}

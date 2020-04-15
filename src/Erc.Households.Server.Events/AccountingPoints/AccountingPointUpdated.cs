@@ -5,7 +5,7 @@ namespace Erc.Households.Server.Events.AccountingPoints
     /// <summary>
     /// Event rised after accouting point persisted in database.
     /// </summary>
-    public class AccountingPointUpdated: IEvent
+    public class AccountingPointUpdated: IEntityEvent
     {
         public int Id { get; set;  }
         public string BranchOfficeStringId { get; set;}

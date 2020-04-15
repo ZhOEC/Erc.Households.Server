@@ -5,6 +5,7 @@ namespace Erc.Households.Server.Domain
 {
     public interface IEntity
     {
-        ICollection<IEvent> Events { get; }
+        int Id { get; }
+        ICollection<IEntityEvent> Events { get; }
     }
 }

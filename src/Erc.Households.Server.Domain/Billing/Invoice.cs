@@ -1,4 +1,5 @@
 ﻿using Erc.Households.Server.Domain.AccountingPoints;
+using Erc.Households.Server.Domain.Tariffs;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -19,10 +20,16 @@ namespace Erc.Households.Server.Domain.Billing
         public int ConsumptionT1 { get; set; }
         public int ConsumptionT2 { get; set; }
         public int ConsumptionT3 { get; set; }
-        public decimal T1Sales { get; set; }
-        public decimal T2Sales { get; set; }
-        public decimal T3Sales { get; set; }
-        public int  TariffId { get; set; }
+        public decimal SalesT1 { get; set; }
+        public decimal SalesT2 { get; set; }
+        public decimal SalesT3 { get; set; }
+        public decimal TotalSum { get; set; }
+        public decimal PaidSum { get; set; }
+        public bool WasPaid => TotalSum == PaidSum;
+        public int TariffId { get; set; }
+        public string Note { get; set; }
+        public Tariff Tariff { get; set; }
+        public IEnumerable<InvoiceDetail> InvoiceDetails { get; set; }
         public ZoneRecord ZoneRecord { get; set; }
         public Guid DsoConsumptionId { get; set; }
     }

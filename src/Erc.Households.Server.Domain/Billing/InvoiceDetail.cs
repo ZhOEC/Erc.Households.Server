@@ -7,6 +7,10 @@ namespace Erc.Households.Server.Domain.Billing
 {
     public class InvoiceDetail
     {
+        public int Id { get; set; }
+        public int InvoiceId { get; set; }
+        public DateTime From { get; set; }
+        public DateTime To { get; set; }
         public decimal PriceValue { get; set; }
         public int Consumption { get; set; }
         public decimal Sales { get; set; }

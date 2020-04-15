@@ -13,5 +13,6 @@ namespace Erc.Households.Server.Api.Requests
         public Domain.Person Owner { get; set; }
         public int BranchOfficeId { get; set; }
         public int DsoId { get; set; }
+        public Domain.AccountingPoints.ZoneRecord ZoneRecord { get; set; } = Domain.AccountingPoints.ZoneRecord.None;
     }
 }

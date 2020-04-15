@@ -2,7 +2,6 @@
 using Erc.Households.Server.Domain.Extensions;
 using Erc.Households.Server.Domain.Tariffs;
 using Erc.Households.Server.Events;
-using Erc.Households.Server.Events.AccountingPoints;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,13 +11,13 @@ namespace Erc.Households.Server.Domain.AccountingPoints
     public class AccountingPoint : IEntity
     {
         readonly List<Contract> _contractsHistory = new List<Contract>();
-        private List<AccountingPointTariff> _tariffsHistory = new List<AccountingPointTariff>();
+        private readonly List<AccountingPointTariff> _tariffsHistory = new List<AccountingPointTariff>();
         BranchOffice _branchOffice;
         Person _owner;
         Address _address;
         DistributionSystemOperator _distributionSystemOperator;
 
-        public ICollection<IEvent> Events { get; } = new List<IEvent>();
+        public ICollection<IEntityEvent> Events { get; } = new List<IEntityEvent>();
 
         private Action<object, string> LazyLoader { get; set; }
 
@@ -27,7 +26,8 @@ namespace Erc.Households.Server.Domain.AccountingPoints
             LazyLoader = lazyLoader;
         }
 
-        public AccountingPoint(string eic, string name, DateTime contractStartDate, int tariffId, Address address, Person owner, int branchOfficeId, int dsoId, string currentUser)
+        public AccountingPoint(string eic, string name, ZoneRecord zoneRecord, DateTime contractStartDate, int tariffId, Address address,
+                               Person owner, int branchOfficeId, int dsoId, string currentUser)
         {
             Eic = eic;
             Name = name;
@@ -35,6 +35,7 @@ namespace Erc.Households.Server.Domain.AccountingPoints
             Owner = owner;
             BranchOfficeId = branchOfficeId;
             DistributionSystemOperatorId = dsoId;
+            ZoneRecord = zoneRecord;
             OpenNewContract(contractStartDate, Owner, currentUser);
             SetTariff(tariffId, contractStartDate, currentUser);
         }
@@ -47,6 +48,7 @@ namespace Erc.Households.Server.Domain.AccountingPoints
         public int DistributionSystemOperatorId { get; private set; }
         public int BranchOfficeId { get; private set; }
         public decimal Debt { get; private set; }
+        public ZoneRecord ZoneRecord { get; private set; }
         public DistributionSystemOperator DistributionSystemOperator
         {
 
@@ -80,7 +82,6 @@ namespace Erc.Households.Server.Domain.AccountingPoints
         public IReadOnlyCollection<Contract> ContractsHistory => _contractsHistory.AsReadOnly();
 
         public IReadOnlyCollection<AccountingPointTariff> TariffsHistory => _tariffsHistory.AsReadOnly();
-
 
         public void CloseCurrentContract(DateTime closeDate, string currentUser)
         {
