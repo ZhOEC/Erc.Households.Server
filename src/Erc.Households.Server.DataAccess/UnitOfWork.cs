@@ -35,6 +35,7 @@ namespace Erc.Households.Server.DataAccess
                 entity.Events.Clear();
                 foreach (var @event in events)
                 {
+                    @event.Id = entity.Id;
                     await _bus.Publish(@event, @event.GetType());
                 }
             }

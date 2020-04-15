@@ -2,7 +2,5 @@
 
 namespace Erc.Households.Server.Events
 {
-    public interface IEvent
-    {
-    }
+    public interface IEvent { }
 }

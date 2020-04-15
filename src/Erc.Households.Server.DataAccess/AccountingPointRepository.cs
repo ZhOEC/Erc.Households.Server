@@ -25,6 +25,7 @@ namespace Erc.Households.Server.DataAccess
                 .FirstOrDefaultAsync()) ?? 0;
 
             _ercContext.Entry(accountingPoint.Address).State = accountingPoint.Address.Id == 0 ? EntityState.Added : EntityState.Unchanged;
+            _ercContext.Entry(accountingPoint.Address).Property(p => p.Zip).IsModified = true;
 
             await _ercContext.AccountingPoints.AddAsync(accountingPoint);
 
