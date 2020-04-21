@@ -31,7 +31,7 @@ namespace Erc.Households.Server.Api.Controllers
         public async Task<IActionResult> Search(string q)
         {
           var indices = string.Join(',', UserGroups.Select(c => c + "_accounting_points"));
-           
+            indices = "_all"; 
             var searchResponse = await _elasticClient.SearchAsync<SearchResult>(s => s
                 .Index(indices).Query(query => query
                     .MultiMatch(m => m
