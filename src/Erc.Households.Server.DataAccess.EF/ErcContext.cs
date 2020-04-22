@@ -28,6 +28,7 @@ namespace Erc.Households.Server.DataAccess.EF
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Person> People { get; set; }
         public DbSet<ZoneCoeff> ZoneCoeffs { get; set; }
+        public DbSet<PaymentChannel> PaymentChannels { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
