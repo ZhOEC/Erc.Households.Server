@@ -1,4 +1,6 @@
-﻿namespace Erc.Households.Server.Domain.Payments
+﻿using Erc.Households.Server.Domain.Helpers;
+
+namespace Erc.Households.Server.Domain.Payments
 {
     public class PaymentChannel
     {
