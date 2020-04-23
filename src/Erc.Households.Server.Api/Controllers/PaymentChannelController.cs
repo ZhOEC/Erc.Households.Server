@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Erc.Households.Server.DataAccess.EF;
-using Erc.Households.Server.Domain;
+using Erc.Households.Server.Domain.Payments;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 

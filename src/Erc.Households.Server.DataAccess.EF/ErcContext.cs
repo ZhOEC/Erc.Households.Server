@@ -2,6 +2,7 @@
 using Erc.Households.Server.Domain.AccountingPoints;
 using Erc.Households.Server.Domain.Addresses;
 using Erc.Households.Server.Domain.Billing;
+using Erc.Households.Server.Domain.Payments;
 using Erc.Households.Server.Domain.Tariffs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -44,7 +45,13 @@ namespace Erc.Households.Server.DataAccess.EF
                 entity.HasIndex(e => e.StartDate).IsUnique();
                 //entity.HasData(new Period(new DateTime(2019, 1, 1), new DateTime(2019, 1, 31)));
             });
-            
+
+            modelBuilder.Entity<PaymentChannel>(entity =>
+            {
+                entity.Property(e => e.Name).HasColumnType("citext")
+                    .IsRequired();
+            });
+
             modelBuilder.Entity<ZoneCoeff>(e =>
             {
                 e.HasData(

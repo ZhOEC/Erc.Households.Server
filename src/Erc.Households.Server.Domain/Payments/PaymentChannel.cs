@@ -1,4 +1,4 @@
-﻿namespace Erc.Households.Server.Domain
+﻿namespace Erc.Households.Server.Domain.Payments
 {
     public class PaymentChannel
     {
@@ -9,7 +9,7 @@
         public string DateFieldName { get; set; }
         public string TextDateFormat { get; set; }
         public string PersonFieldName { get; set; }
-        public string TotalRecord { get; set; }
-        public int Type { get; set; }
+        public FileTotalRow TotalRecord { get; set; }
+        public PaymentType Type { get; set; }
     }
 }
