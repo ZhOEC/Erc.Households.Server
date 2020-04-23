@@ -5,15 +5,17 @@ using Erc.Households.Server.DataAccess.EF;
 using Erc.Households.Server.ModelLogs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Erc.Households.Server.DataAccess.EF.Migrations
 {
     [DbContext(typeof(ErcContext))]
-    partial class ErcContextModelSnapshot : ModelSnapshot
+    [Migration("20200417210211_AddPaymentChannel")]
+    partial class AddPaymentChannel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,10 +67,6 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
 
                     b.Property<int>("OwnerId")
                         .HasColumnName("owner_id")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ZoneRecord")
-                        .HasColumnName("zone_record")
                         .HasColumnType("integer");
 
                     b.HasKey("Id")
@@ -1077,7 +1075,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         new
                         {
                             Id = 4,
-                            Name = "Багатодітні, прийомні сім'ї та дитячі будинки сімейного типу"
+                            Name = "Багатодітні, прийомні сім''ї та дитячі будинки сімейного типу"
                         });
                 });
 
