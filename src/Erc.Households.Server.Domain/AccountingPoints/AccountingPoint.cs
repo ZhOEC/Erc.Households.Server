@@ -1,5 +1,6 @@
 ﻿using Erc.Households.Server.Domain.Addresses;
 using Erc.Households.Server.Domain.Extensions;
+using Erc.Households.Server.Domain.Payments;
 using Erc.Households.Server.Domain.Tariffs;
 using Erc.Households.Server.Events;
 using System;
@@ -12,6 +13,8 @@ namespace Erc.Households.Server.Domain.AccountingPoints
     {
         readonly List<Contract> _contractsHistory = new List<Contract>();
         private readonly List<AccountingPointTariff> _tariffsHistory = new List<AccountingPointTariff>();
+        private readonly List<Payment> _payments = new List<Payment>();
+
         BranchOffice _branchOffice;
         Person _owner;
         Address _address;
@@ -103,6 +106,12 @@ namespace Erc.Households.Server.Domain.AccountingPoints
         public void SetTariff(int tariffId, DateTime date, string currentUser)
         {
             _tariffsHistory.Add(new AccountingPointTariff(tariffId, date, currentUser));
+        }
+
+        public void ProcessPayment(Payment payment)
+        {
+            Debt -= payment.Amount;
+            _payments.Add(payment);
         }
     }
 }
