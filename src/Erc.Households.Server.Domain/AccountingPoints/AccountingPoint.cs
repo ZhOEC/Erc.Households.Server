@@ -1,4 +1,5 @@
 ﻿using Erc.Households.Server.Domain.Addresses;
+using Erc.Households.Server.Domain.Billing;
 using Erc.Households.Server.Domain.Extensions;
 using Erc.Households.Server.Domain.Payments;
 using Erc.Households.Server.Domain.Tariffs;
@@ -14,6 +15,7 @@ namespace Erc.Households.Server.Domain.AccountingPoints
         readonly List<Contract> _contractsHistory = new List<Contract>();
         private readonly List<AccountingPointTariff> _tariffsHistory = new List<AccountingPointTariff>();
         private readonly List<Payment> _payments = new List<Payment>();
+        private readonly List<Invoice> _invoices = new List<Invoice>();
 
         BranchOffice _branchOffice;
         Person _owner;
@@ -110,6 +112,13 @@ namespace Erc.Households.Server.Domain.AccountingPoints
 
         public void ProcessPayment(Payment payment)
         {
+            if (payment.Amount > 0)
+            {
+                foreach (var invoice in _invoices.Where(i => !i.IsPaid).OrderBy(i => i.PeriodId).ToList())
+                {
+                    invoice.Pay(payment);
+                }
+            }
             Debt -= payment.Amount;
             _payments.Add(payment);
         }

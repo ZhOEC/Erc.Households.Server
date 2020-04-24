@@ -20,7 +20,7 @@ namespace Erc.Households.Server.Domain.Payments
             if (!IsChecked)
                 throw new Exception("Пачка не може бути закрита. Сумма та кількість платежів повинна співпадати с заявленою");
 
-            if (!Payments.All(p => p.IsProcessed))
+            if (!Payments.All(p => p.Status == PaymentStatus.Processed))
                 throw new Exception("Пачка не може бути закрита. Всі платежі повинні бути оброблені");
 
             IsClosed = true;

@@ -66,9 +66,9 @@ namespace Erc.Households.Server.DataAccess.EF
 
             modelBuilder.Entity<Invoice>(entity =>
             {
-                entity.Property(p => p.SalesT1).HasColumnType("decimal(8,5)");
-                entity.Property(p => p.SalesT2).HasColumnType("decimal(8,5)");
-                entity.Property(p => p.SalesT3).HasColumnType("decimal(8,5)");
+                entity.Property(p => p.T1Sales).HasColumnType("decimal(8,2)");
+                entity.Property(p => p.T2Sales).HasColumnType("decimal(8,2)");
+                entity.Property(p => p.T3Sales).HasColumnType("decimal(8,2)");
                 entity.OwnsMany(e => e.InvoiceDetails, a => { a.WithOwner().HasForeignKey(d => d.InvoiceId); a.HasKey(d => d.Id); });
             });
 

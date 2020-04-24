@@ -1,4 +1,5 @@
 ﻿using Erc.Households.Server.Domain.AccountingPoints;
+using Erc.Households.Server.Domain.Billing;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,6 +9,7 @@ namespace Erc.Households.Server.Domain.Payments
     public class Payment
     {
         AccountingPoint _accountingPoint;
+        List<InvoicePaymentItem> _invoicePaymentItems = new List<InvoicePaymentItem>();
 
         public Payment(DateTime payDate, decimal amount)
         {
@@ -28,6 +30,7 @@ namespace Erc.Households.Server.Domain.Payments
         public PaymentStatus Status { get; private set; }
         public string PayerInfo { get; private set; }
         public string AccountingPointName { get; private set; }
+        public IEnumerable<InvoicePaymentItem> InvoicePaymentItems => _invoicePaymentItems.AsReadOnly();
 
         public void Process()
         {
