@@ -5,6 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20200423120521_UpdatePaymentChannel.cs" />
+    <Compile Remove="Migrations\20200423120521_UpdatePaymentChannel.Designer.cs" />
+    <Compile Remove="Migrations\20200423121209_AddPaymentChannel.cs" />
+    <Compile Remove="Migrations\20200423121209_AddPaymentChannel.Designer.cs" />
+    <Compile Remove="Migrations\20200423121416_AddPaymentChannel.cs" />
+    <Compile Remove="Migrations\20200423121416_AddPaymentChannel.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="EFCore.NamingConventions" Version="1.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="3.1.3" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.1.3" />

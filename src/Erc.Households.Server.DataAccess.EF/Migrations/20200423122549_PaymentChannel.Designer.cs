@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Erc.Households.Server.DataAccess.EF.Migrations
 {
     [DbContext(typeof(ErcContext))]
-    [Migration("20200417210211_AddPaymentChannel")]
-    partial class AddPaymentChannel
+    [Migration("20200423122549_PaymentChannel")]
+    partial class PaymentChannel
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -923,7 +923,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Erc.Households.Server.Domain.PaymentChannel", b =>
+            modelBuilder.Entity("Erc.Households.Server.Domain.Payments.PaymentChannel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -936,8 +936,9 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnName("name")
-                        .HasColumnType("text");
+                        .HasColumnType("citext");
 
                     b.Property<string>("PersonFieldName")
                         .HasColumnName("person_field_name")
@@ -955,9 +956,9 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         .HasColumnName("text_date_format")
                         .HasColumnType("text");
 
-                    b.Property<string>("TotalRecord")
+                    b.Property<int>("TotalRecord")
                         .HasColumnName("total_record")
-                        .HasColumnType("text");
+                        .HasColumnType("integer");
 
                     b.Property<int>("Type")
                         .HasColumnName("type")

@@ -23,12 +23,6 @@ namespace Erc.Households.Server.Api.Controllers
         public async Task<IActionResult> GetAll()
             => Ok(await _ercContext.PaymentChannels.OrderBy(x => x.Id).ToListAsync());
 
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
         [HttpPost]
         public async Task<IActionResult> Add(PaymentChannel paymentChannel)
         {
@@ -56,6 +50,10 @@ namespace Erc.Households.Server.Api.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var paymentChannel = await _ercContext.PaymentChannels.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (paymentChannel is null)
+                return NotFound();
+                
             _ercContext.Remove(paymentChannel);
             await _ercContext.SaveChangesAsync();
 
