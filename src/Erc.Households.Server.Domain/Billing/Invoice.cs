@@ -37,6 +37,7 @@ namespace Erc.Households.Server.Domain.Billing
         public Tariff Tariff { get; set; }
         public IEnumerable<InvoiceDetail> InvoiceDetails { get; set; }
         public IEnumerable<InvoicePaymentItem> InvoicePaymentItems => _invoicePaymentItems.AsReadOnly();
+        public Period Period { get; private set; }
         public ZoneRecord ZoneRecord { get; set; }
         public Guid DsoConsumptionId { get; set; }
         public void Pay(Payment payment)
