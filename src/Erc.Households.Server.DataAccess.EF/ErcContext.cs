@@ -30,6 +30,7 @@ namespace Erc.Households.Server.DataAccess.EF
         public DbSet<Person> People { get; set; }
         public DbSet<ZoneCoeff> ZoneCoeffs { get; set; }
         public DbSet<PaymentChannel> PaymentChannels { get; set; }
+        public DbSet<PaymentBatch> PaymentBatches { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -40,8 +41,14 @@ namespace Erc.Households.Server.DataAccess.EF
         {
             modelBuilder.HasPostgresExtension("citext");
 
+            modelBuilder.Entity<Payment>(entity =>
+            {
+                entity.ToTable("payments");
+            });
+
             modelBuilder.Entity<Period>(entity =>
             {
+                entity.ToTable("periods");
                 entity.HasIndex(e => e.StartDate).IsUnique();
                 entity.HasData(
                     new { Id = 1, StartDate = new DateTime(2019, 1, 1), EndDate = new DateTime(2019, 1, 1).AddMonths(1).AddDays(-1) , Name = "Січень 2019р."},
@@ -87,10 +94,10 @@ namespace Erc.Households.Server.DataAccess.EF
 
             modelBuilder.Entity<Invoice>(entity =>
             {
-                entity.Property(p => p.T1Sales).HasColumnType("decimal(8,2)");
-                entity.Property(p => p.T2Sales).HasColumnType("decimal(8,2)");
-                entity.Property(p => p.T3Sales).HasColumnType("decimal(8,2)");
-                entity.OwnsMany(e => e.InvoiceDetails, a => { a.WithOwner().HasForeignKey(d => d.InvoiceId); a.HasKey(d => d.Id); });
+                entity.ToTable("invoices");
+                entity.Property(p => p.T1Sales).HasColumnType("decimal(10,2)");
+                entity.Property(p => p.T2Sales).HasColumnType("decimal(10,2)");
+                entity.Property(p => p.T3Sales).HasColumnType("decimal(10,2)");
             });
 
             modelBuilder.Entity<Contract>(e =>

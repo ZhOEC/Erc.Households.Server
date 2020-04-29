@@ -11,7 +11,7 @@ namespace Erc.Households.Server.Domain.Payments
         public string DateFieldName { get; set; }
         public string TextDateFormat { get; set; }
         public string PersonFieldName { get; set; }
-        public FileTotalRow TotalRecord { get; set; }
+        public FileTotalRow TotalRecord { get; set; } = FileTotalRow.None;
         public PaymentType Type { get; set; }
     }
 }

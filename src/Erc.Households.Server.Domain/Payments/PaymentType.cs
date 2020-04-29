@@ -6,8 +6,9 @@ namespace Erc.Households.Server.Domain.Payments
 {
     public enum PaymentType
     {
-        CommonPayment,
+        CustomerPayment,
         SocialHelp,
-        DsoCompensation
+        DsoCompensation,
+        CorrectiveTransfer
     }
 }

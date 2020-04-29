@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Erc.Households.Server.Api.Authorization;
 using Erc.Households.Server.DataAccess.EF;
 using Erc.Households.Server.Domain.Payments;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,11 +12,12 @@ namespace Erc.Households.Server.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PaymentChannelController : ControllerBase
+    [Authorize]
+    public class PaymentChannelsController : ControllerBase
     {
         private readonly ErcContext _ercContext;
 
-        public PaymentChannelController(ErcContext ercContext)
+        public PaymentChannelsController(ErcContext ercContext)
         {
             _ercContext = ercContext ?? throw new ArgumentNullException(nameof(ercContext));
         }
@@ -23,13 +26,8 @@ namespace Erc.Households.Server.Api.Controllers
         public async Task<IActionResult> GetAll()
             => Ok(await _ercContext.PaymentChannels.OrderBy(x => x.Id).ToListAsync());
 
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
         [HttpPost]
+        [Authorize(Roles = ApplicationRoles.Administrator)]
         public async Task<IActionResult> Add(PaymentChannel paymentChannel)
         {
             _ercContext.PaymentChannels.Add(paymentChannel);
@@ -39,6 +37,7 @@ namespace Erc.Households.Server.Api.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = ApplicationRoles.Administrator)]
         public async Task<IActionResult> Update(PaymentChannel paymentChannel)
         {
             var pc = await _ercContext.PaymentChannels.Where(x => x.Id == paymentChannel.Id).FirstOrDefaultAsync();
@@ -53,9 +52,14 @@ namespace Erc.Households.Server.Api.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = ApplicationRoles.Administrator)]
         public async Task<IActionResult> Delete(int id)
         {
             var paymentChannel = await _ercContext.PaymentChannels.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (paymentChannel is null)
+                return NotFound();
+                
             _ercContext.Remove(paymentChannel);
             await _ercContext.SaveChangesAsync();
 

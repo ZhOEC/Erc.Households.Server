@@ -527,7 +527,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
 
                     b.Property<decimal>("T1Sales")
                         .HasColumnName("t1sales")
-                        .HasColumnType("decimal(8,2)");
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<int>("T1Usage")
                         .HasColumnName("t1usage")
@@ -535,7 +535,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
 
                     b.Property<decimal>("T2Sales")
                         .HasColumnName("t2sales")
-                        .HasColumnType("decimal(8,2)");
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<int>("T2Usage")
                         .HasColumnName("t2usage")
@@ -543,7 +543,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
 
                     b.Property<decimal>("T3Sales")
                         .HasColumnName("t3sales")
-                        .HasColumnType("decimal(8,2)");
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<int>("T3Usage")
                         .HasColumnName("t3usage")
@@ -568,10 +568,62 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                     b.HasKey("Id")
                         .HasName("pk_invoice");
 
+                    b.HasIndex("PeriodId")
+                        .HasName("ix_invoice_period_id");
+
                     b.HasIndex("TariffId")
                         .HasName("ix_invoice_tariff_id");
 
-                    b.ToTable("invoice");
+                    b.ToTable("invoices");
+                });
+
+            modelBuilder.Entity("Erc.Households.Server.Domain.Billing.InvoiceDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("id")
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("Consumption")
+                        .HasColumnName("consumption")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("From")
+                        .HasColumnName("from")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("InvoiceId")
+                        .HasColumnName("invoice_id")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Kz")
+                        .HasColumnName("kz")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("PriceValue")
+                        .HasColumnName("price_value")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Sales")
+                        .HasColumnName("sales")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTime>("To")
+                        .HasColumnName("to")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("ZoneNumber")
+                        .HasColumnName("zone_number")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id")
+                        .HasName("pk_invoice_detail");
+
+                    b.HasIndex("InvoiceId")
+                        .HasName("ix_invoice_detail_invoice_id");
+
+                    b.ToTable("invoice_detail");
                 });
 
             modelBuilder.Entity("Erc.Households.Server.Domain.Billing.InvoicePaymentItem", b =>
@@ -632,9 +684,9 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
 
                     b.HasIndex("StartDate")
                         .IsUnique()
-                        .HasName("ix_period_start_date");
+                        .HasName("ix_periods_start_date");
 
-                    b.ToTable("period");
+                    b.ToTable("periods");
 
                     b.HasData(
                         new
@@ -1155,6 +1207,14 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         .HasColumnName("payer_info")
                         .HasColumnType("text");
 
+                    b.Property<int?>("PaymentBatchId")
+                        .HasColumnName("payment_batch_id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PeriodId")
+                        .HasColumnName("period_id")
+                        .HasColumnType("integer");
+
                     b.Property<int>("Status")
                         .HasColumnName("status")
                         .HasColumnType("integer");
@@ -1165,7 +1225,43 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                     b.HasIndex("AccountingPointId")
                         .HasName("ix_payment_accounting_point_id");
 
-                    b.ToTable("payment");
+                    b.HasIndex("PaymentBatchId")
+                        .HasName("ix_payment_payment_batch_id");
+
+                    b.HasIndex("PeriodId")
+                        .HasName("ix_payment_period_id");
+
+                    b.ToTable("payments");
+                });
+
+            modelBuilder.Entity("Erc.Households.Server.Domain.Payments.PaymentBatch", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("id")
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("ChannelId")
+                        .HasColumnName("channel_id")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsClosed")
+                        .HasColumnName("is_closed")
+                        .HasColumnType("boolean");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnName("total_amount")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("TotalCount")
+                        .HasColumnName("total_count")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id")
+                        .HasName("pk_payment_batches");
+
+                    b.ToTable("payment_batches");
                 });
 
             modelBuilder.Entity("Erc.Households.Server.Domain.Payments.PaymentChannel", b =>
@@ -1537,65 +1633,29 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
 
             modelBuilder.Entity("Erc.Households.Server.Domain.Billing.Invoice", b =>
                 {
+                    b.HasOne("Erc.Households.Server.Domain.Billing.Period", "Period")
+                        .WithMany()
+                        .HasForeignKey("PeriodId")
+                        .HasConstraintName("fk_invoice_period_period_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Erc.Households.Server.Domain.Tariffs.Tariff", "Tariff")
                         .WithMany()
                         .HasForeignKey("TariffId")
                         .HasConstraintName("fk_invoice_tariffs_tariff_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
 
-                    b.OwnsMany("Erc.Households.Server.Domain.Billing.InvoiceDetail", "InvoiceDetails", b1 =>
-                        {
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnName("id")
-                                .HasColumnType("integer")
-                                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                            b1.Property<int>("Consumption")
-                                .HasColumnName("consumption")
-                                .HasColumnType("integer");
-
-                            b1.Property<DateTime>("From")
-                                .HasColumnName("from")
-                                .HasColumnType("timestamp without time zone");
-
-                            b1.Property<int>("InvoiceId")
-                                .HasColumnName("invoice_id")
-                                .HasColumnType("integer");
-
-                            b1.Property<decimal>("Kz")
-                                .HasColumnName("kz")
-                                .HasColumnType("numeric");
-
-                            b1.Property<decimal>("PriceValue")
-                                .HasColumnName("price_value")
-                                .HasColumnType("numeric");
-
-                            b1.Property<decimal>("Sales")
-                                .HasColumnName("sales")
-                                .HasColumnType("numeric");
-
-                            b1.Property<DateTime>("To")
-                                .HasColumnName("to")
-                                .HasColumnType("timestamp without time zone");
-
-                            b1.Property<int>("ZoneNumber")
-                                .HasColumnName("zone_number")
-                                .HasColumnType("integer");
-
-                            b1.HasKey("Id")
-                                .HasName("pk_invoice_detail");
-
-                            b1.HasIndex("InvoiceId")
-                                .HasName("ix_invoice_detail_invoice_id");
-
-                            b1.ToTable("InvoiceDetail");
-
-                            b1.WithOwner()
-                                .HasForeignKey("InvoiceId")
-                                .HasConstraintName("fk_invoice_detail_invoice_invoice_id");
-                        });
+            modelBuilder.Entity("Erc.Households.Server.Domain.Billing.InvoiceDetail", b =>
+                {
+                    b.HasOne("Erc.Households.Server.Domain.Billing.Invoice", null)
+                        .WithMany("InvoiceDetails")
+                        .HasForeignKey("InvoiceId")
+                        .HasConstraintName("fk_invoice_detail_invoice_invoice_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Erc.Households.Server.Domain.Billing.InvoicePaymentItem", b =>
@@ -1631,6 +1691,18 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         .WithMany()
                         .HasForeignKey("AccountingPointId")
                         .HasConstraintName("fk_payment_accounting_points_accounting_point_id");
+
+                    b.HasOne("Erc.Households.Server.Domain.Payments.PaymentBatch", null)
+                        .WithMany("Payments")
+                        .HasForeignKey("PaymentBatchId")
+                        .HasConstraintName("fk_payment_payment_batches_payment_batch_id");
+
+                    b.HasOne("Erc.Households.Server.Domain.Billing.Period", "Period")
+                        .WithMany()
+                        .HasForeignKey("PeriodId")
+                        .HasConstraintName("fk_payment_period_period_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Erc.Households.Server.Domain.Person", b =>

@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Erc.Households.Server.DataAccess.EF.Migrations
 {
     [DbContext(typeof(ErcContext))]
-    [Migration("20200417210211_AddPaymentChannel")]
-    partial class AddPaymentChannel
+    [Migration("20200428120914_Initial_Create")]
+    partial class Initial_Create
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -67,6 +67,10 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
 
                     b.Property<int>("OwnerId")
                         .HasColumnName("owner_id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ZoneRecord")
+                        .HasColumnName("zone_record")
                         .HasColumnType("integer");
 
                     b.HasKey("Id")
@@ -479,16 +483,8 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
-                    b.Property<int>("ConsumptionT1")
-                        .HasColumnName("consumption_t1")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ConsumptionT2")
-                        .HasColumnName("consumption_t2")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ConsumptionT3")
-                        .HasColumnName("consumption_t3")
+                    b.Property<int>("AccountingPointId")
+                        .HasColumnName("accounting_point_id")
                         .HasColumnType("integer");
 
                     b.Property<Guid>("DsoConsumptionId")
@@ -503,45 +499,57 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         .HasColumnName("note")
                         .HasColumnType("text");
 
-                    b.Property<decimal>("PaidSum")
-                        .HasColumnName("paid_sum")
-                        .HasColumnType("numeric");
-
-                    b.Property<int>("PresentMeterReadingT1")
-                        .HasColumnName("present_meter_reading_t1")
+                    b.Property<int>("PeriodId")
+                        .HasColumnName("period_id")
                         .HasColumnType("integer");
 
-                    b.Property<int>("PresentMeterReadingT2")
-                        .HasColumnName("present_meter_reading_t2")
+                    b.Property<int>("PresentT1MeterReading")
+                        .HasColumnName("present_t1meter_reading")
                         .HasColumnType("integer");
 
-                    b.Property<int>("PresentMeterReadingT3")
-                        .HasColumnName("present_meter_reading_t3")
+                    b.Property<int>("PresentT2MeterReading")
+                        .HasColumnName("present_t2meter_reading")
                         .HasColumnType("integer");
 
-                    b.Property<int>("PreviousMeterReadingT1")
-                        .HasColumnName("previous_meter_reading_t1")
+                    b.Property<int>("PresentT3MeterReading")
+                        .HasColumnName("present_t3meter_reading")
                         .HasColumnType("integer");
 
-                    b.Property<int>("PreviousMeterReadingT2")
-                        .HasColumnName("previous_meter_reading_t2")
+                    b.Property<int>("PreviousT1MeterReading")
+                        .HasColumnName("previous_t1meter_reading")
                         .HasColumnType("integer");
 
-                    b.Property<int>("PreviousMeterReadingT3")
-                        .HasColumnName("previous_meter_reading_t3")
+                    b.Property<int>("PreviousT2MeterReading")
+                        .HasColumnName("previous_t2meter_reading")
                         .HasColumnType("integer");
 
-                    b.Property<decimal>("SalesT1")
-                        .HasColumnName("sales_t1")
-                        .HasColumnType("decimal(8,5)");
+                    b.Property<int>("PreviousT3MeterReading")
+                        .HasColumnName("previous_t3meter_reading")
+                        .HasColumnType("integer");
 
-                    b.Property<decimal>("SalesT2")
-                        .HasColumnName("sales_t2")
-                        .HasColumnType("decimal(8,5)");
+                    b.Property<decimal>("T1Sales")
+                        .HasColumnName("t1sales")
+                        .HasColumnType("decimal(10,2)");
 
-                    b.Property<decimal>("SalesT3")
-                        .HasColumnName("sales_t3")
-                        .HasColumnType("decimal(8,5)");
+                    b.Property<int>("T1Usage")
+                        .HasColumnName("t1usage")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("T2Sales")
+                        .HasColumnName("t2sales")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<int>("T2Usage")
+                        .HasColumnName("t2usage")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("T3Sales")
+                        .HasColumnName("t3sales")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<int>("T3Usage")
+                        .HasColumnName("t3usage")
+                        .HasColumnType("integer");
 
                     b.Property<int>("TariffId")
                         .HasColumnName("tariff_id")
@@ -551,8 +559,8 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         .HasColumnName("to")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<decimal>("TotalSum")
-                        .HasColumnName("total_sum")
+                    b.Property<decimal>("TotalAmountSales")
+                        .HasColumnName("total_amount_sales")
                         .HasColumnType("numeric");
 
                     b.Property<int>("ZoneRecord")
@@ -562,10 +570,94 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                     b.HasKey("Id")
                         .HasName("pk_invoice");
 
+                    b.HasIndex("PeriodId")
+                        .HasName("ix_invoice_period_id");
+
                     b.HasIndex("TariffId")
                         .HasName("ix_invoice_tariff_id");
 
-                    b.ToTable("invoice");
+                    b.ToTable("invoices");
+                });
+
+            modelBuilder.Entity("Erc.Households.Server.Domain.Billing.InvoiceDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("id")
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("Consumption")
+                        .HasColumnName("consumption")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("From")
+                        .HasColumnName("from")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("InvoiceId")
+                        .HasColumnName("invoice_id")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Kz")
+                        .HasColumnName("kz")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("PriceValue")
+                        .HasColumnName("price_value")
+                        .HasColumnType("numeric");
+
+                    b.Property<decimal>("Sales")
+                        .HasColumnName("sales")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTime>("To")
+                        .HasColumnName("to")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("ZoneNumber")
+                        .HasColumnName("zone_number")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id")
+                        .HasName("pk_invoice_detail");
+
+                    b.HasIndex("InvoiceId")
+                        .HasName("ix_invoice_detail_invoice_id");
+
+                    b.ToTable("invoice_detail");
+                });
+
+            modelBuilder.Entity("Erc.Households.Server.Domain.Billing.InvoicePaymentItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("id")
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnName("amount")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("InvoiceId")
+                        .HasColumnName("invoice_id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PaymentId")
+                        .HasColumnName("payment_id")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id")
+                        .HasName("pk_invoice_payment_item");
+
+                    b.HasIndex("InvoiceId")
+                        .HasName("ix_invoice_payment_item_invoice_id");
+
+                    b.HasIndex("PaymentId")
+                        .HasName("ix_invoice_payment_item_payment_id");
+
+                    b.ToTable("invoice_payment_item");
                 });
 
             modelBuilder.Entity("Erc.Households.Server.Domain.Billing.Period", b =>
@@ -581,8 +673,9 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnName("name")
-                        .HasColumnType("text");
+                        .HasColumnType("citext");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnName("start_date")
@@ -593,9 +686,137 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
 
                     b.HasIndex("StartDate")
                         .IsUnique()
-                        .HasName("ix_period_start_date");
+                        .HasName("ix_periods_start_date");
 
-                    b.ToTable("period");
+                    b.ToTable("periods");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            EndDate = new DateTime(2019, 1, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Січень 2019р.",
+                            StartDate = new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            EndDate = new DateTime(2019, 2, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Лютий 2019р.",
+                            StartDate = new DateTime(2019, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            EndDate = new DateTime(2019, 3, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Березень 2019р.",
+                            StartDate = new DateTime(2019, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 4,
+                            EndDate = new DateTime(2019, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Квітень 2019р.",
+                            StartDate = new DateTime(2019, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 5,
+                            EndDate = new DateTime(2019, 5, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Травень 2019р.",
+                            StartDate = new DateTime(2019, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 6,
+                            EndDate = new DateTime(2019, 6, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Червень 2019р.",
+                            StartDate = new DateTime(2019, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 7,
+                            EndDate = new DateTime(2019, 7, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Липень 2019р.",
+                            StartDate = new DateTime(2019, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 8,
+                            EndDate = new DateTime(2019, 8, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Серпень 2019р.",
+                            StartDate = new DateTime(2019, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 9,
+                            EndDate = new DateTime(2019, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Вересень 2019р.",
+                            StartDate = new DateTime(2019, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 10,
+                            EndDate = new DateTime(2019, 10, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Жовтень 2019р.",
+                            StartDate = new DateTime(2019, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 11,
+                            EndDate = new DateTime(2019, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Листопад 2019р.",
+                            StartDate = new DateTime(2019, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 12,
+                            EndDate = new DateTime(2019, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Грудень 2019р.",
+                            StartDate = new DateTime(2019, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 13,
+                            EndDate = new DateTime(2019, 1, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Січень 2019р.",
+                            StartDate = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 14,
+                            EndDate = new DateTime(2019, 2, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Лютий 2019р.",
+                            StartDate = new DateTime(2020, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 15,
+                            EndDate = new DateTime(2019, 3, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Березень 2019р.",
+                            StartDate = new DateTime(2020, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 16,
+                            EndDate = new DateTime(2019, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Квітень 2019р.",
+                            StartDate = new DateTime(2020, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 17,
+                            EndDate = new DateTime(2019, 5, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Травень 2019р.",
+                            StartDate = new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        },
+                        new
+                        {
+                            Id = 18,
+                            EndDate = new DateTime(2019, 6, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Name = "Червень 2019р.",
+                            StartDate = new DateTime(2020, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
                 });
 
             modelBuilder.Entity("Erc.Households.Server.Domain.Billing.ZoneCoeff", b =>
@@ -692,6 +913,10 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         .HasColumnType("citext")
                         .HasMaxLength(500);
 
+                    b.Property<int>("CurrentPeriodId")
+                        .HasColumnName("current_period_id")
+                        .HasColumnType("integer");
+
                     b.Property<int[]>("DistrictIds")
                         .HasColumnName("district_ids")
                         .HasColumnType("integer[]");
@@ -711,6 +936,9 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                     b.HasKey("Id")
                         .HasName("pk_branch_offices");
 
+                    b.HasIndex("CurrentPeriodId")
+                        .HasName("ix_branch_offices_current_period_id");
+
                     b.ToTable("branch_offices");
 
                     b.HasData(
@@ -718,6 +946,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         {
                             Id = 1,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
+                            CurrentPeriodId = 1,
                             DistrictIds = new[] { 1 },
                             Name = "Андрушівський ЦОК",
                             StringId = "an"
@@ -726,6 +955,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         {
                             Id = 2,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
+                            CurrentPeriodId = 1,
                             DistrictIds = new[] { 2 },
                             Name = "Баранiвський ЦОК",
                             StringId = "bn"
@@ -734,6 +964,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         {
                             Id = 3,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
+                            CurrentPeriodId = 1,
                             DistrictIds = new[] { 3 },
                             Name = "Бердичiвський ЦОК",
                             StringId = "bd"
@@ -742,6 +973,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         {
                             Id = 4,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
+                            CurrentPeriodId = 1,
                             DistrictIds = new[] { 4 },
                             Name = "Брусилівський ЦОК",
                             StringId = "br"
@@ -750,6 +982,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         {
                             Id = 5,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
+                            CurrentPeriodId = 1,
                             DistrictIds = new[] { 5 },
                             Name = "Хорошівський ЦОК",
                             StringId = "hr"
@@ -758,6 +991,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         {
                             Id = 6,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
+                            CurrentPeriodId = 1,
                             DistrictIds = new[] { 6 },
                             Name = "Ємільчинський ЦОК",
                             StringId = "em"
@@ -766,6 +1000,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         {
                             Id = 7,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
+                            CurrentPeriodId = 1,
                             DistrictIds = new[] { 7 },
                             Name = "Житомирський ЦОК",
                             StringId = "zt"
@@ -774,6 +1009,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         {
                             Id = 8,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
+                            CurrentPeriodId = 1,
                             DistrictIds = new[] { 7 },
                             Name = "Зарічанський ЦОК",
                             StringId = "zr"
@@ -782,6 +1018,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         {
                             Id = 9,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
+                            CurrentPeriodId = 1,
                             DistrictIds = new[] { 8, 10 },
                             Name = "Коростенський ЦОК",
                             StringId = "kr"
@@ -790,6 +1027,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         {
                             Id = 10,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
+                            CurrentPeriodId = 1,
                             DistrictIds = new[] { 9 },
                             Name = "Коростишiвський ЦОК",
                             StringId = "kt"
@@ -798,6 +1036,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         {
                             Id = 11,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
+                            CurrentPeriodId = 1,
                             DistrictIds = new[] { 11 },
                             Name = "Любарський ЦОК",
                             StringId = "lb"
@@ -806,6 +1045,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         {
                             Id = 12,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
+                            CurrentPeriodId = 1,
                             DistrictIds = new[] { 12 },
                             Name = "Малинський ЦОК",
                             StringId = "ml"
@@ -814,6 +1054,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         {
                             Id = 13,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
+                            CurrentPeriodId = 1,
                             DistrictIds = new[] { 13 },
                             Name = "Народицький ЦОК",
                             StringId = "nr"
@@ -822,6 +1063,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         {
                             Id = 14,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
+                            CurrentPeriodId = 1,
                             DistrictIds = new[] { 14 },
                             Name = "Новоград-Волинський ЦОК",
                             StringId = "nv"
@@ -830,6 +1072,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         {
                             Id = 15,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
+                            CurrentPeriodId = 1,
                             DistrictIds = new[] { 15 },
                             Name = "Овруцький ЦОК",
                             StringId = "ov"
@@ -838,6 +1081,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         {
                             Id = 16,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
+                            CurrentPeriodId = 1,
                             DistrictIds = new[] { 16 },
                             Name = "Олевський ЦОК",
                             StringId = "ol"
@@ -846,6 +1090,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         {
                             Id = 17,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
+                            CurrentPeriodId = 1,
                             DistrictIds = new[] { 17, 20 },
                             Name = "Попільнянський ЦОК",
                             StringId = "pp"
@@ -854,6 +1099,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         {
                             Id = 18,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
+                            CurrentPeriodId = 1,
                             DistrictIds = new[] { 18 },
                             Name = "Радомишльський ЦОК",
                             StringId = "rd"
@@ -862,6 +1108,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         {
                             Id = 19,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
+                            CurrentPeriodId = 1,
                             DistrictIds = new[] { 19 },
                             Name = "Романівський ЦОК",
                             StringId = "rm"
@@ -870,6 +1117,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         {
                             Id = 20,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
+                            CurrentPeriodId = 1,
                             DistrictIds = new[] { 21 },
                             Name = "Пулинський ЦОК",
                             StringId = "pl"
@@ -878,6 +1126,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         {
                             Id = 21,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
+                            CurrentPeriodId = 1,
                             DistrictIds = new[] { 22 },
                             Name = "Черняхівський ЦОК",
                             StringId = "ch"
@@ -886,6 +1135,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         {
                             Id = 22,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
+                            CurrentPeriodId = 1,
                             DistrictIds = new[] { 23 },
                             Name = "Чуднівський ЦОК",
                             StringId = "cd"
@@ -923,7 +1173,100 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Erc.Households.Server.Domain.PaymentChannel", b =>
+            modelBuilder.Entity("Erc.Households.Server.Domain.Payments.Payment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("id")
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int?>("AccountingPointId")
+                        .HasColumnName("accounting_point_id")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("AccountingPointName")
+                        .HasColumnName("accounting_point_name")
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Amount")
+                        .HasColumnName("amount")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("BatchId")
+                        .HasColumnName("batch_id")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("EnterDate")
+                        .HasColumnName("enter_date")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime>("PayDate")
+                        .HasColumnName("pay_date")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("PayerInfo")
+                        .HasColumnName("payer_info")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("PaymentBatchId")
+                        .HasColumnName("payment_batch_id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PeriodId")
+                        .HasColumnName("period_id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Status")
+                        .HasColumnName("status")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id")
+                        .HasName("pk_payment");
+
+                    b.HasIndex("AccountingPointId")
+                        .HasName("ix_payment_accounting_point_id");
+
+                    b.HasIndex("PaymentBatchId")
+                        .HasName("ix_payment_payment_batch_id");
+
+                    b.HasIndex("PeriodId")
+                        .HasName("ix_payment_period_id");
+
+                    b.ToTable("payments");
+                });
+
+            modelBuilder.Entity("Erc.Households.Server.Domain.Payments.PaymentBatch", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("id")
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("ChannelId")
+                        .HasColumnName("channel_id")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsClosed")
+                        .HasColumnName("is_closed")
+                        .HasColumnType("boolean");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnName("total_amount")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("TotalCount")
+                        .HasColumnName("total_count")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id")
+                        .HasName("pk_payment_batches");
+
+                    b.ToTable("payment_batches");
+                });
+
+            modelBuilder.Entity("Erc.Households.Server.Domain.Payments.PaymentChannel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -936,8 +1279,9 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnName("name")
-                        .HasColumnType("text");
+                        .HasColumnType("citext");
 
                     b.Property<string>("PersonFieldName")
                         .HasColumnName("person_field_name")
@@ -955,9 +1299,9 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         .HasColumnName("text_date_format")
                         .HasColumnType("text");
 
-                    b.Property<string>("TotalRecord")
+                    b.Property<int>("TotalRecord")
                         .HasColumnName("total_record")
-                        .HasColumnType("text");
+                        .HasColumnType("integer");
 
                     b.Property<int>("Type")
                         .HasColumnName("type")
@@ -1075,7 +1419,7 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
                         new
                         {
                             Id = 4,
-                            Name = "Багатодітні, прийомні сім''ї та дитячі будинки сімейного типу"
+                            Name = "Багатодітні, прийомні сім'ї та дитячі будинки сімейного типу"
                         });
                 });
 
@@ -1291,65 +1635,76 @@ namespace Erc.Households.Server.DataAccess.EF.Migrations
 
             modelBuilder.Entity("Erc.Households.Server.Domain.Billing.Invoice", b =>
                 {
+                    b.HasOne("Erc.Households.Server.Domain.Billing.Period", "Period")
+                        .WithMany()
+                        .HasForeignKey("PeriodId")
+                        .HasConstraintName("fk_invoice_period_period_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Erc.Households.Server.Domain.Tariffs.Tariff", "Tariff")
                         .WithMany()
                         .HasForeignKey("TariffId")
                         .HasConstraintName("fk_invoice_tariffs_tariff_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
 
-                    b.OwnsMany("Erc.Households.Server.Domain.Billing.InvoiceDetail", "InvoiceDetails", b1 =>
-                        {
-                            b1.Property<int>("Id")
-                                .ValueGeneratedOnAdd()
-                                .HasColumnName("id")
-                                .HasColumnType("integer")
-                                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+            modelBuilder.Entity("Erc.Households.Server.Domain.Billing.InvoiceDetail", b =>
+                {
+                    b.HasOne("Erc.Households.Server.Domain.Billing.Invoice", null)
+                        .WithMany("InvoiceDetails")
+                        .HasForeignKey("InvoiceId")
+                        .HasConstraintName("fk_invoice_detail_invoice_invoice_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
 
-                            b1.Property<int>("Consumption")
-                                .HasColumnName("consumption")
-                                .HasColumnType("integer");
+            modelBuilder.Entity("Erc.Households.Server.Domain.Billing.InvoicePaymentItem", b =>
+                {
+                    b.HasOne("Erc.Households.Server.Domain.Billing.Invoice", "Invoice")
+                        .WithMany("InvoicePaymentItems")
+                        .HasForeignKey("InvoiceId")
+                        .HasConstraintName("fk_invoice_payment_item_invoice_invoice_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                            b1.Property<DateTime>("From")
-                                .HasColumnName("from")
-                                .HasColumnType("timestamp without time zone");
+                    b.HasOne("Erc.Households.Server.Domain.Payments.Payment", "Payment")
+                        .WithMany("InvoicePaymentItems")
+                        .HasForeignKey("PaymentId")
+                        .HasConstraintName("fk_invoice_payment_item_payment_payment_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
 
-                            b1.Property<int>("InvoiceId")
-                                .HasColumnName("invoice_id")
-                                .HasColumnType("integer");
+            modelBuilder.Entity("Erc.Households.Server.Domain.BranchOffice", b =>
+                {
+                    b.HasOne("Erc.Households.Server.Domain.Billing.Period", "CurrentPeriod")
+                        .WithMany()
+                        .HasForeignKey("CurrentPeriodId")
+                        .HasConstraintName("fk_branch_offices_period_current_period_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
 
-                            b1.Property<decimal>("Kz")
-                                .HasColumnName("kz")
-                                .HasColumnType("numeric");
+            modelBuilder.Entity("Erc.Households.Server.Domain.Payments.Payment", b =>
+                {
+                    b.HasOne("Erc.Households.Server.Domain.AccountingPoints.AccountingPoint", "AccountingPoint")
+                        .WithMany()
+                        .HasForeignKey("AccountingPointId")
+                        .HasConstraintName("fk_payment_accounting_points_accounting_point_id");
 
-                            b1.Property<decimal>("PriceValue")
-                                .HasColumnName("price_value")
-                                .HasColumnType("numeric");
+                    b.HasOne("Erc.Households.Server.Domain.Payments.PaymentBatch", null)
+                        .WithMany("Payments")
+                        .HasForeignKey("PaymentBatchId")
+                        .HasConstraintName("fk_payment_payment_batches_payment_batch_id");
 
-                            b1.Property<decimal>("Sales")
-                                .HasColumnName("sales")
-                                .HasColumnType("numeric");
-
-                            b1.Property<DateTime>("To")
-                                .HasColumnName("to")
-                                .HasColumnType("timestamp without time zone");
-
-                            b1.Property<int>("ZoneNumber")
-                                .HasColumnName("zone_number")
-                                .HasColumnType("integer");
-
-                            b1.HasKey("Id")
-                                .HasName("pk_invoice_detail");
-
-                            b1.HasIndex("InvoiceId")
-                                .HasName("ix_invoice_detail_invoice_id");
-
-                            b1.ToTable("InvoiceDetail");
-
-                            b1.WithOwner()
-                                .HasForeignKey("InvoiceId")
-                                .HasConstraintName("fk_invoice_detail_invoice_invoice_id");
-                        });
+                    b.HasOne("Erc.Households.Server.Domain.Billing.Period", "Period")
+                        .WithMany()
+                        .HasForeignKey("PeriodId")
+                        .HasConstraintName("fk_payment_period_period_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Erc.Households.Server.Domain.Person", b =>
