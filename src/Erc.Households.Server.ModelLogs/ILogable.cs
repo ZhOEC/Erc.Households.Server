@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Erc.Households.Server.ModelLogs
+namespace Erc.Households.ModelLogs
 {
     public interface ILogable
     {

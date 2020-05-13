@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
-using Erc.Households.Server.Api.Authorization;
-using Erc.Households.Server.Core;
+using Erc.Households.WebApi.Authorization;
+using Erc.Households.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Nest;
 
-namespace Erc.Households.Server.Api.Controllers
+namespace Erc.Households.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

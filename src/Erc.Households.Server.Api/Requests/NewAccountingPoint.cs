@@ -1,7 +1,7 @@
 ﻿using System;
-using Erc.Households.Server.Domain.Addresses;
+using Erc.Households.Domain.Addresses;
 
-namespace Erc.Households.Server.Api.Requests
+namespace Erc.Households.WebApi.Requests
 { 
     public class NewAccountingPoint
     {

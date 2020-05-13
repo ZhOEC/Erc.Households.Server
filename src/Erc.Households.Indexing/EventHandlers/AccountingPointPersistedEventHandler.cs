@@ -1,4 +1,4 @@
-﻿using Erc.Households.Server.Events.AccountingPoints;
+﻿using Erc.Households.Events.AccountingPoints;
 using MassTransit;
 using Nest;
 using System.Threading.Tasks;

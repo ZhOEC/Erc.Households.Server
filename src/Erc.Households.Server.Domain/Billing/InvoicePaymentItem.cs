@@ -1,10 +1,10 @@
-﻿using Erc.Households.Server.Domain.Extensions;
-using Erc.Households.Server.Domain.Payments;
+﻿using Erc.Households.Domain.Extensions;
+using Erc.Households.Domain.Payments;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Erc.Households.Server.Domain.Billing
+namespace Erc.Households.Domain.Billing
 {
     public class InvoicePaymentItem
     {

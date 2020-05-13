@@ -1,8 +1,8 @@
-﻿using Erc.Households.Server.Domain.Extensions;
-using Erc.Households.Server.ModelLogs;
+﻿using Erc.Households.Domain.Extensions;
+using Erc.Households.ModelLogs;
 using System;
 
-namespace Erc.Households.Server.Domain.AccountingPoints
+namespace Erc.Households.Domain.AccountingPoints
 {
     public class Contract: LogableObjectBase
     {

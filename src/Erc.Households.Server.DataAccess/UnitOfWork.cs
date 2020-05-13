@@ -1,11 +1,11 @@
-﻿using Erc.Households.Server.Core;
-using Erc.Households.Server.DataAccess.EF;
-using Erc.Households.Server.Domain;
+﻿using Erc.Households.Core;
+using Erc.Households.DataAccess.EF;
+using Erc.Households.Domain;
 using MassTransit;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Erc.Households.Server.DataAccess
+namespace Erc.Households.DataAccess
 {
     public class UnitOfWork : IUnitOfWork
     {

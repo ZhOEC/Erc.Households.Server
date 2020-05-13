@@ -9,12 +9,12 @@ using Microsoft.Extensions.Logging;
 
 namespace Erc.Households.Indexing
 {
-    public class IndexongService :IHostedService
+    public class IndexingService :IHostedService
     {
-        private readonly ILogger<IndexongService> _logger;
+        private readonly ILogger<IndexingService> _logger;
         private readonly IBusControl _busControl;
 
-        public IndexongService(ILogger<IndexongService> logger, IBusControl busControl)
+        public IndexingService(ILogger<IndexingService> logger, IBusControl busControl)
         {
             _logger = logger;
             _busControl = busControl;

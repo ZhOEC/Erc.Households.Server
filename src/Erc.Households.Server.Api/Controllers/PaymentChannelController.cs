@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Erc.Households.Server.Api.Authorization;
-using Erc.Households.Server.DataAccess.EF;
-using Erc.Households.Server.Domain.Payments;
+using Erc.Households.WebApi.Authorization;
+using Erc.Households.DataAccess.EF;
+using Erc.Households.Domain.Payments;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Erc.Households.Server.Api.Controllers
+namespace Erc.Households.WebApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

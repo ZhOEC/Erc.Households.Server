@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Server.Api", "Erc.Households.Server.Api\Erc.Households.Server.Api.csproj", "{380164EE-A6F3-4C96-957C-202076B73CF8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.WebApi", "Erc.Households.Server.Api\Erc.Households.WebApi.csproj", "{380164EE-A6F3-4C96-957C-202076B73CF8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Server.Domain", "Erc.Households.Server.Domain\Erc.Households.Server.Domain.csproj", "{C9338418-B4B6-4287-9CA4-A587D7B57DC6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Domain", "Erc.Households.Server.Domain\Erc.Households.Domain.csproj", "{C9338418-B4B6-4287-9CA4-A587D7B57DC6}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Server.DataAccess.EF", "Erc.Households.Server.DataAccess.EF\Erc.Households.Server.DataAccess.EF.csproj", "{20809DE9-C064-4585-B9CC-B213D3C9C997}"
 EndProject
@@ -20,6 +20,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Server.DataAccess", "Erc.Households.Server.DataAccess\Erc.Households.Server.DataAccess.csproj", "{8B84B448-6B51-47D5-87A8-262A168E08B5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Server.Events", "Erc.Households.Server.Events\Erc.Households.Server.Events.csproj", "{2BACAD3C-E570-4C9C-B8E7-77FBAD124F41}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.BranchOffice.Services.Core", "Erc.Households.Server.BL.Periods.Core\Erc.Households.BranchOffice.Services.Core.csproj", "{6265A048-243D-4AEA-8B84-BF5C159D632C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.BranchOffice.Services.EF", "Erc.Households.BranchOfficeManagment.EF\Erc.Households.BranchOffice.Services.EF.csproj", "{925319C5-2F66-408C-91E1-6F1B2DD74FC0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -59,6 +63,14 @@ Global
 		{2BACAD3C-E570-4C9C-B8E7-77FBAD124F41}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2BACAD3C-E570-4C9C-B8E7-77FBAD124F41}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2BACAD3C-E570-4C9C-B8E7-77FBAD124F41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6265A048-243D-4AEA-8B84-BF5C159D632C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6265A048-243D-4AEA-8B84-BF5C159D632C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6265A048-243D-4AEA-8B84-BF5C159D632C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6265A048-243D-4AEA-8B84-BF5C159D632C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{925319C5-2F66-408C-91E1-6F1B2DD74FC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{925319C5-2F66-408C-91E1-6F1B2DD74FC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{925319C5-2F66-408C-91E1-6F1B2DD74FC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{925319C5-2F66-408C-91E1-6F1B2DD74FC0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

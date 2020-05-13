@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Erc.Households.Server.Domain.Extensions
+namespace Erc.Households.Domain.Extensions
 {
     public static class LazyLoadExtension
     {

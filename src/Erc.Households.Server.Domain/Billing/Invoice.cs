@@ -1,12 +1,12 @@
-﻿using Erc.Households.Server.Domain.AccountingPoints;
-using Erc.Households.Server.Domain.Payments;
-using Erc.Households.Server.Domain.Tariffs;
+﻿using Erc.Households.Domain.AccountingPoints;
+using Erc.Households.Domain.Payments;
+using Erc.Households.Domain.Tariffs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Erc.Households.Server.Domain.Billing
+namespace Erc.Households.Domain.Billing
 {
     public class Invoice
     {

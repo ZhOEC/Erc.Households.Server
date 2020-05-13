@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace Erc.Households.Server.Api
+namespace Erc.Households.WebApi
 {
     public class Program
     {

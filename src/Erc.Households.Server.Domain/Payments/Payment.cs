@@ -1,10 +1,10 @@
-﻿using Erc.Households.Server.Domain.AccountingPoints;
-using Erc.Households.Server.Domain.Billing;
+﻿using Erc.Households.Domain.AccountingPoints;
+using Erc.Households.Domain.Billing;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Erc.Households.Server.Domain.Payments
+namespace Erc.Households.Domain.Payments
 {
     public class Payment
     {

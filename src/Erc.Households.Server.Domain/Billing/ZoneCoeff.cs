@@ -1,9 +1,9 @@
-﻿using Erc.Households.Server.Domain.AccountingPoints;
+﻿using Erc.Households.Domain.AccountingPoints;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Erc.Households.Server.Domain.Billing
+namespace Erc.Households.Domain.Billing
 {
     public class ZoneCoeff
     {

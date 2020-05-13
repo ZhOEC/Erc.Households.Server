@@ -1,9 +1,9 @@
-﻿using Erc.Households.Server.Domain.Addresses;
+﻿using Erc.Households.Domain.Addresses;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Erc.Households.Server.Domain
+namespace Erc.Households.Domain
 {
     public class Person
     {

@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Erc.Households.Server.Core
+namespace Erc.Households.Core
 {
     public interface IUnitOfWork
     {

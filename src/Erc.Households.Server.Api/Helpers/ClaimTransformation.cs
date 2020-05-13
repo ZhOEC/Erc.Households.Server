@@ -5,7 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace Erc.Households.Server.Api.Helpers
+namespace Erc.Households.WebApi.Helpers
 {
     public class ClaimTransformation : IClaimsTransformation
     {

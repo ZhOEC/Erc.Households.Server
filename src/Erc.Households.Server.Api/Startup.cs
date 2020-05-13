@@ -1,7 +1,7 @@
 using AutoMapper;
-using Erc.Households.Server.Core;
-using Erc.Households.Server.DataAccess;
-using Erc.Households.Server.DataAccess.EF;
+using Erc.Households.Core;
+using Erc.Households.DataAccess;
+using Erc.Households.DataAccess.EF;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -14,7 +14,7 @@ using Microsoft.Extensions.Hosting;
 using Nest;
 using System.Globalization;
 
-namespace Erc.Households.Server.Api
+namespace Erc.Households.WebApi
 {
     public class Startup
     {

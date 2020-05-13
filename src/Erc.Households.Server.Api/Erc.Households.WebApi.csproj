@@ -24,7 +24,11 @@
     <ProjectReference Include="..\Erc.Households.Server.Core\Erc.Households.Server.Core.csproj" />
     <ProjectReference Include="..\Erc.Households.Server.DataAccess.EF\Erc.Households.Server.DataAccess.EF.csproj" />
     <ProjectReference Include="..\Erc.Households.Server.DataAccess\Erc.Households.Server.DataAccess.csproj" />
-    <ProjectReference Include="..\Erc.Households.Server.Domain\Erc.Households.Server.Domain.csproj" />
+    <ProjectReference Include="..\Erc.Households.Server.Domain\Erc.Households.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\" />
   </ItemGroup>
 
 

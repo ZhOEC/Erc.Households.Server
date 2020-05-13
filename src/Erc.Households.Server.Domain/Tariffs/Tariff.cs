@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Erc.Households.Server.Domain.Tariffs
+namespace Erc.Households.Domain.Tariffs
 {
     public class Tariff
     {

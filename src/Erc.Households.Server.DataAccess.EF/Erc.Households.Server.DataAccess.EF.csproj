@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Erc.Households.Server.Domain\Erc.Households.Server.Domain.csproj" />
+    <ProjectReference Include="..\Erc.Households.Server.Domain\Erc.Households.Domain.csproj" />
     <ProjectReference Include="..\Erc.Households.Server.ModelLogs\Erc.Households.Server.ModelLogs.csproj" />
   </ItemGroup>
 
