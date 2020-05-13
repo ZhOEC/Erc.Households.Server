@@ -11,12 +11,15 @@ namespace Erc.Households.Server.Domain.Payments
         //AccountingPoint _accountingPoint;
         List<InvoicePaymentItem> _invoicePaymentItems = new List<InvoicePaymentItem>();
 
-        public Payment(DateTime payDate, decimal amount)
+        public Payment(DateTime payDate, decimal amount, int periodId, string payerInfo, int? accountingPointId)
         {
             PayDate = payDate;
             Amount = amount;
+            PeriodId = periodId;
+            AccountingPointId = accountingPointId;
             Status = PaymentStatus.New;
             EnterDate = DateTime.Now;
+            PayerInfo = payerInfo;
         }
 
         protected Payment() { }
@@ -33,6 +36,11 @@ namespace Erc.Households.Server.Domain.Payments
         public string AccountingPointName { get; private set; }
         public Period Period { get; private set; }
         public IEnumerable<InvoicePaymentItem> InvoicePaymentItems => _invoicePaymentItems.AsReadOnly();
+
+        /// <summary>
+        /// Will be remoted
+        /// </summary>
+        //public string AccPointName { get; set; }
 
         public void AddInvoicePaymentItem(InvoicePaymentItem invoicePaymentItem) => _invoicePaymentItems.Add(invoicePaymentItem);
 
