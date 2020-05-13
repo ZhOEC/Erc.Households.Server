@@ -19,12 +19,12 @@ namespace Erc.Households.Server.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PaymentBatchController : ControllerBase
+    public class PaymentBatchesController : ControllerBase
     {
         private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly ErcContext _ercContext;
 
-        public PaymentBatchController(IWebHostEnvironment environment, ErcContext ercContext)
+        public PaymentBatchesController(IWebHostEnvironment environment, ErcContext ercContext)
         {
             _hostingEnvironment = environment;
             _ercContext = ercContext ?? throw new ArgumentNullException(nameof(ercContext));
