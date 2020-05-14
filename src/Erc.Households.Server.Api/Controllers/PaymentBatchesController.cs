@@ -6,25 +6,25 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using dBASE.NET;
-using Erc.Households.Server.Api.Requests;
-using Erc.Households.Server.DataAccess.EF;
-using Erc.Households.Server.Domain.Helpers;
-using Erc.Households.Server.Domain.Payments;
+using Erc.Households.Domain.Helpers;
+using Erc.Households.Domain.Payments;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Erc.Households.EF.PostgreSQL;
+using Erc.Households.Api.Requests;
 
 namespace Erc.Households.Server.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PaymentBatchController : ControllerBase
+    public class PaymentBatchesController : ControllerBase
     {
         private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly ErcContext _ercContext;
 
-        public PaymentBatchController(IWebHostEnvironment environment, ErcContext ercContext)
+        public PaymentBatchesController(IWebHostEnvironment environment, ErcContext ercContext)
         {
             _hostingEnvironment = environment;
             _ercContext = ercContext ?? throw new ArgumentNullException(nameof(ercContext));

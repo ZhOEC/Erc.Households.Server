@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Erc.Households.Server.ModelLogs
+namespace Erc.Households.ModelLogs
 {
     public class ObjectLog
     {

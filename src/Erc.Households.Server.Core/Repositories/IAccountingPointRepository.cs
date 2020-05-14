@@ -1,8 +1,8 @@
-﻿using Erc.Households.Server.Domain.AccountingPoints;
+﻿using Erc.Households.Domain.AccountingPoints;
 using System;
 using System.Threading.Tasks;
 
-namespace Erc.Households.Server.Core
+namespace Erc.Households.DataAccess.Core
 {
     public interface IAccountingPointRepository
     {

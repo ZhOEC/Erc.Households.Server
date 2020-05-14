@@ -1,10 +1,8 @@
-﻿using Erc.Households.Server.Domain.Tariffs;
-using Erc.Households.Server.ModelLogs;
+﻿using Erc.Households.Domain.Tariffs;
+using Erc.Households.ModelLogs;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Erc.Households.Server.Domain.AccountingPoints
+namespace Erc.Households.Domain.AccountingPoints
 {
     public class AccountingPointTariff: LogableObjectBase
     {

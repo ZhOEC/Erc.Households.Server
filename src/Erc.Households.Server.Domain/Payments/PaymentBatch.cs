@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Erc.Households.Server.Domain.Payments
+namespace Erc.Households.Domain.Payments
 {
     public class PaymentBatch
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Erc.Households.Server.Events
+namespace Erc.Households.Events
 {
     public interface IEvent { }
 }

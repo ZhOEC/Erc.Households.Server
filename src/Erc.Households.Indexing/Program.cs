@@ -41,7 +41,7 @@ namespace Erc.Households.Indexing
                         cfg.ConfigureEndpoints(provider);
                     }));
                         
-                    services.AddHostedService<IndexongService>();
+                    services.AddHostedService<IndexingService>();
                 });
             });
     }

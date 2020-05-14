@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using Erc.Households.Server.ModelLogs;
+using Erc.Households.ModelLogs;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
-namespace Erc.Households.Server.DataAccess.EF.Migrations
+namespace Erc.Households.EF.PostgreSQL.Migrations
 {
     public partial class Initial_Create : Migration
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Erc.Households.Server.Api.Reponses
+namespace Erc.Households.Api.Reponses
 {
     public class Address
     {

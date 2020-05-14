@@ -3,10 +3,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Erc.Households.Server.DataAccess.EF;
-using Erc.Households.Server.Domain.Tariffs;
+using Erc.Households.Domain.Tariffs;
+using Erc.Households.EF.PostgreSQL;
 
-namespace Erc.Households.Server.Api.Controllers
+namespace Erc.Households.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

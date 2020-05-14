@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Http;
 
-namespace Erc.Households.Server.Api.Requests
+namespace Erc.Households.Api.Requests
 {
     public class NewPaymentBatch
     {

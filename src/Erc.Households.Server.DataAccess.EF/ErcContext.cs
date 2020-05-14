@@ -1,14 +1,14 @@
-﻿using Erc.Households.Server.Domain;
-using Erc.Households.Server.Domain.AccountingPoints;
-using Erc.Households.Server.Domain.Addresses;
-using Erc.Households.Server.Domain.Billing;
-using Erc.Households.Server.Domain.Payments;
-using Erc.Households.Server.Domain.Tariffs;
+﻿using Erc.Households.Domain;
+using Erc.Households.Domain.AccountingPoints;
+using Erc.Households.Domain.Addresses;
+using Erc.Households.Domain.Billing;
+using Erc.Households.Domain.Payments;
+using Erc.Households.Domain.Tariffs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 
-namespace Erc.Households.Server.DataAccess.EF
+namespace Erc.Households.EF.PostgreSQL
 {
     public class ErcContext : DbContext
     {

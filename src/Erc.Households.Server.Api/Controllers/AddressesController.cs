@@ -1,11 +1,11 @@
-﻿using Erc.Households.Server.DataAccess.EF;
+﻿using Erc.Households.EF.PostgreSQL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Erc.Households.Server.Api.Controllers
+namespace Erc.Households.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

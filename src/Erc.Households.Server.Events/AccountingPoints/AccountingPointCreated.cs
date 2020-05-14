@@ -1,4 +1,4 @@
-﻿namespace Erc.Households.Server.Events.AccountingPoints
+﻿namespace Erc.Households.Events.AccountingPoints
 {
     /// <summary>
     /// Event rises after accounting point persisted in database.
