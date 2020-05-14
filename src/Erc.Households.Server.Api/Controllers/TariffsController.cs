@@ -3,8 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Erc.Households.DataAccess.EF;
 using Erc.Households.Domain.Tariffs;
+using Erc.Households.EF.PostgreSQL;
 
 namespace Erc.Households.WebApi.Controllers
 {

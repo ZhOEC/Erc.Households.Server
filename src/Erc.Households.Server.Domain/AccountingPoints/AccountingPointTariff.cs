@@ -1,5 +1,5 @@
 ﻿using Erc.Households.Domain.Tariffs;
-using Erc.Households.ModelLogs;
+using Erc.Households.Server.ModelLogs;
 using System;
 using System.Collections.Generic;
 using System.Text;

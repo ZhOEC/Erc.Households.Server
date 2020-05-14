@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
+    <PackageReference Include="dBASE.NET" Version="1.2.1" />
     <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="6.2.4" />
     <PackageReference Include="MassTransit.RabbitMQ" Version="6.2.4" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.3" />
@@ -15,20 +16,17 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.1.3" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.10" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.8" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.2" />
     <PackageReference Include="NEST" Version="7.6.1" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Erc.Households.Server.Core\Erc.Households.Server.Core.csproj" />
-    <ProjectReference Include="..\Erc.Households.Server.DataAccess.EF\Erc.Households.Server.DataAccess.EF.csproj" />
-    <ProjectReference Include="..\Erc.Households.Server.DataAccess\Erc.Households.Server.DataAccess.csproj" />
+    <ProjectReference Include="..\Erc.Households.Server.Core\Erc.Households.DataAccess.Core.csproj" />
+    <ProjectReference Include="..\Erc.Households.Server.DataAccess.EF\Erc.Households.EF.PostgreSQL.csproj" />
+    <ProjectReference Include="..\Erc.Households.Server.DataAccess\Erc.Households.DataAccess.EF.csproj" />
     <ProjectReference Include="..\Erc.Households.Server.Domain\Erc.Households.Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Services\" />
   </ItemGroup>
 
 

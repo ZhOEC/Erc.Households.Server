@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Erc.Households.Core
+namespace Erc.Households.DataAccess.Core
 {
     public interface IUnitOfWork
     {

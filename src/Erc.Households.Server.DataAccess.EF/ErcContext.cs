@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 
-namespace Erc.Households.DataAccess.EF
+namespace Erc.Households.EF.PostgreSQL
 {
     public class ErcContext : DbContext
     {

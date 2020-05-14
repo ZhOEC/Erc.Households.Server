@@ -1,7 +1,7 @@
 using AutoMapper;
-using Erc.Households.Core;
-using Erc.Households.DataAccess;
+using Erc.Households.DataAccess.Core;
 using Erc.Households.DataAccess.EF;
+using Erc.Households.EF.PostgreSQL;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Nest;
 using System.Globalization;
+using System.Text;
 
 namespace Erc.Households.WebApi
 {
@@ -28,6 +29,8 @@ namespace Erc.Households.WebApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
             var cultureInfo = new CultureInfo(Configuration["Culture"]);
             CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
             CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;

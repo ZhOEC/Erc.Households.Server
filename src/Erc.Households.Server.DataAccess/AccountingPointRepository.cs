@@ -1,5 +1,5 @@
-﻿using Erc.Households.Core;
-using Erc.Households.DataAccess.EF;
+﻿using Erc.Households.DataAccess.Core;
+using Erc.Households.EF.PostgreSQL;
 using Erc.Households.Domain.AccountingPoints;
 using Erc.Households.Events.AccountingPoints;
 using Microsoft.EntityFrameworkCore;
@@ -7,7 +7,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Erc.Households.DataAccess
+namespace Erc.Households.DataAccess.EF
 {
     public class AccountingPointRepository : IAccountingPointRepository
     {

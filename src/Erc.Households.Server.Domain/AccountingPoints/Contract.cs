@@ -1,5 +1,5 @@
 ﻿using Erc.Households.Domain.Extensions;
-using Erc.Households.ModelLogs;
+using Erc.Households.Server.ModelLogs;
 using System;
 
 namespace Erc.Households.Domain.AccountingPoints

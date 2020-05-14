@@ -1,11 +1,11 @@
-﻿using Erc.Households.Core;
-using Erc.Households.DataAccess.EF;
+﻿using Erc.Households.DataAccess.Core;
 using Erc.Households.Domain;
+using Erc.Households.EF.PostgreSQL;
 using MassTransit;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Erc.Households.DataAccess
+namespace Erc.Households.DataAccess.EF
 {
     public class UnitOfWork : IUnitOfWork
     {
