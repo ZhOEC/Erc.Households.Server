@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Erc.Households.Server.Api.Authorization;
-using Erc.Households.Server.Core;
+using Erc.Households.DataAccess.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Nest;

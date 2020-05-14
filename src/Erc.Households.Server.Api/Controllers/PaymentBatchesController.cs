@@ -7,13 +7,13 @@ using System.Text;
 using System.Threading.Tasks;
 using dBASE.NET;
 using Erc.Households.Server.Api.Requests;
-using Erc.Households.Server.DataAccess.EF;
-using Erc.Households.Server.Domain.Helpers;
-using Erc.Households.Server.Domain.Payments;
+using Erc.Households.Domain.Helpers;
+using Erc.Households.Domain.Payments;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Erc.Households.EF.PostgreSQL;
 
 namespace Erc.Households.Server.Api.Controllers
 {

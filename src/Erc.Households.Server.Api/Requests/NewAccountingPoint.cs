@@ -1,5 +1,5 @@
 ﻿using System;
-using Erc.Households.Server.Domain.Addresses;
+using Erc.Households.Domain.Addresses;
 
 namespace Erc.Households.Server.Api.Requests
 { 

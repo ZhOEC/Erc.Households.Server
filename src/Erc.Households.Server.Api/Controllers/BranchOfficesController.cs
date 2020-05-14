@@ -2,10 +2,10 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Erc.Households.Server.Api.Authorization;
-using Erc.Households.Server.DataAccess.EF;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Erc.Households.EF.PostgreSQL;
 
 namespace Erc.Households.Backend.Api.Controllers
 {

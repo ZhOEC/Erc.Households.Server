@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace Erc.Households.Server.Domain
+namespace Erc.Households.Domain
 {
     public class BranchOffice
     {

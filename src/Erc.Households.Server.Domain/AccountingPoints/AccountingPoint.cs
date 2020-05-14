@@ -1,14 +1,14 @@
-﻿using Erc.Households.Server.Domain.Addresses;
-using Erc.Households.Server.Domain.Billing;
-using Erc.Households.Server.Domain.Extensions;
-using Erc.Households.Server.Domain.Payments;
-using Erc.Households.Server.Domain.Tariffs;
-using Erc.Households.Server.Events;
+﻿using Erc.Households.Domain.Addresses;
+using Erc.Households.Domain.Billing;
+using Erc.Households.Domain.Extensions;
+using Erc.Households.Domain.Payments;
+using Erc.Households.Domain.Tariffs;
+using Erc.Households.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Erc.Households.Server.Domain.AccountingPoints
+namespace Erc.Households.Domain.AccountingPoints
 {
     public class AccountingPoint : IEntity
     {

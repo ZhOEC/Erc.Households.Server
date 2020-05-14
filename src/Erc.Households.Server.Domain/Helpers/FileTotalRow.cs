@@ -1,4 +1,4 @@
-﻿namespace Erc.Households.Server.Domain.Helpers
+﻿namespace Erc.Households.Domain.Helpers
 {
     public enum FileTotalRow
     {
