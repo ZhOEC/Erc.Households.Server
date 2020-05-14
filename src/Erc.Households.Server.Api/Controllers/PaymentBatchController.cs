@@ -84,7 +84,7 @@ namespace Erc.Households.Server.Api.Controllers
                         Convert.ToDecimal(record[payChannel.SumFieldName].ToString()),
                         1, //PeriodId for test set 1
                         string.Join(" ", payChannel.PersonFieldName.Split("+").Select(x => record[x]).ToList()),
-                        _ercContext.AccountingPoints.Where(x => x.Name.Equals(record[payChannel.RecordpointFieldName.Trim()].ToString())).Select(x => x.Id).FirstOrDefault()
+                        _ercContext.AccountingPoints.FirstOrDefault(x => x.Name == record[payChannel.RecordpointFieldName.Trim()].ToString())?.Id
                     )
                 );
             }
