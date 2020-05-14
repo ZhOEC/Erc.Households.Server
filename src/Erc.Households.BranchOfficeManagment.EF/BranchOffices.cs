@@ -1,22 +1,21 @@
 ﻿using Erc.Households.BranchOfficeManagment.Core;
-using Erc.Households.DataAccess.EF;
 using Erc.Households.Domain;
 using Erc.Households.Domain.Billing;
+using Erc.Households.EF.PostgreSQL;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Erc.Households.BranchOfficeManagment.EF
 {
-    public class BranchOfficeManagment : IBranchOfficeService
+    public class BranchOffices : IBranchOfficeService
     {
         readonly ErcContext _ercContext;
         readonly IEnumerable<BranchOffice> _branchOffices;
         readonly object _sync = new object();
 
-        public BranchOfficeManagment(ErcContext ercContext)
+        public BranchOffices(ErcContext ercContext)
         {
             _ercContext = ercContext;
             _branchOffices = _ercContext.BranchOffices.Include(b => b.CurrentPeriod).ToArray();

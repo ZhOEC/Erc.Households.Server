@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Erc.Households.WebApi.Controllers
+namespace Erc.Households.Api.Controllers
 {
     public abstract class ErcControllerBase : ControllerBase
     {

@@ -4,7 +4,7 @@ using Erc.Households.EF.PostgreSQL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Erc.Households.WebApi.Controllers
+namespace Erc.Households.Api.Controllers
 {
     [Route("api/distribution-system-operators")]
     [ApiController]

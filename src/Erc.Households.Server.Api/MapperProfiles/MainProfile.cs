@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Erc.Households.WebApi.MapperProfiles
+namespace Erc.Households.Api.MapperProfiles
 {
 	public class MainProfile : Profile
 	{

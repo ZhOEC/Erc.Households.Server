@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Erc.Households.Server.Api.Authorization;
+using Erc.Households.Api.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Erc.Households.EF.PostgreSQL;
 
-namespace Erc.Households.WebApi.Controllers
+namespace Erc.Households.Api.Controllers
 {
     [Route("api/branch-offices")]
     [ApiController]

@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Erc.Households.Server.BL.Periods.Core\Erc.Households.BranchOffice.Services.Core.csproj" />
-    <ProjectReference Include="..\Erc.Households.Server.DataAccess.EF\Erc.Households.Server.DataAccess.EF.csproj" />
+    <ProjectReference Include="..\Erc.Households.Server.DataAccess.EF\Erc.Households.EF.PostgreSQL.csproj" />
   </ItemGroup>
 
 </Project>

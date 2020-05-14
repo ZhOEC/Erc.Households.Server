@@ -21,6 +21,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.DataAccess.E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Events", "Erc.Households.Server.Events\Erc.Households.Events.csproj", "{2BACAD3C-E570-4C9C-B8E7-77FBAD124F41}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.BranchOfficeManagment.EF", "Erc.Households.BranchOfficeManagment.EF\Erc.Households.BranchOfficeManagment.EF.csproj", "{A5765419-531B-42E1-AF2A-0225F3167123}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Erc.Households.BranchOfficeManagment.Core", "Erc.Households.BranchOffices.Managment.Core\Erc.Households.BranchOfficeManagment.Core.csproj", "{5E04E8E3-ABDE-4468-B428-B4BD82D415EC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +63,14 @@ Global
 		{2BACAD3C-E570-4C9C-B8E7-77FBAD124F41}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2BACAD3C-E570-4C9C-B8E7-77FBAD124F41}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2BACAD3C-E570-4C9C-B8E7-77FBAD124F41}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5765419-531B-42E1-AF2A-0225F3167123}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5765419-531B-42E1-AF2A-0225F3167123}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5765419-531B-42E1-AF2A-0225F3167123}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5765419-531B-42E1-AF2A-0225F3167123}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E04E8E3-ABDE-4468-B428-B4BD82D415EC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E04E8E3-ABDE-4468-B428-B4BD82D415EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E04E8E3-ABDE-4468-B428-B4BD82D415EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E04E8E3-ABDE-4468-B428-B4BD82D415EC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

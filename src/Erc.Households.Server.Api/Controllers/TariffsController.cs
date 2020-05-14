@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Erc.Households.Domain.Tariffs;
 using Erc.Households.EF.PostgreSQL;
 
-namespace Erc.Households.WebApi.Controllers
+namespace Erc.Households.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

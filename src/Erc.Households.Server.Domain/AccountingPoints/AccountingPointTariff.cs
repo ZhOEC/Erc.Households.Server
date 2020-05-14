@@ -1,8 +1,6 @@
 ﻿using Erc.Households.Domain.Tariffs;
-using Erc.Households.Server.ModelLogs;
+using Erc.Households.ModelLogs;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Erc.Households.Domain.AccountingPoints
 {

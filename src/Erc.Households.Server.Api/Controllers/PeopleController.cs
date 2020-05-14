@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Erc.Households.WebApi.Controllers
+namespace Erc.Households.Api.Controllers
 {
     [Route("api/people")]
     [ApiController]
