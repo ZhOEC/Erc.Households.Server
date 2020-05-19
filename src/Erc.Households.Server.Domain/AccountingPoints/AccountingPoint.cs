@@ -14,8 +14,8 @@ namespace Erc.Households.Domain.AccountingPoints
     {
         readonly List<Contract> _contractsHistory = new List<Contract>();
         private readonly List<AccountingPointTariff> _tariffsHistory = new List<AccountingPointTariff>();
-        private readonly List<Payment> _payments = new List<Payment>();
-        private readonly List<Invoice> _invoices = new List<Invoice>();
+        private List<Payment> _payments = new List<Payment>();
+        private List<Invoice> _invoices = new List<Invoice>();
 
         BranchOffice _branchOffice;
         Person _owner;
@@ -62,7 +62,21 @@ namespace Erc.Households.Domain.AccountingPoints
         }
         public Contract CurrentContract => _contractsHistory.OrderByDescending(c => c.StartDate).ThenByDescending(c => c.Id).FirstOrDefault();
         public Tariff CurrentTariff => _tariffsHistory.FirstOrDefault(t => t.StartDate <= DateTime.Today).Tariff;
-        
+
+        public IReadOnlyCollection<Invoice> Invoices
+        {
+
+            get => LazyLoader.Load(this, ref _invoices);
+            private set { _invoices = value.ToList(); }
+        }
+
+        public IReadOnlyCollection<Payment> Payments
+        {
+
+            get => LazyLoader.Load(this, ref _payments);
+            private set { Payments = value.ToList(); }
+        }
+
         public Address Address
         {
 
@@ -114,9 +128,20 @@ namespace Erc.Households.Domain.AccountingPoints
         {
             if (payment.Amount > 0)
             {
-                foreach (var invoice in _invoices.Where(i => !i.IsPaid).OrderBy(i => i.PeriodId).ToList())
+                foreach (var invoice in _invoices.Where(i => !i.IsPaid).OrderBy(i => i.PeriodId).ThenBy(i => i.Id).ToList())
                 {
-                    invoice.Pay(payment);
+                    var ipi = invoice.Pay(payment);
+                    payment.AddInvoicePaymentItem(ipi);
+                    if (payment.IsFullyUsed) break;
+                }
+            }
+            else
+            {
+                foreach (var invoice in _invoices.Where(i => i.TotalPaid > 0).OrderByDescending(i => i.PeriodId).ToList())
+                {
+                    var ipi = invoice.TakePaymentBack(payment);
+                    payment.AddInvoicePaymentItem(ipi);
+                    if (payment.IsFullyUsed) break;
                 }
             }
             Debt -= payment.Amount;

@@ -1,7 +1,7 @@
 ﻿namespace Erc.Households.Events.AccountingPoints
 {
     /// <summary>
-    /// Event rises after accounting point persisted in database.
+    /// Event rises after accounting point has persisted in database.
     /// </summary>
     public class AccountingPointCreated: IEntityEvent
     {

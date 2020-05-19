@@ -19,7 +19,8 @@ namespace Erc.Households.DataAccess.EF
         {
             _ercContext.Entry(accountingPoint.Owner).State = accountingPoint.Owner.Id == 0 ? EntityState.Added : EntityState.Modified;
             
-            accountingPoint.Address.Id = (await _ercContext.Addresses
+            accountingPoint.Address.Id = 
+                (await _ercContext.Addresses
                 .Where(a => a.StreetId == accountingPoint.Address.StreetId && a.Building == accountingPoint.Address.Building && ((a.Apt ?? string.Empty) == (accountingPoint.Address.Apt ?? string.Empty)))
                 .Select(a => (int?)a.Id)
                 .FirstOrDefaultAsync()) ?? 0;
