@@ -1,7 +1,9 @@
 ﻿using Erc.Households.Domain.AccountingPoints;
 using Erc.Households.Domain.Billing;
+using Erc.Households.Domain.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Erc.Households.Domain.Payments
@@ -35,19 +37,21 @@ namespace Erc.Households.Domain.Payments
         public string PayerInfo { get; private set; }
         public string AccountingPointName { get; private set; }
         public Period Period { get; private set; }
+        public decimal Used => _invoicePaymentItems.Sum(p => p.Amount);
+        public decimal Balance => Amount - Used;
+        public bool IsFullyUsed => Used == Amount; 
         public IEnumerable<InvoicePaymentItem> InvoicePaymentItems => _invoicePaymentItems.AsReadOnly();
-
-        /// <summary>
-        /// Will be remoted
-        /// </summary>
-        //public string AccPointName { get; set; }
-
+    
         public void AddInvoicePaymentItem(InvoicePaymentItem invoicePaymentItem) => _invoicePaymentItems.Add(invoicePaymentItem);
 
         public void Process()
         {
-            AccountingPoint.ProcessPayment(this);
-            Status = PaymentStatus.Processed;
+            if (AccountingPointId.HasValue)
+            {
+                AccountingPoint.ProcessPayment(this);
+                Status = PaymentStatus.Processed;
+            }
+            else throw new InvalidPaymentOperationException($"Неможливо обробити платіж {Id}. Абонента не знайдено");
         }
     }
 }

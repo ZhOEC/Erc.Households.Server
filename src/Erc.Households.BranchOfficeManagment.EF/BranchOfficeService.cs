@@ -9,13 +9,13 @@ using System.Linq;
 
 namespace Erc.Households.BranchOfficeManagment.EF
 {
-    public class BranchOffices : IBranchOfficeService
+    public class BranchOfficeService : IBranchOfficeService
     {
         readonly ErcContext _ercContext;
         readonly IEnumerable<BranchOffice> _branchOffices;
         readonly object _sync = new object();
 
-        public BranchOffices(ErcContext ercContext)
+        public BranchOfficeService(ErcContext ercContext)
         {
             _ercContext = ercContext;
             _branchOffices = _ercContext.BranchOffices.Include(b => b.CurrentPeriod).ToArray();
@@ -23,12 +23,26 @@ namespace Erc.Households.BranchOfficeManagment.EF
 
         public IEnumerable<BranchOffice> GetList(params int[] branchOfficeIds)
         {
-            return _branchOffices.Where(b => branchOfficeIds.Contains(b.Id));
+            lock (_sync)
+            {
+                return _branchOffices.Where(b => branchOfficeIds.Contains(b.Id));
+            }
         }
 
-        public IEnumerable<BranchOffice> GetList(params string[] branchOfficeIds)
+        public IEnumerable<BranchOffice> GetList(IEnumerable<string> branchOfficeIds)
         {
-            return _branchOffices.Where(b => branchOfficeIds.Contains(b.StringId));
+            lock (_sync)
+            {
+                return _branchOffices.Where(b => branchOfficeIds.Contains(b.StringId));
+            }
+        }
+
+        public BranchOffice GetOne(int id)
+        {
+            lock (_sync)
+            {
+                return _branchOffices.First(b => b.Id == id);
+            }
         }
 
         public void StartNewPeriod(int branchOfficeId)

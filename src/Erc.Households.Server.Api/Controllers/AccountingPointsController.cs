@@ -1,10 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Erc.Households.Api.Authorization;
+using Erc.Households.Api.Queries.AccountingPoints;
 using Erc.Households.DataAccess.Core;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Nest;
@@ -18,13 +19,13 @@ namespace Erc.Households.Api.Controllers
     {
         private readonly IElasticClient _elasticClient;
         readonly IUnitOfWork _unitOfWork;
-        readonly IMapper _mapper;
+        IMediator _mediator;
 
-        public AccountingPointsController(IElasticClient elasticClient, IUnitOfWork unitOfWork, IMapper mapper)
+        public AccountingPointsController(IElasticClient elasticClient, IUnitOfWork unitOfWork, IMediator mediator)
         {
             _elasticClient = elasticClient ?? throw new ArgumentNullException(nameof(elasticClient));
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
+            _mediator = mediator;
         }
 
         [HttpGet("_search")]
@@ -71,11 +72,12 @@ namespace Erc.Households.Api.Controllers
             return CreatedAtRoute("GetAccountingPoint", new { accountingPoint.Id }, new { accountingPoint.Id });
         }
 
-        [HttpGet("{id}", Name= "GetAccountingPoint")]
+        [HttpGet("{id}", Name = "GetAccountingPoint")]
         public async Task<IActionResult> Get(int id)
         {
-            var ap = await _unitOfWork.AccountingPointRepository.GetAsync(id);
-            return Ok(_mapper.Map<Reponses.AccountingPoint>(ap));
+            var ap = await _mediator.Send(new GetAccountingPointById(id));
+
+            return Ok(ap);
         }
 
         class SearchResult

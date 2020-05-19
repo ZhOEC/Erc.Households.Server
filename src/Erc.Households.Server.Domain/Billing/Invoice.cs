@@ -29,9 +29,9 @@ namespace Erc.Households.Domain.Billing
         public decimal T1Sales { get; set; }
         public decimal T2Sales { get; set; }
         public decimal T3Sales { get; set; }
-        public decimal TotalAmountSales { get; set; }
-        public decimal AmountPaid => InvoicePaymentItems.Sum(i => i.Amount);
-        public bool IsPaid => TotalAmountSales == AmountPaid;
+        public decimal TotalSales { get; set; }
+        public decimal TotalPaid => InvoicePaymentItems.Sum(i => i.Amount);
+        public bool IsPaid => TotalSales == TotalPaid;
         public int TariffId { get; set; }
         public string Note { get; set; }
         public Tariff Tariff { get; set; }
@@ -40,16 +40,23 @@ namespace Erc.Households.Domain.Billing
         public Period Period { get; private set; }
         public ZoneRecord ZoneRecord { get; set; }
         public Guid DsoConsumptionId { get; set; }
-        public void Pay(Payment payment)
+        public InvoicePaymentItem Pay(Payment payment)
         {
-            if (IsPaid)
-                return;
-            if (payment.Amount > 0)
-            {
-                decimal paymentAmount = payment.Amount;
-                if ((TotalAmountSales - AmountPaid) < payment.Amount) paymentAmount = TotalAmountSales - AmountPaid;
-                _invoicePaymentItems.Add(new InvoicePaymentItem(this, payment, paymentAmount));
-            }
+            if (payment.Amount < 0) throw new InvalidOperationException($"Платіж {payment.Id} не може бути оброблений. Сумма платежу має бути додатньою.");
+            decimal paidAmount = payment.Balance;
+            if ((TotalSales - TotalPaid) < payment.Balance) paidAmount = TotalSales - TotalPaid;
+            var ipi = new InvoicePaymentItem(this, payment, paidAmount);
+            _invoicePaymentItems.Add(ipi);
+            return ipi;
+        }
+        public InvoicePaymentItem TakePaymentBack(Payment payment)
+        {
+            if (payment.Amount >= 0) throw new InvalidOperationException($"Платіж {payment.Id} не може бути оброблений. Сумма платежу має бути відємною.");
+            decimal paidAmount = payment.Balance;
+            if (TotalPaid < (1 - payment.Balance)) paidAmount = 1 - TotalPaid;
+            var ipi = new InvoicePaymentItem(this, payment, paidAmount);
+            _invoicePaymentItems.Add(ipi);
+            return ipi;
         }
     }
 }

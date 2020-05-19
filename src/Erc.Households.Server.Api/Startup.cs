@@ -1,8 +1,12 @@
 using AutoMapper;
+using Erc.Households.BranchOfficeManagment.Core;
+using Erc.Households.BranchOfficeManagment.EF;
 using Erc.Households.DataAccess.Core;
 using Erc.Households.DataAccess.EF;
 using Erc.Households.EF.PostgreSQL;
 using MassTransit;
+using MassTransit.MultiBus;
+using MediatR;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -37,6 +41,13 @@ namespace Erc.Households.WebApi
 
             services.AddAutoMapper(System.Reflection.Assembly.GetExecutingAssembly());
 
+            services.AddSingleton<IBranchOfficeService>(
+                new BranchOfficeService(
+                    new ErcContext(
+                        new DbContextOptionsBuilder<ErcContext>().UseNpgsql(Configuration.GetConnectionString("ErcContext")).Options)
+                    )
+                );
+
             services.AddDbContext<ErcContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("ErcContext")));
 
@@ -50,9 +61,11 @@ namespace Erc.Households.WebApi
 
             services.AddTransient<IClaimsTransformation, Helpers.ClaimTransformation>();
 
-            services.AddTransient<IUnitOfWork>(factory => new UnitOfWork(factory.GetService<ErcContext>(), factory.GetService<IBus>()));
+            services.AddTransient<IUnitOfWork>(provider => new UnitOfWork(provider.GetService<ErcContext>(), provider.GetService<IBus>()));
 
-            services.AddSingleton<IElasticClient>(_ => new ElasticClient(new System.Uri(Configuration.GetConnectionString("Elasticsearch"))));
+            services.AddMediatR(typeof(Startup)); ;
+
+            services.AddSingleton<IElasticClient>(new ElasticClient(new System.Uri(Configuration.GetConnectionString("Elasticsearch"))));
 
             services.AddMassTransit(x =>
             {

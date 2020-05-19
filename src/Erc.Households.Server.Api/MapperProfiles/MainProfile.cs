@@ -10,8 +10,9 @@ namespace Erc.Households.Api.MapperProfiles
 	{
 		public MainProfile()
 		{
-			CreateMap<Domain.AccountingPoints.AccountingPoint, Reponses.AccountingPoint>();
-			CreateMap<Domain.Person, Reponses.Person>();
+			CreateMap<Domain.AccountingPoints.AccountingPoint, Responses.AccountingPoint>();
+			CreateMap<Domain.Person, Responses.Person>();
+			CreateMap<Domain.BranchOffice, Responses.BranchOffice>();
 		}
 	}
 }

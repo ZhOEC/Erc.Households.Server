@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Erc.Households.Api.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Erc.Households.EF.PostgreSQL;
+using Erc.Households.BranchOfficeManagment.Core;
+using AutoMapper;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Erc.Households.Api.Controllers
 {
@@ -14,22 +13,19 @@ namespace Erc.Households.Api.Controllers
     [Authorize]
     public class BranchOfficesController : ErcControllerBase
     {
-        private readonly ErcContext _ercContext;
+        private readonly IBranchOfficeService _branchOfficeService;
+        readonly IMapper _mapper;
 
-        public BranchOfficesController(ErcContext ercContext)
+        public BranchOfficesController(IBranchOfficeService branchOfficeService, IMapper mapper)
         {
-            _ercContext = ercContext ?? throw new ArgumentNullException(nameof(ercContext));
+            _branchOfficeService = branchOfficeService ?? throw new ArgumentNullException(nameof(branchOfficeService));
+            _mapper = mapper;
         }
 
         [HttpGet("")]
-        public async Task<IActionResult> GetAll()
+        public IActionResult GetAll()
         {
-            return Ok(
-                await _ercContext.BranchOffices
-                .Include(b => b.CurrentPeriod)
-                .Where(bo => UserGroups.Contains(bo.StringId))
-                .ToArrayAsync()
-                );
+            return Ok(_mapper.Map<IEnumerable<Responses.BranchOffice>>( _branchOfficeService.GetList(UserGroups)));
         }
     }
 }
