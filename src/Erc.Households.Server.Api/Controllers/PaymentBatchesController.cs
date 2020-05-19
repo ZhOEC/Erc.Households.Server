@@ -1,19 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using dBASE.NET;
-using Erc.Households.Domain.Helpers;
 using Erc.Households.Domain.Payments;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Erc.Households.EF.PostgreSQL;
 using Erc.Households.Api.Requests;
+using Erc.Households.Api.Helpers;
+using Microsoft.AspNetCore.Hosting;
 
 namespace Erc.Households.Server.Api.Controllers
 {
@@ -21,21 +17,30 @@ namespace Erc.Households.Server.Api.Controllers
     [ApiController]
     public class PaymentBatchesController : ControllerBase
     {
-        private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly ErcContext _ercContext;
+        private readonly IWebHostEnvironment _hostingEnvironment;
 
-        public PaymentBatchesController(IWebHostEnvironment environment, ErcContext ercContext)
+        public PaymentBatchesController(ErcContext ercContext, IWebHostEnvironment hostingEnvironment)
         {
-            _hostingEnvironment = environment;
             _ercContext = ercContext ?? throw new ArgumentNullException(nameof(ercContext));
+            _hostingEnvironment = hostingEnvironment;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
-            => Ok(await _ercContext.PaymentBatches
-                            .Select(x => new { paymentChannelName = _ercContext.PaymentChannels.Where(p => p.Id == x.ChannelId).Select(p => p.Name).First(), x.TotalAmount, x.TotalCount, x.IsClosed })
-                            .ToListAsync()
+        public async Task<IActionResult> GetPart(int pageNumber, int pageSize, bool showClosed)
+        {
+            var totalCount = await _ercContext.PaymentBatches.CountAsync(x => showClosed ? x.IsClosed || !x.IsClosed : !x.IsClosed);
+ 
+            Response.Headers.Add("X-Total-Count", totalCount.ToString());
+            return Ok(
+                await _ercContext.PaymentBatches
+                    .Where(x => showClosed ? x.IsClosed || !x.IsClosed : !x.IsClosed)
+                    .OrderByDescending(x => x.Id)
+                    .Skip((pageNumber - 1) * pageSize > totalCount ? 0 : (pageNumber - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync()
                 );
+        }
 
         [HttpPost]
         public async Task<IActionResult> Add([FromForm] NewPaymentBatch paymentBatch)
@@ -49,60 +54,35 @@ namespace Erc.Households.Server.Api.Controllers
             if (paymentBatch.UploadFile != null)
             {
                 var extFile = Path.GetExtension(paymentBatch.UploadFile.FileName);
-                if (extFile == ".dbf") paymentList = ParseFileDbf(paymentChannel, paymentBatch.UploadFile);
-                else if (extFile == ".xls" || extFile == ".xlsx") return Ok("Excel files not yet supported");
+                if (extFile == ".dbf") paymentList = new PaymentsDbfParser(_hostingEnvironment, _ercContext).Parser(paymentBatch.UploadFile, paymentChannel);
+                else if (extFile == ".xls" || extFile == ".xlsx") return BadRequest("Excel files not yet supported");
             }
 
-            _ercContext.PaymentBatches.Add(
-                new PaymentBatch(
-                    paymentBatch.PaymentChannelId,
-                    paymentList
-                )
+            var payBatch = new PaymentBatch(
+                paymentBatch.PaymentChannelId,
+                paymentList
             );
+
+            _ercContext.PaymentBatches.Add(payBatch);
             await _ercContext.SaveChangesAsync();
 
-            return Ok(paymentChannel);
+            return Ok(payBatch);
         }
 
-        public List<Payment> ParseFileDbf(PaymentChannel payChannel, IFormFile file)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            var listPayment = new List<Payment>();
-            var filePath = SaveFileToDisk(file);
+            var paymentBatch = await _ercContext.PaymentBatches.FirstOrDefaultAsync(x => x.Id == id);
 
-            var dbf = new Dbf(Encoding.GetEncoding(866));
-            dbf.Read(filePath);
+            if (paymentBatch is null)
+                return NotFound();
+            else if (paymentBatch.Payments.Any(x => x.Status == PaymentStatus.Processed))
+                return BadRequest("Пачка містить рознесені платежі");
 
-            var recordList = payChannel.TotalRecord == FileTotalRow.Last
-                ? dbf.Records.GetRange(0, dbf.Records.Count - 1)
-                : dbf.Records.GetRange(Convert.ToInt16(payChannel.TotalRecord), dbf.Records.Count - Convert.ToInt16(payChannel.TotalRecord));
+            _ercContext.Remove(paymentBatch);
+            await _ercContext.SaveChangesAsync();
 
-            foreach (DbfRecord record in recordList)
-            {
-                listPayment.Add(
-                    new Payment(
-                        DateTime.ParseExact(record[payChannel.DateFieldName].ToString(), payChannel.TextDateFormat, CultureInfo.InvariantCulture),
-                        Convert.ToDecimal(record[payChannel.SumFieldName].ToString()),
-                        1, //PeriodId for test set 1
-                        string.Join(" ", payChannel.PersonFieldName.Split("+").Select(x => record[x]).ToList()),
-                        _ercContext.AccountingPoints.FirstOrDefault(x => x.Name == record[payChannel.RecordpointFieldName.Trim()].ToString())?.Id
-                    )
-                );
-            }
-
-            System.IO.File.Delete(filePath);
-            return listPayment;
-        }
-
-        private string SaveFileToDisk(IFormFile file)
-        {
-            var tempFolder = Directory.CreateDirectory($"{_hostingEnvironment.ContentRootPath}/Temp");
-            var filePath = Path.Combine(tempFolder.FullName, file.FileName);
-            using (var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.ReadWrite))
-            {
-                file.CopyTo(fileStream);
-            }
-
-            return filePath;
+            return Ok();
         }
     }
 }

@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using Nest;
 using System.Globalization;
 using System.Text;
@@ -68,6 +69,11 @@ namespace Erc.Households.WebApi
                     cfg.ConfigureEndpoints(provider);
                 }));
             });
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Erc.Households.Api", Version = "v1" });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -80,11 +86,18 @@ namespace Erc.Households.WebApi
 
             app.UseRouting();
 
-            app.UseCors(builder=>builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+            app.UseCors(builder=>builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().WithExposedHeaders("X-Total-Count"));
 
             app.UseAuthentication();
             
             app.UseAuthorization();
+
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Erc.Households.Api V1");
+            });
 
             app.UseEndpoints(endpoints =>
             {

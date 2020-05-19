@@ -11,6 +11,7 @@ namespace Erc.Households.Api.Controllers
     [ApiController]
     public class VersionController : ControllerBase
     {
+        [HttpGet]
         public IActionResult GetVersion()
         {
 

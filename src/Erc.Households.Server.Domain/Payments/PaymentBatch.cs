@@ -18,6 +18,8 @@ namespace Erc.Households.Domain.Payments
         }
 
         public int Id { get; set; }
+        public string Name => $"Пачка №{Id}";
+        public DateTime Date => DateTime.Now;
         public int TotalCount { get; set; }
         public decimal TotalAmount{ get; set; }
         public int ChannelId { get; private set; }
