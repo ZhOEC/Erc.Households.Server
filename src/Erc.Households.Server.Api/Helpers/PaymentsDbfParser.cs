@@ -1,4 +1,5 @@
 ﻿using dBASE.NET;
+using Erc.Households.BranchOfficeManagment.EF;
 using Erc.Households.Domain.Helpers;
 using Erc.Households.Domain.Payments;
 using Erc.Households.EF.PostgreSQL;
@@ -24,7 +25,7 @@ namespace Erc.Households.Api.Helpers
             _ercContext = ercContext;
         }
 
-        public List<Payment> Parser(IFormFile file, PaymentChannel paymentChannel)
+        public List<Payment> Parser(IFormFile file, PaymentChannel paymentChannel, int branchOfficeId)
         {
             var listPayment = new List<Payment>();
             var filePath = SaveFileToDisk(file);
@@ -42,7 +43,7 @@ namespace Erc.Households.Api.Helpers
                     new Payment(
                         DateTime.ParseExact(record[paymentChannel.DateFieldName].ToString(), paymentChannel.TextDateFormat, CultureInfo.InvariantCulture),
                         Convert.ToDecimal(record[paymentChannel.SumFieldName].ToString()),
-                        1, //PeriodId for test set 1
+                        new BranchOfficeService(_ercContext).GetOne(branchOfficeId).CurrentPeriodId,
                         string.Join(" ", paymentChannel.PersonFieldName.Split("+").Select(x => record[x]).ToList()),
                         _ercContext.AccountingPoints.FirstOrDefault(x => x.Name == record[paymentChannel.RecordpointFieldName.Trim()].ToString())?.Id
                     )

@@ -13,6 +13,9 @@ namespace Erc.Households.Api.MapperProfiles
 			CreateMap<Domain.AccountingPoints.AccountingPoint, Responses.AccountingPoint>();
 			CreateMap<Domain.Person, Responses.Person>();
 			CreateMap<Domain.BranchOffice, Responses.BranchOffice>();
+			CreateMap<Domain.Payments.PaymentBatch, Responses.PaymentsBatch>()
+				.ForMember(x => x.TotalAmount, x => x.MapFrom(y => y.Payments.Sum(t => t.Amount)))
+				.ForMember(x => x.TotalCount, x => x.MapFrom(y => y.Payments.Count()));
 		}
 	}
 }

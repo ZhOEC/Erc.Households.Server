@@ -5,15 +5,17 @@ using Erc.Households.EF.PostgreSQL;
 using Erc.Households.ModelLogs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Erc.Households.EF.PostgreSQL.Migrations
 {
     [DbContext(typeof(ErcContext))]
-    partial class ErcContextModelSnapshot : ModelSnapshot
+    [Migration("20200520053020_UpdateTableFields2")]
+    partial class UpdateTableFields2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1268,9 +1270,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     b.HasKey("Id")
                         .HasName("pk_payment_batches");
 
-                    b.HasIndex("PaymentChannelId")
-                        .HasName("ix_payment_batches_payment_channel_id");
-
                     b.ToTable("payment_batches");
                 });
 
@@ -1718,16 +1717,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         .WithMany()
                         .HasForeignKey("PeriodId")
                         .HasConstraintName("fk_payment_period_period_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Erc.Households.Domain.Payments.PaymentBatch", b =>
-                {
-                    b.HasOne("Erc.Households.Domain.Payments.PaymentChannel", "PaymentChannel")
-                        .WithMany()
-                        .HasForeignKey("PaymentChannelId")
-                        .HasConstraintName("fk_payment_batches_payment_channels_payment_channel_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

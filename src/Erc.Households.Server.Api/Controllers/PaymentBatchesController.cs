@@ -10,6 +10,10 @@ using Erc.Households.EF.PostgreSQL;
 using Erc.Households.Api.Requests;
 using Erc.Households.Api.Helpers;
 using Microsoft.AspNetCore.Hosting;
+using MediatR;
+using Erc.Households.Api.Queries.AccountingPoints;
+using Erc.Households.Api.Queries.Payments;
+using Erc.Households.BranchOfficeManagment.EF;
 
 namespace Erc.Households.Server.Api.Controllers
 {
@@ -19,42 +23,37 @@ namespace Erc.Households.Server.Api.Controllers
     {
         private readonly ErcContext _ercContext;
         private readonly IWebHostEnvironment _hostingEnvironment;
+        private readonly IMediator _mediatR;
 
-        public PaymentBatchesController(ErcContext ercContext, IWebHostEnvironment hostingEnvironment)
+        public PaymentBatchesController(ErcContext ercContext, IWebHostEnvironment hostingEnvironment, IMediator mediator)
         {
             _ercContext = ercContext ?? throw new ArgumentNullException(nameof(ercContext));
             _hostingEnvironment = hostingEnvironment;
+            _mediatR = mediator;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetPart(int pageNumber, int pageSize, bool showClosed)
         {
-            var totalCount = await _ercContext.PaymentBatches.CountAsync(x => showClosed ? x.IsClosed || !x.IsClosed : !x.IsClosed);
- 
-            Response.Headers.Add("X-Total-Count", totalCount.ToString());
-            return Ok(
-                await _ercContext.PaymentBatches
-                    .Where(x => showClosed ? x.IsClosed || !x.IsClosed : !x.IsClosed)
-                    .OrderByDescending(x => x.Id)
-                    .Skip((pageNumber - 1) * pageSize > totalCount ? 0 : (pageNumber - 1) * pageSize)
-                    .Take(pageSize)
-                    .ToListAsync()
-                );
+            var pagedList = await _mediatR.Send(new GetPaymentBatchesByPart(pageNumber, pageSize, showClosed));
+
+            Response.Headers.Add("X-Total-Count", pagedList.TotalItemCount.ToString());
+            return Ok(pagedList.ToList());
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add([FromForm] NewPaymentBatch paymentBatch)
+        public async Task<IActionResult> Add([FromForm] NewPaymentsBatch paymentBatch)
         {
-            var paymentChannel = _ercContext.PaymentChannels.Where(x => x.Id == paymentBatch.PaymentChannelId).FirstOrDefault();
+            var paymentChannel = await _mediatR.Send(new GetPaymentChannelById(paymentBatch.PaymentChannelId));
 
             if (paymentChannel is null)
-                return NotFound("Payment channel not found!");
+                return BadRequest("Payment channel not found!");
 
             var paymentList = new List<Payment>();
             if (paymentBatch.UploadFile != null)
             {
                 var extFile = Path.GetExtension(paymentBatch.UploadFile.FileName);
-                if (extFile == ".dbf") paymentList = new PaymentsDbfParser(_hostingEnvironment, _ercContext).Parser(paymentBatch.UploadFile, paymentChannel);
+                if (extFile == ".dbf") paymentList = new PaymentsDbfParser(_hostingEnvironment, _ercContext).Parser(paymentBatch.UploadFile, paymentChannel, paymentBatch.BranchOfficeId);
                 else if (extFile == ".xls" || extFile == ".xlsx") return BadRequest("Excel files not yet supported");
             }
 

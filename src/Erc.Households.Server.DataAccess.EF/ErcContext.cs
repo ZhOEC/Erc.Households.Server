@@ -40,7 +40,7 @@ namespace Erc.Households.EF.PostgreSQL
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasPostgresExtension("citext");
-            
+
             modelBuilder.Entity<Payment>(entity =>
             {
                 entity.ToTable("payments");
