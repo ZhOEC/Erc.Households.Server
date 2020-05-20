@@ -11,6 +11,7 @@ namespace Erc.Households.Domain.Billing
             StartDate = startDate;
             EndDate = endDate;
             Name = char.ToUpper(startDate.ToString("Y")[0]) + startDate.ToString("Y").Substring(1);
+            Id = int.Parse(startDate.ToString("yyyyMM"));
         }
 
         public int Id { get; private set; }

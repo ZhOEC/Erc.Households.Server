@@ -19,17 +19,19 @@ namespace Erc.Households.Domain.Billing
         public DateTime To { get; set; }
         public int PreviousT1MeterReading { get; set; }
         public int PresentT1MeterReading { get; set; }
-        public int PreviousT2MeterReading { get; set; }
-        public int PresentT2MeterReading { get; set; }
-        public int PreviousT3MeterReading { get; set; }
-        public int PresentT3MeterReading { get; set; }
+        public int? PreviousT2MeterReading { get; set; }
+        public int? PresentT2MeterReading { get; set; }
+        public int? PreviousT3MeterReading { get; set; }
+        public int? PresentT3MeterReading { get; set; }
         public int T1Usage { get; set; }
-        public int T2Usage { get; set; }
-        public int T3Usage { get; set; }
+        public int? T2Usage { get; set; }
+        public int? T3Usage { get; set; }
         public decimal T1Sales { get; set; }
-        public decimal T2Sales { get; set; }
-        public decimal T3Sales { get; set; }
+        public decimal? T2Sales { get; set; }
+        public decimal? T3Sales { get; set; }
         public decimal TotalSales { get; set; }
+        public decimal IncomingBalance { get; set; }
+        public string CounterSerialNumber { get; set; }
         public decimal TotalPaid => InvoicePaymentItems.Sum(i => i.Amount);
         public bool IsPaid => TotalSales == TotalPaid;
         public int TariffId { get; set; }

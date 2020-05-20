@@ -51,24 +51,24 @@ namespace Erc.Households.EF.PostgreSQL
                 entity.ToTable("periods");
                 entity.HasIndex(e => e.StartDate).IsUnique();
                 entity.HasData(
-                    new { Id = 1, StartDate = new DateTime(2019, 1, 1), EndDate = new DateTime(2019, 1, 1).AddMonths(1).AddDays(-1) , Name = "Січень 2019р."},
-                    new { Id = 2, StartDate = new DateTime(2019, 2, 1), EndDate = new DateTime(2019, 2, 1).AddMonths(1).AddDays(-1), Name = "Лютий 2019р." },
-                    new { Id = 3, StartDate = new DateTime(2019, 3, 1), EndDate = new DateTime(2019, 3, 1).AddMonths(1).AddDays(-1), Name = "Березень 2019р." },
-                    new { Id = 4, StartDate = new DateTime(2019, 4, 1), EndDate = new DateTime(2019, 4, 1).AddMonths(1).AddDays(-1), Name = "Квітень 2019р." },
-                    new { Id = 5, StartDate = new DateTime(2019, 5, 1), EndDate = new DateTime(2019, 5, 1).AddMonths(1).AddDays(-1), Name = "Травень 2019р." },
-                    new { Id = 6, StartDate = new DateTime(2019, 6, 1), EndDate = new DateTime(2019, 6, 1).AddMonths(1).AddDays(-1), Name = "Червень 2019р." },
-                    new { Id = 7, StartDate = new DateTime(2019, 7, 1), EndDate = new DateTime(2019, 7, 1).AddMonths(1).AddDays(-1), Name = "Липень 2019р." },
-                    new { Id = 8, StartDate = new DateTime(2019, 8, 1), EndDate = new DateTime(2019, 8, 1).AddMonths(1).AddDays(-1), Name = "Серпень 2019р." },
-                    new { Id = 9, StartDate = new DateTime(2019, 9, 1), EndDate = new DateTime(2019, 9, 1).AddMonths(1).AddDays(-1), Name = "Вересень 2019р." },
-                    new { Id = 10, StartDate = new DateTime(2019, 10, 1), EndDate = new DateTime(2019, 10, 1).AddMonths(1).AddDays(-1), Name = "Жовтень 2019р." },
-                    new { Id = 11, StartDate = new DateTime(2019, 11, 1), EndDate = new DateTime(2019, 11, 1).AddMonths(1).AddDays(-1), Name = "Листопад 2019р." },
-                    new { Id = 12, StartDate = new DateTime(2019, 12, 1), EndDate = new DateTime(2019, 12, 1).AddMonths(1).AddDays(-1), Name = "Грудень 2019р." },
-                    new { Id = 13, StartDate = new DateTime(2020, 1, 1), EndDate = new DateTime(2019, 1, 1).AddMonths(1).AddDays(-1), Name = "Січень 2019р." },
-                    new { Id = 14, StartDate = new DateTime(2020, 2, 1), EndDate = new DateTime(2019, 2, 1).AddMonths(1).AddDays(-1), Name = "Лютий 2019р." },
-                    new { Id = 15, StartDate = new DateTime(2020, 3, 1), EndDate = new DateTime(2019, 3, 1).AddMonths(1).AddDays(-1), Name = "Березень 2019р." },
-                    new { Id = 16, StartDate = new DateTime(2020, 4, 1), EndDate = new DateTime(2019, 4, 1).AddMonths(1).AddDays(-1), Name = "Квітень 2019р." },
-                    new { Id = 17, StartDate = new DateTime(2020, 5, 1), EndDate = new DateTime(2019, 5, 1).AddMonths(1).AddDays(-1), Name = "Травень 2019р." },
-                    new { Id = 18, StartDate = new DateTime(2020, 6, 1), EndDate = new DateTime(2019, 6, 1).AddMonths(1).AddDays(-1), Name = "Червень 2019р." }
+                    new { Id = 201901, StartDate = new DateTime(2019, 1, 1), EndDate = new DateTime(2019, 1, 1).AddMonths(1).AddDays(-1), Name = "Січень 2019р."},
+                    new { Id = 201902, StartDate = new DateTime(2019, 2, 1), EndDate = new DateTime(2019, 2, 1).AddMonths(1).AddDays(-1), Name = "Лютий 2019р." },
+                    new { Id = 201903, StartDate = new DateTime(2019, 3, 1), EndDate = new DateTime(2019, 3, 1).AddMonths(1).AddDays(-1), Name = "Березень 2019р." },
+                    new { Id = 201904, StartDate = new DateTime(2019, 4, 1), EndDate = new DateTime(2019, 4, 1).AddMonths(1).AddDays(-1), Name = "Квітень 2019р." },
+                    new { Id = 201905, StartDate = new DateTime(2019, 5, 1), EndDate = new DateTime(2019, 5, 1).AddMonths(1).AddDays(-1), Name = "Травень 2019р." },
+                    new { Id = 201906, StartDate = new DateTime(2019, 6, 1), EndDate = new DateTime(2019, 6, 1).AddMonths(1).AddDays(-1), Name = "Червень 2019р." },
+                    new { Id = 201907, StartDate = new DateTime(2019, 7, 1), EndDate = new DateTime(2019, 7, 1).AddMonths(1).AddDays(-1), Name = "Липень 2019р." },
+                    new { Id = 201908, StartDate = new DateTime(2019, 8, 1), EndDate = new DateTime(2019, 8, 1).AddMonths(1).AddDays(-1), Name = "Серпень 2019р." },
+                    new { Id = 201909, StartDate = new DateTime(2019, 9, 1), EndDate = new DateTime(2019, 9, 1).AddMonths(1).AddDays(-1), Name = "Вересень 2019р." },
+                    new { Id = 201910, StartDate = new DateTime(2019, 10, 1), EndDate = new DateTime(2019, 10, 1).AddMonths(1).AddDays(-1), Name = "Жовтень 2019р." },
+                    new { Id = 201911, StartDate = new DateTime(2019, 11, 1), EndDate = new DateTime(2019, 11, 1).AddMonths(1).AddDays(-1), Name = "Листопад 2019р." },
+                    new { Id = 201912, StartDate = new DateTime(2019, 12, 1), EndDate = new DateTime(2019, 12, 1).AddMonths(1).AddDays(-1), Name = "Грудень 2019р." },
+                    new { Id = 202001, StartDate = new DateTime(2020, 1, 1), EndDate = new DateTime(2019, 1, 1).AddMonths(1).AddDays(-1), Name = "Січень 2019р." },
+                    new { Id = 202002, StartDate = new DateTime(2020, 2, 1), EndDate = new DateTime(2019, 2, 1).AddMonths(1).AddDays(-1), Name = "Лютий 2019р." },
+                    new { Id = 202003, StartDate = new DateTime(2020, 3, 1), EndDate = new DateTime(2019, 3, 1).AddMonths(1).AddDays(-1), Name = "Березень 2019р." },
+                    new { Id = 202004, StartDate = new DateTime(2020, 4, 1), EndDate = new DateTime(2019, 4, 1).AddMonths(1).AddDays(-1), Name = "Квітень 2019р." },
+                    new { Id = 202005, StartDate = new DateTime(2020, 5, 1), EndDate = new DateTime(2019, 5, 1).AddMonths(1).AddDays(-1), Name = "Травень 2019р." },
+                    new { Id = 202006, StartDate = new DateTime(2020, 6, 1), EndDate = new DateTime(2019, 6, 1).AddMonths(1).AddDays(-1), Name = "Червень 2019р." }
                     );
                 entity.Property(e => e.Name).HasColumnType("citext")
                     .IsRequired();
@@ -242,14 +242,15 @@ namespace Erc.Households.EF.PostgreSQL
 
                 e.HasOne(p => p.Street)
                     .WithMany();
-
-                //e.HasCheckConstraint("ck_address_building", "length(building) <= 10");
-                //e.HasCheckConstraint("ck_address_apt", "length[apt] <= 5");
+                
                 e.HasCheckConstraint("ck_address_zip", "zip ~ '^(\\d){5}$'");
             });
 
             modelBuilder.Entity<Person>(e =>
             {
+                e.Property(p => p.IdCardIssuer)
+                    .HasColumnType("citext");
+
                 e.Property(p => p.FirstName)
                     .HasColumnType("citext")
                     .HasMaxLength(50)
