@@ -485,6 +485,10 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         .HasColumnName("accounting_point_id")
                         .HasColumnType("integer");
 
+                    b.Property<string>("CounterSerialNumber")
+                        .HasColumnName("counter_serial_number")
+                        .HasColumnType("text");
+
                     b.Property<Guid>("DsoConsumptionId")
                         .HasColumnName("dso_consumption_id")
                         .HasColumnType("uuid");
@@ -492,6 +496,10 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     b.Property<DateTime>("From")
                         .HasColumnName("from")
                         .HasColumnType("timestamp without time zone");
+
+                    b.Property<decimal>("IncomingBalance")
+                        .HasColumnName("incoming_balance")
+                        .HasColumnType("numeric");
 
                     b.Property<string>("Note")
                         .HasColumnName("note")
@@ -505,11 +513,11 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         .HasColumnName("present_t1meter_reading")
                         .HasColumnType("integer");
 
-                    b.Property<int>("PresentT2MeterReading")
+                    b.Property<int?>("PresentT2MeterReading")
                         .HasColumnName("present_t2meter_reading")
                         .HasColumnType("integer");
 
-                    b.Property<int>("PresentT3MeterReading")
+                    b.Property<int?>("PresentT3MeterReading")
                         .HasColumnName("present_t3meter_reading")
                         .HasColumnType("integer");
 
@@ -517,11 +525,11 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         .HasColumnName("previous_t1meter_reading")
                         .HasColumnType("integer");
 
-                    b.Property<int>("PreviousT2MeterReading")
+                    b.Property<int?>("PreviousT2MeterReading")
                         .HasColumnName("previous_t2meter_reading")
                         .HasColumnType("integer");
 
-                    b.Property<int>("PreviousT3MeterReading")
+                    b.Property<int?>("PreviousT3MeterReading")
                         .HasColumnName("previous_t3meter_reading")
                         .HasColumnType("integer");
 
@@ -533,19 +541,19 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         .HasColumnName("t1usage")
                         .HasColumnType("integer");
 
-                    b.Property<decimal>("T2Sales")
+                    b.Property<decimal?>("T2Sales")
                         .HasColumnName("t2sales")
                         .HasColumnType("decimal(10,2)");
 
-                    b.Property<int>("T2Usage")
+                    b.Property<int?>("T2Usage")
                         .HasColumnName("t2usage")
                         .HasColumnType("integer");
 
-                    b.Property<decimal>("T3Sales")
+                    b.Property<decimal?>("T3Sales")
                         .HasColumnName("t3sales")
                         .HasColumnType("decimal(10,2)");
 
-                    b.Property<int>("T3Usage")
+                    b.Property<int?>("T3Usage")
                         .HasColumnName("t3usage")
                         .HasColumnType("integer");
 
@@ -566,16 +574,16 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id")
-                        .HasName("pk_invoice");
+                        .HasName("pk_invoices");
 
                     b.HasIndex("AccountingPointId")
-                        .HasName("ix_invoice_accounting_point_id");
+                        .HasName("ix_invoices_accounting_point_id");
 
                     b.HasIndex("PeriodId")
-                        .HasName("ix_invoice_period_id");
+                        .HasName("ix_invoices_period_id");
 
                     b.HasIndex("TariffId")
-                        .HasName("ix_invoice_tariff_id");
+                        .HasName("ix_invoices_tariff_id");
 
                     b.ToTable("invoices");
                 });
@@ -587,10 +595,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         .HasColumnName("id")
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<int>("Consumption")
-                        .HasColumnName("consumption")
-                        .HasColumnType("integer");
 
                     b.Property<DateTime>("From")
                         .HasColumnName("from")
@@ -615,6 +619,10 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     b.Property<DateTime>("To")
                         .HasColumnName("to")
                         .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("Usage")
+                        .HasColumnName("usage")
+                        .HasColumnType("integer");
 
                     b.Property<int>("ZoneNumber")
                         .HasColumnName("zone_number")
@@ -694,126 +702,126 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 1,
+                            Id = 201901,
                             EndDate = new DateTime(2019, 1, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Січень 2019р.",
                             StartDate = new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            Id = 2,
+                            Id = 201902,
                             EndDate = new DateTime(2019, 2, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Лютий 2019р.",
                             StartDate = new DateTime(2019, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            Id = 3,
+                            Id = 201903,
                             EndDate = new DateTime(2019, 3, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Березень 2019р.",
                             StartDate = new DateTime(2019, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            Id = 4,
+                            Id = 201904,
                             EndDate = new DateTime(2019, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Квітень 2019р.",
                             StartDate = new DateTime(2019, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            Id = 5,
+                            Id = 201905,
                             EndDate = new DateTime(2019, 5, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Травень 2019р.",
                             StartDate = new DateTime(2019, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            Id = 6,
+                            Id = 201906,
                             EndDate = new DateTime(2019, 6, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Червень 2019р.",
                             StartDate = new DateTime(2019, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            Id = 7,
+                            Id = 201907,
                             EndDate = new DateTime(2019, 7, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Липень 2019р.",
                             StartDate = new DateTime(2019, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            Id = 8,
+                            Id = 201908,
                             EndDate = new DateTime(2019, 8, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Серпень 2019р.",
                             StartDate = new DateTime(2019, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            Id = 9,
+                            Id = 201909,
                             EndDate = new DateTime(2019, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Вересень 2019р.",
                             StartDate = new DateTime(2019, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            Id = 10,
+                            Id = 201910,
                             EndDate = new DateTime(2019, 10, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Жовтень 2019р.",
                             StartDate = new DateTime(2019, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            Id = 11,
+                            Id = 201911,
                             EndDate = new DateTime(2019, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Листопад 2019р.",
                             StartDate = new DateTime(2019, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            Id = 12,
+                            Id = 201912,
                             EndDate = new DateTime(2019, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Грудень 2019р.",
                             StartDate = new DateTime(2019, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            Id = 13,
+                            Id = 202001,
                             EndDate = new DateTime(2019, 1, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Січень 2019р.",
                             StartDate = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            Id = 14,
+                            Id = 202002,
                             EndDate = new DateTime(2019, 2, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Лютий 2019р.",
                             StartDate = new DateTime(2020, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            Id = 15,
+                            Id = 202003,
                             EndDate = new DateTime(2019, 3, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Березень 2019р.",
                             StartDate = new DateTime(2020, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            Id = 16,
+                            Id = 202004,
                             EndDate = new DateTime(2019, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Квітень 2019р.",
                             StartDate = new DateTime(2020, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            Id = 17,
+                            Id = 202005,
                             EndDate = new DateTime(2019, 5, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Травень 2019р.",
                             StartDate = new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
-                            Id = 18,
+                            Id = 202006,
                             EndDate = new DateTime(2019, 6, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Червень 2019р.",
                             StartDate = new DateTime(2020, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
@@ -947,7 +955,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         {
                             Id = 1,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
-                            CurrentPeriodId = 1,
+                            CurrentPeriodId = 201901,
                             DistrictIds = new[] { 1 },
                             Name = "Андрушівський ЦОК",
                             StringId = "an"
@@ -956,7 +964,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         {
                             Id = 2,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
-                            CurrentPeriodId = 1,
+                            CurrentPeriodId = 201901,
                             DistrictIds = new[] { 2 },
                             Name = "Баранiвський ЦОК",
                             StringId = "bn"
@@ -965,7 +973,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         {
                             Id = 3,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
-                            CurrentPeriodId = 1,
+                            CurrentPeriodId = 201901,
                             DistrictIds = new[] { 3 },
                             Name = "Бердичiвський ЦОК",
                             StringId = "bd"
@@ -974,7 +982,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         {
                             Id = 4,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
-                            CurrentPeriodId = 1,
+                            CurrentPeriodId = 201901,
                             DistrictIds = new[] { 4 },
                             Name = "Брусилівський ЦОК",
                             StringId = "br"
@@ -983,7 +991,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         {
                             Id = 5,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
-                            CurrentPeriodId = 1,
+                            CurrentPeriodId = 201901,
                             DistrictIds = new[] { 5 },
                             Name = "Хорошівський ЦОК",
                             StringId = "hr"
@@ -992,7 +1000,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         {
                             Id = 6,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
-                            CurrentPeriodId = 1,
+                            CurrentPeriodId = 201901,
                             DistrictIds = new[] { 6 },
                             Name = "Ємільчинський ЦОК",
                             StringId = "em"
@@ -1001,7 +1009,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         {
                             Id = 7,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
-                            CurrentPeriodId = 1,
+                            CurrentPeriodId = 201901,
                             DistrictIds = new[] { 7 },
                             Name = "Житомирський ЦОК",
                             StringId = "zt"
@@ -1010,7 +1018,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         {
                             Id = 8,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
-                            CurrentPeriodId = 1,
+                            CurrentPeriodId = 201901,
                             DistrictIds = new[] { 7 },
                             Name = "Зарічанський ЦОК",
                             StringId = "zr"
@@ -1019,7 +1027,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         {
                             Id = 9,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
-                            CurrentPeriodId = 1,
+                            CurrentPeriodId = 201901,
                             DistrictIds = new[] { 8, 10 },
                             Name = "Коростенський ЦОК",
                             StringId = "kr"
@@ -1028,7 +1036,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         {
                             Id = 10,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
-                            CurrentPeriodId = 1,
+                            CurrentPeriodId = 201901,
                             DistrictIds = new[] { 9 },
                             Name = "Коростишiвський ЦОК",
                             StringId = "kt"
@@ -1037,7 +1045,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         {
                             Id = 11,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
-                            CurrentPeriodId = 1,
+                            CurrentPeriodId = 201901,
                             DistrictIds = new[] { 11 },
                             Name = "Любарський ЦОК",
                             StringId = "lb"
@@ -1046,7 +1054,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         {
                             Id = 12,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
-                            CurrentPeriodId = 1,
+                            CurrentPeriodId = 201901,
                             DistrictIds = new[] { 12 },
                             Name = "Малинський ЦОК",
                             StringId = "ml"
@@ -1055,7 +1063,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         {
                             Id = 13,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
-                            CurrentPeriodId = 1,
+                            CurrentPeriodId = 201901,
                             DistrictIds = new[] { 13 },
                             Name = "Народицький ЦОК",
                             StringId = "nr"
@@ -1064,7 +1072,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         {
                             Id = 14,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
-                            CurrentPeriodId = 1,
+                            CurrentPeriodId = 201901,
                             DistrictIds = new[] { 14 },
                             Name = "Новоград-Волинський ЦОК",
                             StringId = "nv"
@@ -1073,7 +1081,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         {
                             Id = 15,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
-                            CurrentPeriodId = 1,
+                            CurrentPeriodId = 201901,
                             DistrictIds = new[] { 15 },
                             Name = "Овруцький ЦОК",
                             StringId = "ov"
@@ -1082,7 +1090,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         {
                             Id = 16,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
-                            CurrentPeriodId = 1,
+                            CurrentPeriodId = 201901,
                             DistrictIds = new[] { 16 },
                             Name = "Олевський ЦОК",
                             StringId = "ol"
@@ -1091,7 +1099,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         {
                             Id = 17,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
-                            CurrentPeriodId = 1,
+                            CurrentPeriodId = 201901,
                             DistrictIds = new[] { 17, 20 },
                             Name = "Попільнянський ЦОК",
                             StringId = "pp"
@@ -1100,7 +1108,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         {
                             Id = 18,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
-                            CurrentPeriodId = 1,
+                            CurrentPeriodId = 201901,
                             DistrictIds = new[] { 18 },
                             Name = "Радомишльський ЦОК",
                             StringId = "rd"
@@ -1109,7 +1117,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         {
                             Id = 19,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
-                            CurrentPeriodId = 1,
+                            CurrentPeriodId = 201901,
                             DistrictIds = new[] { 19 },
                             Name = "Романівський ЦОК",
                             StringId = "rm"
@@ -1118,7 +1126,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         {
                             Id = 20,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
-                            CurrentPeriodId = 1,
+                            CurrentPeriodId = 201901,
                             DistrictIds = new[] { 21 },
                             Name = "Пулинський ЦОК",
                             StringId = "pl"
@@ -1127,7 +1135,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         {
                             Id = 21,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
-                            CurrentPeriodId = 1,
+                            CurrentPeriodId = 201901,
                             DistrictIds = new[] { 22 },
                             Name = "Черняхівський ЦОК",
                             StringId = "ch"
@@ -1136,7 +1144,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         {
                             Id = 22,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
-                            CurrentPeriodId = 1,
+                            CurrentPeriodId = 201901,
                             DistrictIds = new[] { 23 },
                             Name = "Чуднівський ЦОК",
                             StringId = "cd"
@@ -1210,10 +1218,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         .HasColumnName("payer_info")
                         .HasColumnType("text");
 
-                    b.Property<int?>("PaymentBatchId")
-                        .HasColumnName("payment_batch_id")
-                        .HasColumnType("integer");
-
                     b.Property<int>("PeriodId")
                         .HasColumnName("period_id")
                         .HasColumnType("integer");
@@ -1222,22 +1226,73 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         .HasColumnName("status")
                         .HasColumnType("integer");
 
+                    b.Property<int>("Type")
+                        .HasColumnName("type")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id")
-                        .HasName("pk_payment");
+                        .HasName("pk_payments");
 
                     b.HasIndex("AccountingPointId")
-                        .HasName("ix_payment_accounting_point_id");
+                        .HasName("ix_payments_accounting_point_id");
 
-                    b.HasIndex("PaymentBatchId")
-                        .HasName("ix_payment_payment_batch_id");
+                    b.HasIndex("BatchId")
+                        .HasName("ix_payments_batch_id");
 
                     b.HasIndex("PeriodId")
-                        .HasName("ix_payment_period_id");
+                        .HasName("ix_payments_period_id");
 
                     b.ToTable("payments");
                 });
 
-            modelBuilder.Entity("Erc.Households.Domain.Payments.PaymentBatch", b =>
+            modelBuilder.Entity("Erc.Households.Domain.Payments.PaymentChannel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("id")
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<string>("DateFieldName")
+                        .HasColumnName("date_field_name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnName("name")
+                        .HasColumnType("citext");
+
+                    b.Property<int>("PaymentsType")
+                        .HasColumnName("payments_type")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("PersonFieldName")
+                        .HasColumnName("person_field_name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RecordpointFieldName")
+                        .HasColumnName("recordpoint_field_name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SumFieldName")
+                        .HasColumnName("sum_field_name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TextDateFormat")
+                        .HasColumnName("text_date_format")
+                        .HasColumnType("text");
+
+                    b.Property<int>("TotalRecord")
+                        .HasColumnName("total_record")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id")
+                        .HasName("pk_payment_channels");
+
+                    b.ToTable("payment_channels");
+                });
+
+            modelBuilder.Entity("Erc.Households.Domain.Payments.PaymentsBatch", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1274,53 +1329,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     b.ToTable("payment_batches");
                 });
 
-            modelBuilder.Entity("Erc.Households.Domain.Payments.PaymentChannel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("id")
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<string>("DateFieldName")
-                        .HasColumnName("date_field_name")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnName("name")
-                        .HasColumnType("citext");
-
-                    b.Property<string>("PersonFieldName")
-                        .HasColumnName("person_field_name")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RecordpointFieldName")
-                        .HasColumnName("recordpoint_field_name")
-                        .HasColumnType("text");
-
-                    b.Property<string>("SumFieldName")
-                        .HasColumnName("sum_field_name")
-                        .HasColumnType("text");
-
-                    b.Property<string>("TextDateFormat")
-                        .HasColumnName("text_date_format")
-                        .HasColumnType("text");
-
-                    b.Property<int>("TotalRecord")
-                        .HasColumnName("total_record")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Type")
-                        .HasColumnName("type")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id")
-                        .HasName("pk_payment_channels");
-
-                    b.ToTable("payment_channels");
-                });
-
             modelBuilder.Entity("Erc.Households.Domain.Person", b =>
                 {
                     b.Property<int>("Id")
@@ -1346,6 +1354,10 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     b.Property<DateTime>("IdCardIssuanceDate")
                         .HasColumnName("id_card_issuance_date")
                         .HasColumnType("timestamp without time zone");
+
+                    b.Property<string>("IdCardIssuer")
+                        .HasColumnName("id_card_issuer")
+                        .HasColumnType("citext");
 
                     b.Property<string>("IdCardNumber")
                         .IsRequired()
@@ -1646,21 +1658,21 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     b.HasOne("Erc.Households.Domain.AccountingPoints.AccountingPoint", null)
                         .WithMany("Invoices")
                         .HasForeignKey("AccountingPointId")
-                        .HasConstraintName("fk_invoice_accounting_points_accounting_point_id")
+                        .HasConstraintName("fk_invoices_accounting_points_accounting_point_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Erc.Households.Domain.Billing.Period", "Period")
                         .WithMany()
                         .HasForeignKey("PeriodId")
-                        .HasConstraintName("fk_invoice_period_period_id")
+                        .HasConstraintName("fk_invoices_period_period_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Erc.Households.Domain.Tariffs.Tariff", "Tariff")
                         .WithMany()
                         .HasForeignKey("TariffId")
-                        .HasConstraintName("fk_invoice_tariffs_tariff_id")
+                        .HasConstraintName("fk_invoices_tariffs_tariff_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -1670,7 +1682,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     b.HasOne("Erc.Households.Domain.Billing.Invoice", null)
                         .WithMany("InvoiceDetails")
                         .HasForeignKey("InvoiceId")
-                        .HasConstraintName("fk_invoice_detail_invoice_invoice_id")
+                        .HasConstraintName("fk_invoice_detail_invoices_invoice_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -1680,14 +1692,14 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     b.HasOne("Erc.Households.Domain.Billing.Invoice", "Invoice")
                         .WithMany("InvoicePaymentItems")
                         .HasForeignKey("InvoiceId")
-                        .HasConstraintName("fk_invoice_payment_item_invoice_invoice_id")
+                        .HasConstraintName("fk_invoice_payment_item_invoices_invoice_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Erc.Households.Domain.Payments.Payment", "Payment")
                         .WithMany("InvoicePaymentItems")
                         .HasForeignKey("PaymentId")
-                        .HasConstraintName("fk_invoice_payment_item_payment_payment_id")
+                        .HasConstraintName("fk_invoice_payment_item_payments_payment_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -1707,22 +1719,24 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     b.HasOne("Erc.Households.Domain.AccountingPoints.AccountingPoint", "AccountingPoint")
                         .WithMany("Payments")
                         .HasForeignKey("AccountingPointId")
-                        .HasConstraintName("fk_payment_accounting_points_accounting_point_id");
+                        .HasConstraintName("fk_payments_accounting_points_accounting_point_id");
 
-                    b.HasOne("Erc.Households.Domain.Payments.PaymentBatch", null)
+                    b.HasOne("Erc.Households.Domain.Payments.PaymentsBatch", "Batch")
                         .WithMany("Payments")
-                        .HasForeignKey("PaymentBatchId")
-                        .HasConstraintName("fk_payment_payment_batches_payment_batch_id");
+                        .HasForeignKey("BatchId")
+                        .HasConstraintName("fk_payments_payment_batches_batch_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Erc.Households.Domain.Billing.Period", "Period")
                         .WithMany()
                         .HasForeignKey("PeriodId")
-                        .HasConstraintName("fk_payment_period_period_id")
+                        .HasConstraintName("fk_payments_period_period_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Erc.Households.Domain.Payments.PaymentBatch", b =>
+            modelBuilder.Entity("Erc.Households.Domain.Payments.PaymentsBatch", b =>
                 {
                     b.HasOne("Erc.Households.Domain.Payments.PaymentChannel", "PaymentChannel")
                         .WithMany()

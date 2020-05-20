@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Hosting;
 using MediatR;
 using Erc.Households.Api.Queries.AccountingPoints;
 using Erc.Households.Api.Queries.Payments;
-using Erc.Households.BranchOfficeManagment.EF;
+using Erc.Households.BranchOfficeManagment.Core;
 
 namespace Erc.Households.Server.Api.Controllers
 {
@@ -24,12 +24,14 @@ namespace Erc.Households.Server.Api.Controllers
         private readonly ErcContext _ercContext;
         private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly IMediator _mediatR;
+        IBranchOfficeService _branchOfficeService;
 
-        public PaymentBatchesController(ErcContext ercContext, IWebHostEnvironment hostingEnvironment, IMediator mediator)
+        public PaymentBatchesController(ErcContext ercContext, IWebHostEnvironment hostingEnvironment, IMediator mediator, IBranchOfficeService branchOfficeService)
         {
             _ercContext = ercContext ?? throw new ArgumentNullException(nameof(ercContext));
             _hostingEnvironment = hostingEnvironment;
             _mediatR = mediator;
+            _branchOfficeService = branchOfficeService;
         }
 
         [HttpGet]
@@ -53,11 +55,11 @@ namespace Erc.Households.Server.Api.Controllers
             if (paymentBatch.UploadFile != null)
             {
                 var extFile = Path.GetExtension(paymentBatch.UploadFile.FileName);
-                if (extFile == ".dbf") paymentList = new PaymentsDbfParser(_hostingEnvironment, _ercContext).Parser(paymentBatch.UploadFile, paymentChannel, paymentBatch.BranchOfficeId);
+                if (extFile == ".dbf") paymentList = new PaymentsDbfParser(_hostingEnvironment, _ercContext, _branchOfficeService).Parser(paymentBatch.UploadFile, paymentChannel, paymentBatch.BranchOfficeId);
                 else if (extFile == ".xls" || extFile == ".xlsx") return BadRequest("Excel files not yet supported");
             }
 
-            var payBatch = new PaymentBatch(
+            var payBatch = new PaymentsBatch(
                 paymentBatch.PaymentChannelId,
                 paymentList
             );

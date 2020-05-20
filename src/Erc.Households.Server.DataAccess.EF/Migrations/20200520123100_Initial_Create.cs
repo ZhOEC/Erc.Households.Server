@@ -27,22 +27,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "payment_batches",
-                columns: table => new
-                {
-                    id = table.Column<int>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    total_count = table.Column<int>(nullable: false),
-                    total_amount = table.Column<decimal>(nullable: false),
-                    channel_id = table.Column<int>(nullable: false),
-                    is_closed = table.Column<bool>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_payment_batches", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "payment_channels",
                 columns: table => new
                 {
@@ -55,7 +39,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     text_date_format = table.Column<string>(nullable: true),
                     person_field_name = table.Column<string>(nullable: true),
                     total_record = table.Column<int>(nullable: false),
-                    type = table.Column<int>(nullable: false)
+                    payments_type = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -120,6 +104,29 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "payment_batches",
+                columns: table => new
+                {
+                    id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    name = table.Column<string>(nullable: true),
+                    incoming_date = table.Column<DateTime>(nullable: false),
+                    branch_office_id = table.Column<int>(nullable: false),
+                    payment_channel_id = table.Column<int>(nullable: false),
+                    is_closed = table.Column<bool>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_payment_batches", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_payment_batches_payment_channels_payment_channel_id",
+                        column: x => x.payment_channel_id,
+                        principalTable: "payment_channels",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "branch_offices",
                 columns: table => new
                 {
@@ -158,51 +165,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         name: "fk_districts_regions_region_id",
                         column: x => x.region_id,
                         principalTable: "regions",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "invoices",
-                columns: table => new
-                {
-                    id = table.Column<int>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    period_id = table.Column<int>(nullable: false),
-                    accounting_point_id = table.Column<int>(nullable: false),
-                    from = table.Column<DateTime>(nullable: false),
-                    to = table.Column<DateTime>(nullable: false),
-                    previous_t1meter_reading = table.Column<int>(nullable: false),
-                    present_t1meter_reading = table.Column<int>(nullable: false),
-                    previous_t2meter_reading = table.Column<int>(nullable: false),
-                    present_t2meter_reading = table.Column<int>(nullable: false),
-                    previous_t3meter_reading = table.Column<int>(nullable: false),
-                    present_t3meter_reading = table.Column<int>(nullable: false),
-                    t1usage = table.Column<int>(nullable: false),
-                    t2usage = table.Column<int>(nullable: false),
-                    t3usage = table.Column<int>(nullable: false),
-                    t1sales = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    t2sales = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    t3sales = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    total_amount_sales = table.Column<decimal>(nullable: false),
-                    tariff_id = table.Column<int>(nullable: false),
-                    note = table.Column<string>(nullable: true),
-                    zone_record = table.Column<int>(nullable: false),
-                    dso_consumption_id = table.Column<Guid>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_invoice", x => x.id);
-                    table.ForeignKey(
-                        name: "fk_invoice_period_period_id",
-                        column: x => x.period_id,
-                        principalTable: "periods",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "fk_invoice_tariffs_tariff_id",
-                        column: x => x.tariff_id,
-                        principalTable: "tariffs",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -250,32 +212,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         name: "fk_cities_districts_district_id",
                         column: x => x.district_id,
                         principalTable: "districts",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "invoice_detail",
-                columns: table => new
-                {
-                    id = table.Column<int>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    invoice_id = table.Column<int>(nullable: false),
-                    from = table.Column<DateTime>(nullable: false),
-                    to = table.Column<DateTime>(nullable: false),
-                    price_value = table.Column<decimal>(nullable: false),
-                    consumption = table.Column<int>(nullable: false),
-                    sales = table.Column<decimal>(nullable: false),
-                    kz = table.Column<decimal>(nullable: false),
-                    zone_number = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_invoice_detail", x => x.id);
-                    table.ForeignKey(
-                        name: "fk_invoice_detail_invoice_invoice_id",
-                        column: x => x.invoice_id,
-                        principalTable: "invoices",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -335,6 +271,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     tax_code = table.Column<string>(maxLength: 10, nullable: true),
                     id_card_number = table.Column<string>(type: "citext", maxLength: 9, nullable: false),
                     id_card_issuance_date = table.Column<DateTime>(nullable: false),
+                    id_card_issuer = table.Column<string>(type: "citext", nullable: true),
                     id_card_exp_date = table.Column<DateTime>(nullable: true),
                     address_id = table.Column<int>(nullable: true),
                     mobile_phones = table.Column<string[]>(type: "varchar(15)[]", nullable: true)
@@ -455,6 +392,59 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "invoices",
+                columns: table => new
+                {
+                    id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    period_id = table.Column<int>(nullable: false),
+                    accounting_point_id = table.Column<int>(nullable: false),
+                    from = table.Column<DateTime>(nullable: false),
+                    to = table.Column<DateTime>(nullable: false),
+                    previous_t1meter_reading = table.Column<int>(nullable: false),
+                    present_t1meter_reading = table.Column<int>(nullable: false),
+                    previous_t2meter_reading = table.Column<int>(nullable: true),
+                    present_t2meter_reading = table.Column<int>(nullable: true),
+                    previous_t3meter_reading = table.Column<int>(nullable: true),
+                    present_t3meter_reading = table.Column<int>(nullable: true),
+                    t1usage = table.Column<int>(nullable: false),
+                    t2usage = table.Column<int>(nullable: true),
+                    t3usage = table.Column<int>(nullable: true),
+                    t1sales = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    t2sales = table.Column<decimal>(type: "decimal(10,2)", nullable: true),
+                    t3sales = table.Column<decimal>(type: "decimal(10,2)", nullable: true),
+                    total_sales = table.Column<decimal>(nullable: false),
+                    incoming_balance = table.Column<decimal>(nullable: false),
+                    counter_serial_number = table.Column<string>(nullable: true),
+                    tariff_id = table.Column<int>(nullable: false),
+                    note = table.Column<string>(nullable: true),
+                    zone_record = table.Column<int>(nullable: false),
+                    dso_consumption_id = table.Column<Guid>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_invoices", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_invoices_accounting_points_accounting_point_id",
+                        column: x => x.accounting_point_id,
+                        principalTable: "accounting_points",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_invoices_period_period_id",
+                        column: x => x.period_id,
+                        principalTable: "periods",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_invoices_tariffs_tariff_id",
+                        column: x => x.tariff_id,
+                        principalTable: "tariffs",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "payments",
                 columns: table => new
                 {
@@ -469,27 +459,53 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     status = table.Column<int>(nullable: false),
                     payer_info = table.Column<string>(nullable: true),
                     accounting_point_name = table.Column<string>(nullable: true),
-                    payment_batch_id = table.Column<int>(nullable: true)
+                    type = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_payment", x => x.id);
+                    table.PrimaryKey("pk_payments", x => x.id);
                     table.ForeignKey(
-                        name: "fk_payment_accounting_points_accounting_point_id",
+                        name: "fk_payments_accounting_points_accounting_point_id",
                         column: x => x.accounting_point_id,
                         principalTable: "accounting_points",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "fk_payment_payment_batches_payment_batch_id",
-                        column: x => x.payment_batch_id,
+                        name: "fk_payments_payment_batches_batch_id",
+                        column: x => x.batch_id,
                         principalTable: "payment_batches",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_payment_period_period_id",
+                        name: "fk_payments_period_period_id",
                         column: x => x.period_id,
                         principalTable: "periods",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "invoice_detail",
+                columns: table => new
+                {
+                    id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    invoice_id = table.Column<int>(nullable: false),
+                    from = table.Column<DateTime>(nullable: false),
+                    to = table.Column<DateTime>(nullable: false),
+                    price_value = table.Column<decimal>(nullable: false),
+                    usage = table.Column<int>(nullable: false),
+                    sales = table.Column<decimal>(nullable: false),
+                    kz = table.Column<decimal>(nullable: false),
+                    zone_number = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_invoice_detail", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_invoice_detail_invoices_invoice_id",
+                        column: x => x.invoice_id,
+                        principalTable: "invoices",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -508,13 +524,13 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 {
                     table.PrimaryKey("pk_invoice_payment_item", x => x.id);
                     table.ForeignKey(
-                        name: "fk_invoice_payment_item_invoice_invoice_id",
+                        name: "fk_invoice_payment_item_invoices_invoice_id",
                         column: x => x.invoice_id,
                         principalTable: "invoices",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "fk_invoice_payment_item_payment_payment_id",
+                        name: "fk_invoice_payment_item_payments_payment_id",
                         column: x => x.payment_id,
                         principalTable: "payments",
                         principalColumn: "id",
@@ -535,24 +551,24 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 columns: new[] { "id", "end_date", "name", "start_date" },
                 values: new object[,]
                 {
-                    { 17, new DateTime(2019, 5, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Травень 2019р.", new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 16, new DateTime(2019, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), "Квітень 2019р.", new DateTime(2020, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 14, new DateTime(2019, 2, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Лютий 2019р.", new DateTime(2020, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 13, new DateTime(2019, 1, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Січень 2019р.", new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 12, new DateTime(2019, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Грудень 2019р.", new DateTime(2019, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 11, new DateTime(2019, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), "Листопад 2019р.", new DateTime(2019, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 10, new DateTime(2019, 10, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Жовтень 2019р.", new DateTime(2019, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 9, new DateTime(2019, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), "Вересень 2019р.", new DateTime(2019, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 8, new DateTime(2019, 8, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Серпень 2019р.", new DateTime(2019, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 7, new DateTime(2019, 7, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Липень 2019р.", new DateTime(2019, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 6, new DateTime(2019, 6, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), "Червень 2019р.", new DateTime(2019, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 5, new DateTime(2019, 5, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Травень 2019р.", new DateTime(2019, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 4, new DateTime(2019, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), "Квітень 2019р.", new DateTime(2019, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 3, new DateTime(2019, 3, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Березень 2019р.", new DateTime(2019, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 2, new DateTime(2019, 2, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Лютий 2019р.", new DateTime(2019, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 1, new DateTime(2019, 1, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Січень 2019р.", new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 18, new DateTime(2019, 6, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), "Червень 2019р.", new DateTime(2020, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 15, new DateTime(2019, 3, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Березень 2019р.", new DateTime(2020, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
+                    { 202005, new DateTime(2019, 5, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Травень 2019р.", new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 202004, new DateTime(2019, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), "Квітень 2019р.", new DateTime(2020, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 202002, new DateTime(2019, 2, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Лютий 2019р.", new DateTime(2020, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 202001, new DateTime(2019, 1, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Січень 2019р.", new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 201912, new DateTime(2019, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Грудень 2019р.", new DateTime(2019, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 201911, new DateTime(2019, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), "Листопад 2019р.", new DateTime(2019, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 201910, new DateTime(2019, 10, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Жовтень 2019р.", new DateTime(2019, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 201909, new DateTime(2019, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), "Вересень 2019р.", new DateTime(2019, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 201908, new DateTime(2019, 8, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Серпень 2019р.", new DateTime(2019, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 201907, new DateTime(2019, 7, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Липень 2019р.", new DateTime(2019, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 201906, new DateTime(2019, 6, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), "Червень 2019р.", new DateTime(2019, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 201905, new DateTime(2019, 5, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Травень 2019р.", new DateTime(2019, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 201904, new DateTime(2019, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), "Квітень 2019р.", new DateTime(2019, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 201903, new DateTime(2019, 3, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Березень 2019р.", new DateTime(2019, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 201902, new DateTime(2019, 2, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Лютий 2019р.", new DateTime(2019, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 201901, new DateTime(2019, 1, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Січень 2019р.", new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 202006, new DateTime(2019, 6, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), "Червень 2019р.", new DateTime(2020, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 202003, new DateTime(2019, 3, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Березень 2019р.", new DateTime(2020, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.InsertData(
@@ -589,28 +605,28 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 columns: new[] { "id", "address", "current_period_id", "district_ids", "name", "string_id" },
                 values: new object[,]
                 {
-                    { 3, "10003, м. Житомир, майдан Перемоги, 10", 1, new[] { 3 }, "Бердичiвський ЦОК", "bd" },
-                    { 4, "10003, м. Житомир, майдан Перемоги, 10", 1, new[] { 4 }, "Брусилівський ЦОК", "br" },
-                    { 5, "10003, м. Житомир, майдан Перемоги, 10", 1, new[] { 5 }, "Хорошівський ЦОК", "hr" },
-                    { 6, "10003, м. Житомир, майдан Перемоги, 10", 1, new[] { 6 }, "Ємільчинський ЦОК", "em" },
-                    { 7, "10003, м. Житомир, майдан Перемоги, 10", 1, new[] { 7 }, "Житомирський ЦОК", "zt" },
-                    { 8, "10003, м. Житомир, майдан Перемоги, 10", 1, new[] { 7 }, "Зарічанський ЦОК", "zr" },
-                    { 9, "10003, м. Житомир, майдан Перемоги, 10", 1, new[] { 8, 10 }, "Коростенський ЦОК", "kr" },
-                    { 10, "10003, м. Житомир, майдан Перемоги, 10", 1, new[] { 9 }, "Коростишiвський ЦОК", "kt" },
-                    { 11, "10003, м. Житомир, майдан Перемоги, 10", 1, new[] { 11 }, "Любарський ЦОК", "lb" },
-                    { 12, "10003, м. Житомир, майдан Перемоги, 10", 1, new[] { 12 }, "Малинський ЦОК", "ml" },
-                    { 13, "10003, м. Житомир, майдан Перемоги, 10", 1, new[] { 13 }, "Народицький ЦОК", "nr" },
-                    { 14, "10003, м. Житомир, майдан Перемоги, 10", 1, new[] { 14 }, "Новоград-Волинський ЦОК", "nv" },
-                    { 15, "10003, м. Житомир, майдан Перемоги, 10", 1, new[] { 15 }, "Овруцький ЦОК", "ov" },
-                    { 16, "10003, м. Житомир, майдан Перемоги, 10", 1, new[] { 16 }, "Олевський ЦОК", "ol" },
-                    { 17, "10003, м. Житомир, майдан Перемоги, 10", 1, new[] { 17, 20 }, "Попільнянський ЦОК", "pp" },
-                    { 18, "10003, м. Житомир, майдан Перемоги, 10", 1, new[] { 18 }, "Радомишльський ЦОК", "rd" },
-                    { 19, "10003, м. Житомир, майдан Перемоги, 10", 1, new[] { 19 }, "Романівський ЦОК", "rm" },
-                    { 20, "10003, м. Житомир, майдан Перемоги, 10", 1, new[] { 21 }, "Пулинський ЦОК", "pl" },
-                    { 21, "10003, м. Житомир, майдан Перемоги, 10", 1, new[] { 22 }, "Черняхівський ЦОК", "ch" },
-                    { 22, "10003, м. Житомир, майдан Перемоги, 10", 1, new[] { 23 }, "Чуднівський ЦОК", "cd" },
-                    { 2, "10003, м. Житомир, майдан Перемоги, 10", 1, new[] { 2 }, "Баранiвський ЦОК", "bn" },
-                    { 1, "10003, м. Житомир, майдан Перемоги, 10", 1, new[] { 1 }, "Андрушівський ЦОК", "an" }
+                    { 3, "10003, м. Житомир, майдан Перемоги, 10", 201901, new[] { 3 }, "Бердичiвський ЦОК", "bd" },
+                    { 4, "10003, м. Житомир, майдан Перемоги, 10", 201901, new[] { 4 }, "Брусилівський ЦОК", "br" },
+                    { 5, "10003, м. Житомир, майдан Перемоги, 10", 201901, new[] { 5 }, "Хорошівський ЦОК", "hr" },
+                    { 6, "10003, м. Житомир, майдан Перемоги, 10", 201901, new[] { 6 }, "Ємільчинський ЦОК", "em" },
+                    { 7, "10003, м. Житомир, майдан Перемоги, 10", 201901, new[] { 7 }, "Житомирський ЦОК", "zt" },
+                    { 8, "10003, м. Житомир, майдан Перемоги, 10", 201901, new[] { 7 }, "Зарічанський ЦОК", "zr" },
+                    { 9, "10003, м. Житомир, майдан Перемоги, 10", 201901, new[] { 8, 10 }, "Коростенський ЦОК", "kr" },
+                    { 10, "10003, м. Житомир, майдан Перемоги, 10", 201901, new[] { 9 }, "Коростишiвський ЦОК", "kt" },
+                    { 11, "10003, м. Житомир, майдан Перемоги, 10", 201901, new[] { 11 }, "Любарський ЦОК", "lb" },
+                    { 12, "10003, м. Житомир, майдан Перемоги, 10", 201901, new[] { 12 }, "Малинський ЦОК", "ml" },
+                    { 13, "10003, м. Житомир, майдан Перемоги, 10", 201901, new[] { 13 }, "Народицький ЦОК", "nr" },
+                    { 14, "10003, м. Житомир, майдан Перемоги, 10", 201901, new[] { 14 }, "Новоград-Волинський ЦОК", "nv" },
+                    { 15, "10003, м. Житомир, майдан Перемоги, 10", 201901, new[] { 15 }, "Овруцький ЦОК", "ov" },
+                    { 16, "10003, м. Житомир, майдан Перемоги, 10", 201901, new[] { 16 }, "Олевський ЦОК", "ol" },
+                    { 17, "10003, м. Житомир, майдан Перемоги, 10", 201901, new[] { 17, 20 }, "Попільнянський ЦОК", "pp" },
+                    { 18, "10003, м. Житомир, майдан Перемоги, 10", 201901, new[] { 18 }, "Радомишльський ЦОК", "rd" },
+                    { 19, "10003, м. Житомир, майдан Перемоги, 10", 201901, new[] { 19 }, "Романівський ЦОК", "rm" },
+                    { 20, "10003, м. Житомир, майдан Перемоги, 10", 201901, new[] { 21 }, "Пулинський ЦОК", "pl" },
+                    { 21, "10003, м. Житомир, майдан Перемоги, 10", 201901, new[] { 22 }, "Черняхівський ЦОК", "ch" },
+                    { 22, "10003, м. Житомир, майдан Перемоги, 10", 201901, new[] { 23 }, "Чуднівський ЦОК", "cd" },
+                    { 2, "10003, м. Житомир, майдан Перемоги, 10", 201901, new[] { 2 }, "Баранiвський ЦОК", "bn" },
+                    { 1, "10003, м. Житомир, майдан Перемоги, 10", 201901, new[] { 1 }, "Андрушівський ЦОК", "an" }
                 });
 
             migrationBuilder.InsertData(
@@ -745,27 +761,37 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 column: "payment_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_invoice_period_id",
+                name: "ix_invoices_accounting_point_id",
+                table: "invoices",
+                column: "accounting_point_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_invoices_period_id",
                 table: "invoices",
                 column: "period_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_invoice_tariff_id",
+                name: "ix_invoices_tariff_id",
                 table: "invoices",
                 column: "tariff_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_payment_accounting_point_id",
+                name: "ix_payment_batches_payment_channel_id",
+                table: "payment_batches",
+                column: "payment_channel_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_payments_accounting_point_id",
                 table: "payments",
                 column: "accounting_point_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_payment_payment_batch_id",
+                name: "ix_payments_batch_id",
                 table: "payments",
-                column: "payment_batch_id");
+                column: "batch_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_payment_period_id",
+                name: "ix_payments_period_id",
                 table: "payments",
                 column: "period_id");
 
@@ -818,9 +844,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 name: "invoice_payment_item");
 
             migrationBuilder.DropTable(
-                name: "payment_channels");
-
-            migrationBuilder.DropTable(
                 name: "tariff_rates");
 
             migrationBuilder.DropTable(
@@ -849,6 +872,9 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
 
             migrationBuilder.DropTable(
                 name: "people");
+
+            migrationBuilder.DropTable(
+                name: "payment_channels");
 
             migrationBuilder.DropTable(
                 name: "periods");

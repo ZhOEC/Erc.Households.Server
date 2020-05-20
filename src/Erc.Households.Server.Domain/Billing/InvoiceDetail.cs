@@ -12,7 +12,7 @@ namespace Erc.Households.Domain.Billing
         public DateTime From { get; set; }
         public DateTime To { get; set; }
         public decimal PriceValue { get; set; }
-        public int Consumption { get; set; }
+        public int Usage { get; set; }
         public decimal Sales { get; set; }
         public decimal Kz { get; set; }
         public ZoneNumber ZoneNumber { get; set; }

@@ -13,7 +13,7 @@ namespace Erc.Households.Domain.Payments
         //AccountingPoint _accountingPoint;
         List<InvoicePaymentItem> _invoicePaymentItems = new List<InvoicePaymentItem>();
 
-        public Payment(DateTime payDate, decimal amount, int periodId, string payerInfo, int? accountingPointId)
+        public Payment(DateTime payDate, decimal amount, int periodId, PaymentType type, string payerInfo = null, int? accountingPointId = null)
         {
             PayDate = payDate;
             Amount = amount;
@@ -22,6 +22,7 @@ namespace Erc.Households.Domain.Payments
             Status = PaymentStatus.New;
             EnterDate = DateTime.Now;
             PayerInfo = payerInfo;
+            Type = type;
         }
 
         protected Payment() { }
@@ -33,9 +34,11 @@ namespace Erc.Households.Domain.Payments
         public DateTime EnterDate { get; set; }
         public decimal Amount { get; private set; }
         public AccountingPoint AccountingPoint { get; private set; }
+        public PaymentsBatch Batch { get; private set; }
         public PaymentStatus Status { get; private set; }
         public string PayerInfo { get; private set; }
         public string AccountingPointName { get; private set; }
+        public PaymentType Type { get; private set; }
         public Period Period { get; private set; }
         public decimal Used => _invoicePaymentItems.Sum(p => p.Amount);
         public decimal Balance => Amount - Used;

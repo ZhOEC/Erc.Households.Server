@@ -4,14 +4,14 @@ using System.Linq;
 
 namespace Erc.Households.Domain.Payments
 {
-    public class PaymentBatch
+    public class PaymentsBatch
     {
-        public PaymentBatch()
+        public PaymentsBatch()
         {
             Payments = new HashSet<Payment>();
         }
 
-        public PaymentBatch(int paymentChannelId, ICollection<Payment> payments)
+        public PaymentsBatch(int paymentChannelId, ICollection<Payment> payments)
         {
             PaymentChannelId = paymentChannelId;
             Payments = payments;
