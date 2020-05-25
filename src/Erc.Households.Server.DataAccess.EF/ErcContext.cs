@@ -45,6 +45,8 @@ namespace Erc.Households.EF.PostgreSQL
 
             modelBuilder.Entity<PaymentsBatch>(entity =>
             {
+                entity.Property(e => e.IncomingDate).HasColumnType("date");
+                
                 entity.HasMany(pb => pb.Payments)
                 .WithOne(p => p.Batch)
                 .HasForeignKey(p => p.BatchId);
@@ -53,6 +55,8 @@ namespace Erc.Households.EF.PostgreSQL
             modelBuilder.Entity<Period>(entity =>
             {
                 entity.ToTable("periods");
+                entity.Property(e => e.StartDate).HasColumnType("date");
+                entity.Property(e => e.EndDate).HasColumnType("date");
                 entity.HasIndex(e => e.StartDate).IsUnique();
                 entity.HasData(
                     new { Id = 201901, StartDate = new DateTime(2019, 1, 1), EndDate = new DateTime(2019, 1, 1).AddMonths(1).AddDays(-1), Name = "Січень 2019р."},
@@ -84,10 +88,17 @@ namespace Erc.Households.EF.PostgreSQL
                     .IsRequired();
             });
 
-            modelBuilder.Entity<ZoneCoeff>(e =>
+            modelBuilder.Entity<Payment>(entity =>
             {
-                e.HasData(
-                    new { Id = 1, ZoneNumber = ZoneNumber.T1, ZoneRecord = ZoneRecord.None, Value = 1m, DiscountWeight = 1, StartDate = new DateTime(2019, 1, 1) },
+                entity.Property(e => e.Amount).HasColumnType("decimal(10,2)");
+            });
+
+            modelBuilder.Entity<ZoneCoeff>(entity =>
+            {
+                entity.Property(e => e.StartDate).HasColumnType("date");
+
+                entity.HasData(
+                    new { Id = 1, ZoneNumber = ZoneNumber.T1, ZoneRecord = ZoneRecord.None, Value = 1m, DiscountWeight = 1m, StartDate = new DateTime(2019, 1, 1) },
                     new { Id = 2, ZoneNumber = ZoneNumber.T1, ZoneRecord = ZoneRecord.Two, Value = 0.5m, DiscountWeight = 0.67m, StartDate = new DateTime(2019, 1, 1) },
                     new { Id = 3, ZoneNumber = ZoneNumber.T2, ZoneRecord = ZoneRecord.Two, Value = 1m, DiscountWeight = 0.33m, StartDate = new DateTime(2019, 1, 1) },
                     new { Id = 4, ZoneNumber = ZoneNumber.T1, ZoneRecord = ZoneRecord.Three, Value = 0.4m, DiscountWeight = 0.46m, StartDate = new DateTime(2019, 1, 1) },
@@ -98,21 +109,31 @@ namespace Erc.Households.EF.PostgreSQL
 
             modelBuilder.Entity<Invoice>(entity =>
             {
-                entity.Property(p => p.T1Sales).HasColumnType("decimal(10,2)");
-                entity.Property(p => p.T2Sales).HasColumnType("decimal(10,2)");
-                entity.Property(p => p.T3Sales).HasColumnType("decimal(10,2)");
+                entity.Property(p => p.TotalAmountDue).HasColumnType("decimal(10,2)");
+                entity.Property(p => p.TotalDiscount).HasColumnType("decimal(10,2)");
+
+                entity.Property(e => e.FromDate).HasColumnType("date");
+                entity.Property(e => e.ToDate).HasColumnType("date");
+                entity.Property(b => b.UsageT1).HasColumnType("jsonb");
+                entity.Property(b => b.UsageT2).HasColumnType("jsonb");
+                entity.Property(b => b.UsageT3).HasColumnType("jsonb");
             });
 
             modelBuilder.Entity<Contract>(e =>
             {
                 e.ToTable("contracts")
                     .Property(p => p.Logs).HasColumnType("jsonb");
+
+                e.Property(e => e.StartDate).HasColumnType("date");
+                e.Property(e => e.EndDate).HasColumnType("date");
             });
 
             modelBuilder.Entity<AccountingPointTariff>(e =>
             {
                 e.ToTable("accounting_point_tariffs");
-                
+
+                e.Property(e => e.StartDate).HasColumnType("date");
+
                 e.Property(p => p.Logs).HasColumnType("jsonb");
                 
                 e.HasOne(p => p.Tariff)
@@ -350,6 +371,8 @@ namespace Erc.Households.EF.PostgreSQL
             {
                 e.ToTable("tariff_rates")
                     .Property(p => p.Value).HasColumnType("decimal(8,5)");
+                
+                e.Property(e => e.StartDate).HasColumnType("date");
 
                 e.HasData(
                     new TariffRate { Id = 1, StartDate = new DateTime(2017, 3, 1), Value = 0.9m, ConsumptionLimit = 100, TariffId = 1 },

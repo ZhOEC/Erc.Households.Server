@@ -42,12 +42,7 @@ namespace Erc.Households.WebApi
 
             services.AddAutoMapper(System.Reflection.Assembly.GetExecutingAssembly());
 
-            services.AddSingleton<IBranchOfficeService>(
-                new BranchOfficeService(
-                    new ErcContext(
-                        new DbContextOptionsBuilder<ErcContext>().UseNpgsql(Configuration.GetConnectionString("ErcContext")).Options)
-                    )
-                );
+            services.AddSingleton<IBranchOfficeService>(provider => new BranchOfficeService(provider.CreateScope().ServiceProvider.GetService<ErcContext>()));
 
             services.AddDbContext<ErcContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("ErcContext")));

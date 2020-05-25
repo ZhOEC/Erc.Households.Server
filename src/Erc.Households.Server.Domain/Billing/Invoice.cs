@@ -10,34 +10,29 @@ namespace Erc.Households.Domain.Billing
 {
     public class Invoice
     {
-        List<InvoicePaymentItem> _invoicePaymentItems = new List<InvoicePaymentItem>();
+        private readonly List<InvoicePaymentItem> _invoicePaymentItems = new List<InvoicePaymentItem>();
 
-        public int Id { get; set; }
-        public int PeriodId { get; set; }
-        public int AccountingPointId { get; set; }
-        public DateTime From { get; set; }
-        public DateTime To { get; set; }
-        public int PreviousT1MeterReading { get; set; }
-        public int PresentT1MeterReading { get; set; }
-        public int? PreviousT2MeterReading { get; set; }
-        public int? PresentT2MeterReading { get; set; }
-        public int? PreviousT3MeterReading { get; set; }
-        public int? PresentT3MeterReading { get; set; }
-        public int T1Usage { get; set; }
-        public int? T2Usage { get; set; }
-        public int? T3Usage { get; set; }
-        public decimal T1Sales { get; set; }
-        public decimal? T2Sales { get; set; }
-        public decimal? T3Sales { get; set; }
-        public decimal TotalSales { get; set; }
-        public decimal IncomingBalance { get; set; }
-        public string CounterSerialNumber { get; set; }
+        public int Id { get; private set; }
+        public int PeriodId { get; private set; }
+        public int AccountingPointId { get; private set; }
+        public DateTime Date { get; private set; } = DateTime.Now;
+        public DateTime FromDate { get; private set; }
+        public DateTime ToDate { get; private set; }
+        public Usage UsageT1 { get; private set; }
+        public Usage UsageT2 { get; private set; }
+        public Usage UsageT3 { get; private set; }
+        public int TotalUnits { get; private set; }
+        public decimal TotalDiscount { get; private set; }
+        public decimal TotalAmountDue { get; private set; }
+        public decimal TotalCharge { get; private set; }
+        public decimal IncomingBalance { get; private set; }
+        public string CounterSerialNumber { get; private set; }
         public decimal TotalPaid => InvoicePaymentItems.Sum(i => i.Amount);
-        public bool IsPaid => TotalSales == TotalPaid;
-        public int TariffId { get; set; }
-        public string Note { get; set; }
+        public bool IsPaid => TotalAmountDue == TotalPaid;
+        public int TariffId { get; private set; }
+        public string Note { get; private set; }
         public Tariff Tariff { get; set; }
-        public IEnumerable<InvoiceDetail> InvoiceDetails { get; set; }
+        
         public IEnumerable<InvoicePaymentItem> InvoicePaymentItems => _invoicePaymentItems.AsReadOnly();
         public Period Period { get; private set; }
         public ZoneRecord ZoneRecord { get; set; }
@@ -46,7 +41,7 @@ namespace Erc.Households.Domain.Billing
         {
             if (payment.Amount < 0) throw new InvalidOperationException($"Платіж {payment.Id} не може бути оброблений. Сумма платежу має бути додатньою.");
             decimal paidAmount = payment.Balance;
-            if ((TotalSales - TotalPaid) < payment.Balance) paidAmount = TotalSales - TotalPaid;
+            if ((TotalAmountDue - TotalPaid) < payment.Balance) paidAmount = TotalAmountDue - TotalPaid;
             var ipi = new InvoicePaymentItem(this, payment, paidAmount);
             _invoicePaymentItems.Add(ipi);
             return ipi;
