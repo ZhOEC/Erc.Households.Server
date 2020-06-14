@@ -10,6 +10,7 @@ namespace Erc.Households.Api.Responses
         public DateTime IncomingDate { get; set; }
         public int TotalCount { get; set; }
         public decimal TotalAmount { get; set; }
+        public int BranchOfficeId { get; set; }
         public int PaymentChannelId { get; set; }
         public bool IsClosed { get; set; }
     }

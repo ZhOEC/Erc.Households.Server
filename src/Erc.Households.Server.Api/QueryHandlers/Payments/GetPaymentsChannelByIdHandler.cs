@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace Erc.Households.Api.QueryHandlers.Payments
 {
-    public class GetPaymentChannelByIdHandler : IRequestHandler<GetPaymentChannelById, PaymentChannel>
+    public class GetPaymentsChannelByIdHandler : IRequestHandler<GetPaymentChannelById, PaymentChannel>
     {
         private readonly ErcContext _ercContext;
 
-        public GetPaymentChannelByIdHandler(ErcContext ercContext)
+        public GetPaymentsChannelByIdHandler(ErcContext ercContext)
         {
             _ercContext = ercContext;
         }

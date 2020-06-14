@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
 using Erc.Households.Api.Authorization;
 using Erc.Households.Api.Queries.AccountingPoints;
 using Erc.Households.DataAccess.Core;

@@ -11,7 +11,6 @@ using Erc.Households.Api.Requests;
 using Erc.Households.Api.Helpers;
 using Microsoft.AspNetCore.Hosting;
 using MediatR;
-using Erc.Households.Api.Queries.AccountingPoints;
 using Erc.Households.Api.Queries.Payments;
 using Erc.Households.BranchOfficeManagment.Core;
 
@@ -24,7 +23,7 @@ namespace Erc.Households.Server.Api.Controllers
         private readonly ErcContext _ercContext;
         private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly IMediator _mediatR;
-        IBranchOfficeService _branchOfficeService;
+        private readonly IBranchOfficeService _branchOfficeService;
 
         public PaymentBatchesController(ErcContext ercContext, IWebHostEnvironment hostingEnvironment, IMediator mediator, IBranchOfficeService branchOfficeService)
         {
@@ -41,6 +40,12 @@ namespace Erc.Households.Server.Api.Controllers
 
             Response.Headers.Add("X-Total-Count", pagedList.TotalItemCount.ToString());
             return Ok(pagedList.ToList());
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetOne(int id)
+        {
+            return Ok(await _mediatR.Send(new GetPaymentsBatchById(id)));
         }
 
         [HttpPost]
@@ -60,14 +65,30 @@ namespace Erc.Households.Server.Api.Controllers
             }
 
             var payBatch = new PaymentsBatch(
+                paymentBatch.BranchOfficeId,
                 paymentBatch.PaymentChannelId,
+                paymentBatch.IncomingDate,
                 paymentList
             );
 
             _ercContext.PaymentBatches.Add(payBatch);
             await _ercContext.SaveChangesAsync();
 
-            return Ok(payBatch);
+            return await GetOne(payBatch.Id);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(PaymentsBatch paymentsBatch)
+        {
+            var pc = await _ercContext.PaymentBatches.FindAsync(paymentsBatch.Id);
+
+            if (pc is null)
+                return NotFound();
+
+            _ercContext.Entry(pc).CurrentValues.SetValues(paymentsBatch);
+            await _ercContext.SaveChangesAsync();
+
+            return Ok();
         }
 
         [HttpDelete("{id}")]

@@ -40,7 +40,7 @@ namespace Erc.Households.Api.Controllers
         [Authorize(Roles = ApplicationRoles.Administrator)]
         public async Task<IActionResult> Update(PaymentChannel paymentChannel)
         {
-            var pc = await _ercContext.PaymentChannels.Where(x => x.Id == paymentChannel.Id).FirstOrDefaultAsync();
+            var pc = await _ercContext.PaymentChannels.FindAsync(paymentChannel.Id);
 
             if (pc is null)
                 return NotFound();

@@ -11,17 +11,19 @@ namespace Erc.Households.Domain.Payments
             Payments = new HashSet<Payment>();
         }
 
-        public PaymentsBatch(int paymentChannelId, ICollection<Payment> payments)
+        public PaymentsBatch(int branchOfficeId, int paymentChannelId, DateTime incomingDate, ICollection<Payment> payments)
         {
+            BranchOfficeId = branchOfficeId;
             PaymentChannelId = paymentChannelId;
+            IncomingDate = incomingDate;
             Payments = payments;
         }
 
         public int Id { get; set; }
-        public string Name { get; private set; }
-        public DateTime IncomingDate { get; private set; }
-        public int BranchOfficeId { get; private set; }
-        public int PaymentChannelId { get; private set; }
+        public string Name { get; set; }
+        public DateTime IncomingDate { get; set; }
+        public int BranchOfficeId { get; set; }
+        public int PaymentChannelId { get; set; }
         public virtual ICollection<Payment> Payments { get; private set; }
         public virtual PaymentChannel PaymentChannel { get; set; }
         public bool IsClosed { get; private set; }

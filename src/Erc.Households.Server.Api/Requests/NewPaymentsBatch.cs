@@ -7,7 +7,7 @@ namespace Erc.Households.Api.Requests
     {
         public int BranchOfficeId { get; set; }
         public int PaymentChannelId { get; set; }
-        public DateTime DateComing { get; set; }
+        public DateTime IncomingDate { get; set; }
         public IFormFile UploadFile { get; set; }
     }
 }

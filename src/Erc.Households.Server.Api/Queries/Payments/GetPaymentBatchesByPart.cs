@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using X.PagedList;
 
-namespace Erc.Households.Api.Queries.AccountingPoints
+namespace Erc.Households.Api.Queries.Payments
 {
     public class GetPaymentBatchesByPart : IRequest<IPagedList<Responses.PaymentsBatch>>
     {
