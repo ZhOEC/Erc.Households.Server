@@ -12,13 +12,10 @@ namespace Erc.Households.Api.Controllers
     public class VersionController : ControllerBase
     {
         [HttpGet]
-        public IActionResult GetVersion()
+        public IActionResult GetVersion() => Ok(new
         {
-
-            return Ok(new
-            {
-                ServerTime = DateTime.Now.ToString("F")
-            });
-        }
+            OS = Environment.OSVersion.VersionString,
+            ServerTime = DateTime.Now.ToString("F")
+        });
     }
 }

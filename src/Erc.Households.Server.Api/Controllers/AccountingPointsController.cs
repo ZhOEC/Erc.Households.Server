@@ -64,7 +64,7 @@ namespace Erc.Households.Api.Controllers
             var accountingPoint = new Domain.AccountingPoints.AccountingPoint(
                 newAccountingPoint.Eic, newAccountingPoint.Name, newAccountingPoint.ZoneRecord, newAccountingPoint.ContractStartDate,
                 newAccountingPoint.TariffId, newAccountingPoint.Address, newAccountingPoint.Owner,
-                newAccountingPoint.BranchOfficeId, newAccountingPoint.DsoId, User.Identity.Name);
+                newAccountingPoint.BranchOfficeId, newAccountingPoint.DsoId, User.Identity.Name, 1);
 
             await _unitOfWork.AccountingPointRepository.AddNewAsync(accountingPoint);
             await _unitOfWork.SaveWorkAsync();

@@ -2,6 +2,7 @@
 using Erc.Households.Domain.AccountingPoints;
 using Erc.Households.Domain.Addresses;
 using Erc.Households.Domain.Billing;
+using Erc.Households.Domain.Exemptions;
 using Erc.Households.Domain.Payments;
 using Erc.Households.Domain.Tariffs;
 using Microsoft.EntityFrameworkCore;
@@ -33,6 +34,9 @@ namespace Erc.Households.EF.PostgreSQL
         public DbSet<PaymentsBatch> PaymentBatches { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Invoice> Invoices { get; set; }
+        public DbSet<ExemptionCategory> ExemptionCategories { get; set; }
+        public DbSet<BuildingType> BuildingTypes { get; set; }
+        public DbSet<UsageCategory> UsageCategories { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -42,6 +46,57 @@ namespace Erc.Households.EF.PostgreSQL
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasPostgresExtension("citext");
+
+            modelBuilder.Entity<UsageCategory>(entity =>
+            {
+                entity.Property(e => e.ExemptionDiscountNorms).HasColumnType("jsonb");
+
+                entity.HasData(
+                    new
+                    {
+                        Id = 1,
+                        Name = "Звичайне споживання",
+                        ExemptionDiscountNorms = new[] { new { EffectivetDate = new DateTime(2019, 1, 1), BaseKWh = 70, BaseKWhWithoutHotWater = 100, BasePerson = 1, KWhPerPerson = 30, MaxKWh = 190, MaxKWhWithoutHotWater = 220 } }
+                    },
+                    new
+                    {
+                        Id = 2,
+                        Name = "Електроплита",
+                        ExemptionDiscountNorms = new[] { new { EffectivetDate = new DateTime(2019, 1, 1), BaseKWh = 110, BaseKWhWithoutHotWater = 130, BasePerson = 1, KWhPerPerson = 30, MaxKWh = 230, MaxKWhWithoutHotWater = 250 } }
+                    },
+                    new
+                    {
+                        Id = 3,
+                        Name = "Електроопалювальна установка",
+                        ExemptionDiscountNorms = new[] { new { EffectivetDate = new DateTime(2019, 1, 1), BaseKWh = 70, BaseKWhWithoutHotWater = 100, BasePerson = 1, KWhPerPerson = 30, MaxKWh = 190, MaxKWhWithoutHotWater = 220, BaseSquareMeter = 10.5m, SquareMeterPerPerson = 21m, KWhPerSquareMeter = 30 } }
+                    },
+                    new
+                    {
+                        Id = 4,
+                        Name = "Електроопалювальна установка та електроплита",
+                        ExemptionDiscountNorms = new[] { new { EffectivetDate = new DateTime(2019, 1, 1), BaseKWh = 110, BaseKWhWithoutHotWater = 130, BasePerson = 1, KWhPerPerson = 30, MaxKWh = 230, MaxKWhWithoutHotWater = 250, BaseSquareMeter = 10.5m, SquareMeterPerPerson = 21m, KWhPerSquareMeter = 30 } }
+                    });
+            });
+
+            modelBuilder.Entity<BuildingType>(entity =>
+            {
+                entity.HasData(
+                    new { Id = 1, Name = "1-2 поверхи", Coeff = 1.0940m },
+                    new { Id = 2, Name = "3 поверхи і більше", Coeff = 0.7980m }
+                    );
+            });
+
+            modelBuilder.Entity<ExemptionCategory>(entity =>
+            {
+                entity.Property(e => e.EffectiveDate).HasColumnType("date");
+                entity.Property(e => e.EndDate).HasColumnType("date");
+                entity.HasData(
+                    new { Id = 1, Name = "Почесні громадяни міста", Coeff = 100.0m, EffectiveDate = new DateTime(2019, 1, 1) },
+                    new { Id = 2, Name = "Iнвалiди 1 групи по зору або з ураженням ОРА", Coeff = 50.0m, EffectiveDate = new DateTime(2019, 1, 1), HasLimit = true },
+                    new { Id = 3, Name = "Iнвалiди 2 групи по зору або з ураженням ОРА", Coeff = 50.0m, EffectiveDate = new DateTime(2019, 1, 1), HasLimit = true },
+                    new { Id = 4, Name = "Учасник бойових дій та членів родин загиблих в АТО (ООС)", Coeff = 100.0m, EffectiveDate = new DateTime(2019, 1, 1), HasLimit = true }
+                    );
+            });
 
             modelBuilder.Entity<PaymentsBatch>(entity =>
             {
@@ -71,12 +126,12 @@ namespace Erc.Households.EF.PostgreSQL
                     new { Id = 201910, StartDate = new DateTime(2019, 10, 1), EndDate = new DateTime(2019, 10, 1).AddMonths(1).AddDays(-1), Name = "Жовтень 2019р." },
                     new { Id = 201911, StartDate = new DateTime(2019, 11, 1), EndDate = new DateTime(2019, 11, 1).AddMonths(1).AddDays(-1), Name = "Листопад 2019р." },
                     new { Id = 201912, StartDate = new DateTime(2019, 12, 1), EndDate = new DateTime(2019, 12, 1).AddMonths(1).AddDays(-1), Name = "Грудень 2019р." },
-                    new { Id = 202001, StartDate = new DateTime(2020, 1, 1), EndDate = new DateTime(2019, 1, 1).AddMonths(1).AddDays(-1), Name = "Січень 2019р." },
-                    new { Id = 202002, StartDate = new DateTime(2020, 2, 1), EndDate = new DateTime(2019, 2, 1).AddMonths(1).AddDays(-1), Name = "Лютий 2019р." },
-                    new { Id = 202003, StartDate = new DateTime(2020, 3, 1), EndDate = new DateTime(2019, 3, 1).AddMonths(1).AddDays(-1), Name = "Березень 2019р." },
-                    new { Id = 202004, StartDate = new DateTime(2020, 4, 1), EndDate = new DateTime(2019, 4, 1).AddMonths(1).AddDays(-1), Name = "Квітень 2019р." },
-                    new { Id = 202005, StartDate = new DateTime(2020, 5, 1), EndDate = new DateTime(2019, 5, 1).AddMonths(1).AddDays(-1), Name = "Травень 2019р." },
-                    new { Id = 202006, StartDate = new DateTime(2020, 6, 1), EndDate = new DateTime(2019, 6, 1).AddMonths(1).AddDays(-1), Name = "Червень 2019р." }
+                    new { Id = 202001, StartDate = new DateTime(2020, 1, 1), EndDate = new DateTime(2019, 1, 1).AddMonths(1).AddDays(-1), Name = "Січень 2020р." },
+                    new { Id = 202002, StartDate = new DateTime(2020, 2, 1), EndDate = new DateTime(2019, 2, 1).AddMonths(1).AddDays(-1), Name = "Лютий 2020р." },
+                    new { Id = 202003, StartDate = new DateTime(2020, 3, 1), EndDate = new DateTime(2019, 3, 1).AddMonths(1).AddDays(-1), Name = "Березень 2020р." },
+                    new { Id = 202004, StartDate = new DateTime(2020, 4, 1), EndDate = new DateTime(2019, 4, 1).AddMonths(1).AddDays(-1), Name = "Квітень 2020р." },
+                    new { Id = 202005, StartDate = new DateTime(2020, 5, 1), EndDate = new DateTime(2019, 5, 1).AddMonths(1).AddDays(-1), Name = "Травень 2020р." },
+                    new { Id = 202006, StartDate = new DateTime(2020, 6, 1), EndDate = new DateTime(2019, 6, 1).AddMonths(1).AddDays(-1), Name = "Червень 2020р." }
                     );
                 entity.Property(e => e.Name).HasColumnType("citext")
                     .IsRequired();
@@ -119,27 +174,27 @@ namespace Erc.Households.EF.PostgreSQL
                 entity.Property(b => b.UsageT3).HasColumnType("jsonb");
             });
 
-            modelBuilder.Entity<Contract>(e =>
-            {
-                e.ToTable("contracts")
-                    .Property(p => p.Logs).HasColumnType("jsonb");
+            //modelBuilder.Entity<Contract>(e =>
+            //{
+            //    e.ToTable("contracts")
+            //        .Property(p => p.Logs).HasColumnType("jsonb");
 
-                e.Property(e => e.StartDate).HasColumnType("date");
-                e.Property(e => e.EndDate).HasColumnType("date");
-            });
+            //    e.Property(e => e.StartDate).HasColumnType("date");
+            //    e.Property(e => e.EndDate).HasColumnType("date");
+            //});
 
-            modelBuilder.Entity<AccountingPointTariff>(e =>
-            {
-                e.ToTable("accounting_point_tariffs");
+            //modelBuilder.Entity<AccountingPointTariff>(e =>
+            //{
+            //    e.ToTable("accounting_point_tariffs");
 
-                e.Property(e => e.StartDate).HasColumnType("date");
+            //    e.Property(e => e.StartDate).HasColumnType("date");
 
-                e.Property(p => p.Logs).HasColumnType("jsonb");
+            //    e.Property(p => p.Logs).HasColumnType("jsonb");
                 
-                e.HasOne(p => p.Tariff)
-                    .WithMany()
-                    .HasForeignKey(p => p.TariffId);
-            });
+            //    e.HasOne(p => p.Tariff)
+            //        .WithMany()
+            //        .HasForeignKey(p => p.TariffId);
+            //});
 
             modelBuilder.Entity<BranchOffice>(e =>
             {
@@ -309,13 +364,22 @@ namespace Erc.Households.EF.PostgreSQL
 
             modelBuilder.Entity<AccountingPoint>(e =>
             {
-                e.HasMany(p => p.TariffsHistory)
-                    .WithOne()
-                    .HasForeignKey(p => p.AccountingPointId);
+                //e.OwnsMany(p => p.Exemptions, r => r.ToTable("exemptions").WithOwner().HasForeignKey(e => e.AccountingPointId));
 
-                e.HasMany(p => p.ContractsHistory)
-                    .WithOne()
-                    .HasForeignKey(p => p.AccountingPointId);
+                e.OwnsMany(p => p.TariffsHistory, t =>
+                {
+                    t.ToTable("accounting_point_tariffs").WithOwner().HasForeignKey(p => p.AccountingPointId);
+                    t.Property(p => p.Logs).HasColumnType("jsonb");
+                    t.Property(p => p.StartDate).HasColumnType("date");
+                });
+
+                e.OwnsMany(p => p.ContractsHistory, t =>
+                {
+                    t.ToTable("contracts").WithOwner().HasForeignKey(p => p.AccountingPointId);
+                    t.Property(p => p.Logs).HasColumnType("jsonb");
+                    t.Property(p => p.StartDate).HasColumnType("date");
+                    t.Property(p => p.EndDate).HasColumnType("date"); ;
+                });
 
                 e.Property(p => p.Name)
                     .HasColumnType("citext")

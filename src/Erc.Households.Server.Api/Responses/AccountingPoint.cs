@@ -4,6 +4,7 @@ namespace Erc.Households.Api.Responses
 {
     public class AccountingPoint
     {
+        public int Id { get; set; }
         public string BranchOfficeName { get; set; }
         public string Name { get; set; }
         public string DistributionSystemOperatorName { get; set; }

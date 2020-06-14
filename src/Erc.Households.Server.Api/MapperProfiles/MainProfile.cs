@@ -16,6 +16,14 @@ namespace Erc.Households.Api.MapperProfiles
 			CreateMap<Domain.Payments.PaymentsBatch, Responses.PaymentsBatch>()
 				.ForMember(x => x.TotalAmount, x => x.MapFrom(y => y.Payments.Sum(t => t.Amount)))
 				.ForMember(x => x.TotalCount, x => x.MapFrom(y => y.Payments.Count()));
+
+			CreateMap<Domain.Billing.Invoice, Responses.Invoice>()
+				.ForMember(i => i.Type, s => s.MapFrom(_ => "Звичайний"));
+			//CreateMap<Domain.Billing.Usage, Responses.Usage>();
+				//.ForMember(d=>d.Calculations, opt=>opt.Ignore());
+				//.AfterMap((s, d) => d.CalculationItems = s.Calculations
+				//));
+			//CreateMap<Domain.Billing.UsageCalculation, Responses.UsageCalculation>();
 		}
 	}
 }
