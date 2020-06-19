@@ -27,7 +27,8 @@ namespace Erc.Households.Api.QueryHandlers.AccountingPoints
         {
             return await _ercContext.PaymentBatches
                 .Include(t => t.PaymentChannel)
-                .Where(x => request.ShowClosed || !x.IsClosed)
+                .Include(t => t.BranchOffice)
+                .Where(x => request.BranchOfficeStringIds.Contains(x.BranchOffice.StringId) && (request.ShowClosed || !x.IsClosed))
                 .ProjectTo<PaymentsBatch>(_mapper.ConfigurationProvider)
                 .OrderByDescending(x => x.Id)
                 .ToPagedListAsync(request.PageNumber, request.PageSize);

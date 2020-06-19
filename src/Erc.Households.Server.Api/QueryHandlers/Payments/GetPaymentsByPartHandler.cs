@@ -28,6 +28,7 @@ namespace Erc.Households.Api.QueryHandlers.Payments
             return await _ercContext.Payments
                 .Include(t => t.AccountingPoint)
                 .Include(t => t.Batch)
+                    .ThenInclude(t => t.BranchOffice)
                 .Where(x => x.Batch.Id == request.PaymentsBatchId && (request.ShowProcessed || x.Status != Domain.Payments.PaymentStatus.Processed))
                 .ProjectTo<Payment>(_mapper.ConfigurationProvider)
                 .OrderByDescending(x => x.Id)

@@ -1,4 +1,7 @@
 ﻿using AutoMapper;
+using Erc.Households.Domain;
+using Erc.Households.Domain.AccountingPoints;
+using Erc.Households.Domain.Payments;
 using System.Linq;
 
 namespace Erc.Households.Api.MapperProfiles
@@ -7,13 +10,14 @@ namespace Erc.Households.Api.MapperProfiles
 	{
 		public MainProfile()
 		{
-			CreateMap<Domain.AccountingPoints.AccountingPoint, Responses.AccountingPoint>();
-			CreateMap<Domain.Person, Responses.Person>();
-			CreateMap<Domain.BranchOffice, Responses.BranchOffice>();
-			CreateMap<Domain.Payments.PaymentsBatch, Responses.PaymentsBatch>()
+			CreateMap<AccountingPoint, Responses.AccountingPoint>();
+			CreateMap<Person, Responses.Person>();
+			CreateMap<BranchOffice, Responses.BranchOffice>();
+			CreateMap<PaymentsBatch, Responses.PaymentsBatch>()
 				.ForMember(x => x.TotalAmount, x => x.MapFrom(y => y.Payments.Sum(t => t.Amount)))
 				.ForMember(x => x.TotalCount, x => x.MapFrom(y => y.Payments.Count()));
-			CreateMap<Domain.Payments.Payment, Responses.Payment>();
+			CreateMap<Payment, Responses.Payment>()
+				.ForMember(x => x.AccountingPointName, x => x.MapFrom(y => y.AccountingPoint.Name));
 		}
 	}
 }

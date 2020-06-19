@@ -25,7 +25,7 @@ namespace Erc.Households.Api.Controllers
         [HttpGet("")]
         public IActionResult GetAll()
         {
-            return Ok(_mapper.Map<IEnumerable<Responses.BranchOffice>>( _branchOfficeService.GetList(UserGroups)));
+            return Ok(_mapper.Map<IEnumerable<Responses.BranchOffice>>(_branchOfficeService.GetList(UserGroups)));
         }
     }
 }

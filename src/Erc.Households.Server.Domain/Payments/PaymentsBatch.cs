@@ -20,12 +20,13 @@ namespace Erc.Households.Domain.Payments
         }
 
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string Name => Id.ToString();
         public DateTime IncomingDate { get; set; }
         public int BranchOfficeId { get; set; }
         public int PaymentChannelId { get; set; }
-        public virtual ICollection<Payment> Payments { get; private set; }
-        public virtual PaymentChannel PaymentChannel { get; set; }
+        public ICollection<Payment> Payments { get; private set; }
+        public BranchOffice BranchOffice { get; private set; }
+        public PaymentChannel PaymentChannel { get; set; }
         public bool IsClosed { get; private set; }
 
         public void Close()

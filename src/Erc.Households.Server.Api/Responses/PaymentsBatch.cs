@@ -5,6 +5,7 @@ namespace Erc.Households.Api.Responses
     public class PaymentsBatch
     {
         public int Id { get; set; }
+        public string BranchOfficeName { get; set; }
         public string PaymentChannelName { get; set; }
         public string Name { get; set; }
         public DateTime IncomingDate { get; set; }

@@ -27,9 +27,9 @@ namespace Erc.Households.Api.Helpers
             _branchOfficeService = branchOfficeService;
         }
 
-        public List<Payment> Parser(IFormFile file, PaymentChannel paymentChannel, int branchOfficeId)
+        public List<Payment> Parser(int branchOfficeId, PaymentChannel paymentChannel, IFormFile file)
         {
-            var listPayment = new List<Payment>();
+            var listPayments = new List<Payment>();
             var filePath = SaveFileToDisk(file);
 
             var dbf = new Dbf(Encoding.GetEncoding(866));
@@ -41,7 +41,7 @@ namespace Erc.Households.Api.Helpers
 
             foreach (DbfRecord record in recordList)
             {
-                listPayment.Add(
+                listPayments.Add(
                     new Payment(
                         DateTime.ParseExact(record[paymentChannel.DateFieldName].ToString(), paymentChannel.TextDateFormat, CultureInfo.InvariantCulture),
                         Convert.ToDecimal(record[paymentChannel.SumFieldName].ToString()),
@@ -54,7 +54,7 @@ namespace Erc.Households.Api.Helpers
             }
 
             File.Delete(filePath);
-            return listPayment;
+            return listPayments;
         }
 
         private string SaveFileToDisk(IFormFile file)

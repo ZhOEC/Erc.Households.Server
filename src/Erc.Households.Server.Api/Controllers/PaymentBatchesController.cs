@@ -13,12 +13,15 @@ using Microsoft.AspNetCore.Hosting;
 using MediatR;
 using Erc.Households.Api.Queries.Payments;
 using Erc.Households.BranchOfficeManagment.Core;
+using Microsoft.AspNetCore.Authorization;
+using Erc.Households.Api.Controllers;
 
 namespace Erc.Households.Server.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PaymentBatchesController : ControllerBase
+    [Authorize]
+    public class PaymentBatchesController : ErcControllerBase
     {
         private readonly ErcContext _ercContext;
         private readonly IWebHostEnvironment _hostingEnvironment;
@@ -36,10 +39,10 @@ namespace Erc.Households.Server.Api.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPart(int pageNumber, int pageSize, bool showClosed)
         {
-            var pagedList = await _mediatR.Send(new GetPaymentBatchesByPart(pageNumber, pageSize, showClosed));
+            var pagedList = await _mediatR.Send(new GetPaymentBatchesByPart(UserGroups, pageNumber, pageSize, showClosed));
 
             Response.Headers.Add("X-Total-Count", pagedList.TotalItemCount.ToString());
-            return Ok(pagedList.ToList());
+            return Ok(pagedList);
         }
 
         [HttpGet("{id}")]
@@ -60,7 +63,7 @@ namespace Erc.Households.Server.Api.Controllers
             if (paymentBatch.UploadFile != null)
             {
                 var extFile = Path.GetExtension(paymentBatch.UploadFile.FileName);
-                if (extFile == ".dbf") paymentList = new PaymentsDbfParser(_hostingEnvironment, _ercContext, _branchOfficeService).Parser(paymentBatch.UploadFile, paymentChannel, paymentBatch.BranchOfficeId);
+                if (extFile == ".dbf") paymentList = new PaymentsDbfParser(_hostingEnvironment, _ercContext, _branchOfficeService).Parser(paymentBatch.BranchOfficeId, paymentChannel, paymentBatch.UploadFile);
                 else if (extFile == ".xls" || extFile == ".xlsx") return BadRequest("Excel files not yet supported");
             }
 

@@ -1,6 +1,8 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Erc.Households.Api.Queries.Payments;
+using Erc.Households.Api.Requests;
+using Erc.Households.DataAccess.Core;
+using Erc.Households.Domain.Payments;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,10 +13,12 @@ namespace Erc.Households.Api.Controllers
     public class PaymentsController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public PaymentsController(IMediator mediator)
+        public PaymentsController(IMediator mediator, IUnitOfWork unitOfWork)
         {
             _mediator = mediator;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
@@ -23,29 +27,42 @@ namespace Erc.Households.Api.Controllers
             var pagedList = await _mediator.Send(new GetPaymentsByPart(paymentsBatchId, pageNumber, pageSize, showProcessed));
  
             Response.Headers.Add("X-Total-Count", pagedList.TotalItemCount.ToString());
-            return Ok(pagedList.ToList());
+            return Ok(pagedList);
         }
 
         [HttpGet("{id}")]
-        public string Get(int id)
+        public async Task<IActionResult> GetOne(int id)
         {
-            return "value";
+            return Ok(await _mediator.Send(new GetPaymentById(id)));
         }
 
         [HttpPost]
-        public void Post([FromBody] string value)
+        public async Task<IActionResult> Post(NewPayment newPayment)
         {
+            var payment = await _mediator.Send(new AddPayment(newPayment));
 
-        }
+            if (payment is null)
+                return BadRequest();
 
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
+            await _unitOfWork.SaveWorkAsync();
+
+            return Ok(payment);
         }
 
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
+            var payment = await _mediator.Send(new GetPaymentById(id));
+
+            if (payment is null)
+                return NotFound();
+            else if (payment.Status == PaymentStatus.Processed)
+                return BadRequest("Платіж проведений, і поки не може бути видалений");
+
+            if (await _mediator.Send(new DeletePayment(payment.Id)))
+                await _unitOfWork.SaveWorkAsync();
+
+            return Ok();
         }
     }
 }
