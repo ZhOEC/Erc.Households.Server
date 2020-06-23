@@ -48,7 +48,8 @@ namespace Erc.Households.Api.Helpers
                         _branchOfficeService.GetOne(branchOfficeId).CurrentPeriodId,
                         paymentChannel.PaymentsType,
                         string.Join(" ", paymentChannel.PersonFieldName.Split("+").Select(x => record[x]).ToList()),
-                        _ercContext.AccountingPoints.FirstOrDefault(x => x.Name == record[paymentChannel.RecordpointFieldName.Trim()].ToString())?.Id
+                        _ercContext.AccountingPoints.FirstOrDefault(x => x.Name == record[paymentChannel.RecordpointFieldName.Trim()].ToString())?.Id,
+                        record[paymentChannel.RecordpointFieldName].ToString()
                     )
                 );
             }

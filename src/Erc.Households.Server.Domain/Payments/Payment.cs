@@ -11,17 +11,19 @@ namespace Erc.Households.Domain.Payments
     {
         List<InvoicePaymentItem> _invoicePaymentItems = new List<InvoicePaymentItem>();
 
-        public Payment(DateTime payDate, decimal amount, int periodId, PaymentType type, string payerInfo = null, int? accountingPointId = null, int? batchId = null)
+        public Payment(DateTime payDate, decimal amount, int periodId, PaymentType type, string payerInfo = null, int? accountingPointId = null, string accountingPointName = null, int? batchId = null)
         {
             PayDate = payDate;
             Amount = amount;
             PeriodId = periodId;
+            Type = type;
+            PayerInfo = payerInfo;
             AccountingPointId = accountingPointId;
+            AccountingPointName = accountingPointName;
+            BatchId = batchId;
+
             Status = PaymentStatus.New;
             EnterDate = DateTime.Now;
-            PayerInfo = payerInfo;
-            Type = type;
-            BatchId = batchId;
         }
 
         protected Payment() { }
@@ -29,8 +31,8 @@ namespace Erc.Households.Domain.Payments
         public int PeriodId { get; private set; }
         public int? BatchId { get; private set; }
         public int? AccountingPointId { get; private set; }
-        public DateTime PayDate { get; set; }
-        public DateTime EnterDate { get; set; }
+        public DateTime PayDate { get; private set; }
+        public DateTime EnterDate { get; private set; }
         public decimal Amount { get; private set; }
         public AccountingPoint AccountingPoint { get; private set; }
         public PaymentsBatch Batch { get; private set; }

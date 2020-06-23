@@ -23,21 +23,23 @@ namespace Erc.Households.Api.QueryHandlers.Payments
 
         public async Task<Responses.Payment> Handle(AddPayment request, CancellationToken cancellationToken)
         {
-            var accountingPoint = await _ercContext.AccountingPoints.Include(x => x.BranchOffice).FirstOrDefaultAsync(x => x.Id == request.payment.AccountingPointId);
+            var accountingPoint = await _ercContext.AccountingPoints.Include(x => x.BranchOffice).FirstOrDefaultAsync(x => x.Id == request.Payment.AccountingPointId);
             if (accountingPoint is null)
                 return null;
 
             var payment = new Payment(
-                    request.payment.PayDate,
-                    request.payment.Amount,
+                    request.Payment.PayDate,
+                    request.Payment.Amount,
                     accountingPoint.BranchOffice.CurrentPeriodId,
-                    PaymentType.CustomerPayment,
-                    request.payment.PayerInfo,
-                    request.payment.AccountingPointId,
-                    request.payment.PaymentsBatchId
+                    request.Payment.Type,
+                    request.Payment.PayerInfo,
+                    request.Payment.AccountingPointId,
+                    null,
+                    request.Payment.BatchId
                 );
 
             await _ercContext.Payments.AddAsync(payment);
+            await _ercContext.SaveChangesAsync();
             return _mapper.Map<Responses.Payment>(payment);
         }
     }

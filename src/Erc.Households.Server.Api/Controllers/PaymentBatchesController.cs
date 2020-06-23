@@ -59,7 +59,7 @@ namespace Erc.Households.Server.Api.Controllers
             if (paymentChannel is null)
                 return BadRequest("Payment channel not found!");
 
-            var paymentList = new List<Payment>();
+            var paymentList = new List<Domain.Payments.Payment>();
             if (paymentBatch.UploadFile != null)
             {
                 var extFile = Path.GetExtension(paymentBatch.UploadFile.FileName);

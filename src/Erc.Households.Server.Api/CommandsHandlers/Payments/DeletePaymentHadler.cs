@@ -19,6 +19,7 @@ namespace Erc.Households.Api.QueryHandlers.Payments
         {
             var payment = await _ercContext.Payments.FindAsync(request.Id);
             _ercContext.Remove(payment);
+            await _ercContext.SaveChangesAsync();
 
             return true;
         }

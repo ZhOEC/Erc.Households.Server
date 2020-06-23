@@ -13,12 +13,10 @@ namespace Erc.Households.Api.Controllers
     public class PaymentsController : ControllerBase
     {
         private readonly IMediator _mediator;
-        private readonly IUnitOfWork _unitOfWork;
 
-        public PaymentsController(IMediator mediator, IUnitOfWork unitOfWork)
+        public PaymentsController(IMediator mediator)
         {
             _mediator = mediator;
-            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
@@ -39,12 +37,31 @@ namespace Erc.Households.Api.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(NewPayment newPayment)
         {
-            var payment = await _mediator.Send(new AddPayment(newPayment));
+            Responses.Payment payment = null;
+            if (newPayment.BatchId is null && newPayment.Type == PaymentType.CorrectiveTransfer)
+            {
+                // TODO: implement the business logic of payment distribution by customer
+            }
+            else
+            {
+                payment = await _mediator.Send(new AddPayment(newPayment));
+            }
 
             if (payment is null)
-                return BadRequest();
+                return NotFound();
 
-            await _unitOfWork.SaveWorkAsync();
+            return Ok(payment);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(UpdatedPayment updatePayment)
+        {
+            var payment = await _mediator.Send(new UpdatePayment(updatePayment));
+
+            if (payment is null)
+                return NotFound();
+            else if (payment.Status == PaymentStatus.Processed)
+                return BadRequest("Платіж проведений, і не може редагуватися");
 
             return Ok(payment);
         }
@@ -59,8 +76,8 @@ namespace Erc.Households.Api.Controllers
             else if (payment.Status == PaymentStatus.Processed)
                 return BadRequest("Платіж проведений, і поки не може бути видалений");
 
-            if (await _mediator.Send(new DeletePayment(payment.Id)))
-                await _unitOfWork.SaveWorkAsync();
+            if (!await _mediator.Send(new DeletePayment(payment.Id)))
+                return BadRequest();
 
             return Ok();
         }

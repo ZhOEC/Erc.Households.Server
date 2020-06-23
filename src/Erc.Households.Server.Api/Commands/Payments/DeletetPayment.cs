@@ -8,7 +8,7 @@ namespace Erc.Households.Api.Queries.Payments
 
         public DeletePayment(int id)
         {
-            this.Id = id;
+            Id = id;
         }
     }
 }
