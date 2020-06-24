@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json;
+using Erc.Households.Domain.Billing;
 using Erc.Households.ModelLogs;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -14,6 +16,20 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 .Annotation("Npgsql:PostgresExtension:citext", ",,");
 
             migrationBuilder.CreateTable(
+                name: "building_types",
+                columns: table => new
+                {
+                    id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    name = table.Column<string>(nullable: true),
+                    heataing_correction = table.Column<decimal>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_building_types", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "distribution_system_operators",
                 columns: table => new
                 {
@@ -24,6 +40,23 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_distribution_system_operators", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "exemption_categories",
+                columns: table => new
+                {
+                    id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    name = table.Column<string>(nullable: true),
+                    coeff = table.Column<decimal>(nullable: false),
+                    has_limit = table.Column<bool>(nullable: true),
+                    effective_date = table.Column<DateTime>(type: "date", nullable: false),
+                    end_date = table.Column<DateTime>(type: "date", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_exemption_categories", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -52,8 +85,8 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 {
                     id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    start_date = table.Column<DateTime>(nullable: false),
-                    end_date = table.Column<DateTime>(nullable: false),
+                    start_date = table.Column<DateTime>(type: "date", nullable: false),
+                    end_date = table.Column<DateTime>(type: "date", nullable: false),
                     name = table.Column<string>(type: "citext", nullable: false)
                 },
                 constraints: table =>
@@ -88,6 +121,20 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "usage_categories",
+                columns: table => new
+                {
+                    id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    name = table.Column<string>(nullable: true),
+                    exemption_discount_norms = table.Column<IEnumerable<ExemptionDiscountNorms>>(type: "jsonb", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_usage_categories", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "zone_coeffs",
                 columns: table => new
                 {
@@ -96,7 +143,8 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     zone_number = table.Column<int>(nullable: false),
                     zone_record = table.Column<int>(nullable: false),
                     value = table.Column<decimal>(nullable: false),
-                    start_date = table.Column<DateTime>(nullable: false)
+                    discount_weight = table.Column<decimal>(nullable: false),
+                    start_date = table.Column<DateTime>(type: "date", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -110,7 +158,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(nullable: true),
-                    incoming_date = table.Column<DateTime>(nullable: false),
+                    incoming_date = table.Column<DateTime>(type: "date", nullable: false),
                     branch_office_id = table.Column<int>(nullable: false),
                     payment_channel_id = table.Column<int>(nullable: false),
                     is_closed = table.Column<bool>(nullable: false)
@@ -175,7 +223,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 {
                     id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    start_date = table.Column<DateTime>(nullable: false),
+                    start_date = table.Column<DateTime>(type: "date", nullable: false),
                     value = table.Column<decimal>(type: "decimal(8,5)", nullable: false),
                     consumption_limit = table.Column<int>(nullable: true),
                     heating_consumption_limit = table.Column<int>(nullable: true),
@@ -302,6 +350,8 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     branch_office_id = table.Column<int>(nullable: false),
                     debt = table.Column<decimal>(nullable: false),
                     zone_record = table.Column<int>(nullable: false),
+                    usage_category_id = table.Column<int>(nullable: false),
+                    building_type_id = table.Column<int>(nullable: false),
                     contract_is_signed = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
@@ -321,6 +371,12 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
+                        name: "fk_accounting_points_building_types_building_type_id",
+                        column: x => x.building_type_id,
+                        principalTable: "building_types",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "fk_accounting_points_distribution_system_operators_distributio",
                         column: x => x.distribution_system_operator_id,
                         principalTable: "distribution_system_operators",
@@ -332,6 +388,51 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         principalTable: "people",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_accounting_points_usage_categories_usage_category_id",
+                        column: x => x.usage_category_id,
+                        principalTable: "usage_categories",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "accounting_point_exemptions",
+                columns: table => new
+                {
+                    id = table.Column<int>(nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    accounting_point_id = table.Column<int>(nullable: false),
+                    exemption_category_id = table.Column<int>(nullable: false),
+                    person_id = table.Column<int>(nullable: false),
+                    effective_date = table.Column<DateTime>(type: "date", nullable: false),
+                    end_date = table.Column<DateTime>(type: "date", nullable: true),
+                    certificate = table.Column<string>(nullable: true),
+                    persons_number = table.Column<int>(nullable: false),
+                    has_limit = table.Column<bool>(nullable: false, defaultValue: true),
+                    note = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_accounting_point_exemption", x => new { x.accounting_point_id, x.id });
+                    table.ForeignKey(
+                        name: "fk_accounting_point_exemption_accounting_points_accounting_poin",
+                        column: x => x.accounting_point_id,
+                        principalTable: "accounting_points",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_accounting_point_exemption_exemption_categories_exemption_c",
+                        column: x => x.exemption_category_id,
+                        principalTable: "exemption_categories",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_accounting_point_exemption_people_person_id",
+                        column: x => x.person_id,
+                        principalTable: "people",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -340,14 +441,14 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 {
                     id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    logs = table.Column<IReadOnlyCollection<ObjectLog>>(type: "jsonb", nullable: true),
-                    start_date = table.Column<DateTime>(nullable: false),
                     accounting_point_id = table.Column<int>(nullable: false),
+                    logs = table.Column<IReadOnlyCollection<ObjectLog>>(type: "jsonb", nullable: true),
+                    start_date = table.Column<DateTime>(type: "date", nullable: false),
                     tariff_id = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_accounting_point_tariff", x => x.id);
+                    table.PrimaryKey("pk_accounting_point_tariff", x => new { x.accounting_point_id, x.id });
                     table.ForeignKey(
                         name: "fk_accounting_point_tariff_accounting_points_accounting_point_id",
                         column: x => x.accounting_point_id,
@@ -368,15 +469,15 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 {
                     id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    logs = table.Column<IReadOnlyCollection<ObjectLog>>(type: "jsonb", nullable: true),
                     accounting_point_id = table.Column<int>(nullable: false),
+                    logs = table.Column<IReadOnlyCollection<ObjectLog>>(type: "jsonb", nullable: true),
                     customer_id = table.Column<int>(nullable: false),
-                    start_date = table.Column<DateTime>(nullable: false),
-                    end_date = table.Column<DateTime>(nullable: true)
+                    start_date = table.Column<DateTime>(type: "date", nullable: false),
+                    end_date = table.Column<DateTime>(type: "date", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_contract", x => x.id);
+                    table.PrimaryKey("pk_contract", x => new { x.accounting_point_id, x.id });
                     table.ForeignKey(
                         name: "fk_contract_accounting_points_accounting_point_id",
                         column: x => x.accounting_point_id,
@@ -399,25 +500,21 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     period_id = table.Column<int>(nullable: false),
                     accounting_point_id = table.Column<int>(nullable: false),
-                    from = table.Column<DateTime>(nullable: false),
-                    to = table.Column<DateTime>(nullable: false),
-                    previous_t1meter_reading = table.Column<int>(nullable: false),
-                    present_t1meter_reading = table.Column<int>(nullable: false),
-                    previous_t2meter_reading = table.Column<int>(nullable: true),
-                    present_t2meter_reading = table.Column<int>(nullable: true),
-                    previous_t3meter_reading = table.Column<int>(nullable: true),
-                    present_t3meter_reading = table.Column<int>(nullable: true),
-                    t1usage = table.Column<int>(nullable: false),
-                    t2usage = table.Column<int>(nullable: true),
-                    t3usage = table.Column<int>(nullable: true),
-                    t1sales = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    t2sales = table.Column<decimal>(type: "decimal(10,2)", nullable: true),
-                    t3sales = table.Column<decimal>(type: "decimal(10,2)", nullable: true),
-                    total_sales = table.Column<decimal>(nullable: false),
+                    date = table.Column<DateTime>(nullable: false),
+                    from_date = table.Column<DateTime>(type: "date", nullable: false),
+                    to_date = table.Column<DateTime>(type: "date", nullable: false),
+                    usage_t1 = table.Column<Usage>(type: "jsonb", nullable: true),
+                    usage_t2 = table.Column<Usage>(type: "jsonb", nullable: true),
+                    usage_t3 = table.Column<Usage>(type: "jsonb", nullable: true),
+                    total_units = table.Column<int>(nullable: false),
+                    total_discount = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    total_amount_due = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    total_charge = table.Column<decimal>(nullable: false),
                     incoming_balance = table.Column<decimal>(nullable: false),
                     counter_serial_number = table.Column<string>(nullable: true),
                     tariff_id = table.Column<int>(nullable: false),
                     note = table.Column<string>(nullable: true),
+                    type = table.Column<int>(nullable: false),
                     zone_record = table.Column<int>(nullable: false),
                     dso_consumption_id = table.Column<Guid>(nullable: false)
                 },
@@ -455,7 +552,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     accounting_point_id = table.Column<int>(nullable: true),
                     pay_date = table.Column<DateTime>(nullable: false),
                     enter_date = table.Column<DateTime>(nullable: false),
-                    amount = table.Column<decimal>(nullable: false),
+                    amount = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     status = table.Column<int>(nullable: false),
                     payer_info = table.Column<string>(nullable: true),
                     accounting_point_name = table.Column<string>(nullable: true),
@@ -480,32 +577,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         name: "fk_payments_period_period_id",
                         column: x => x.period_id,
                         principalTable: "periods",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "invoice_detail",
-                columns: table => new
-                {
-                    id = table.Column<int>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    invoice_id = table.Column<int>(nullable: false),
-                    from = table.Column<DateTime>(nullable: false),
-                    to = table.Column<DateTime>(nullable: false),
-                    price_value = table.Column<decimal>(nullable: false),
-                    usage = table.Column<int>(nullable: false),
-                    sales = table.Column<decimal>(nullable: false),
-                    kz = table.Column<decimal>(nullable: false),
-                    zone_number = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_invoice_detail", x => x.id);
-                    table.ForeignKey(
-                        name: "fk_invoice_detail_invoices_invoice_id",
-                        column: x => x.invoice_id,
-                        principalTable: "invoices",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -538,12 +609,32 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 });
 
             migrationBuilder.InsertData(
+                table: "building_types",
+                columns: new[] { "id", "heataing_correction", "name" },
+                values: new object[,]
+                {
+                    { 1, 1.0940m, "1-2 поверхи" },
+                    { 3, 0.7980m, "3 поверхи і більше" }
+                });
+
+            migrationBuilder.InsertData(
                 table: "distribution_system_operators",
                 columns: new[] { "id", "name" },
                 values: new object[,]
                 {
-                    { 1, "АТ «Житомиробленерго»" },
-                    { 2, "АТ «Укрзалізниця»" }
+                    { 2, "АТ «Укрзалізниця»" },
+                    { 1, "АТ «Житомиробленерго»" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "exemption_categories",
+                columns: new[] { "id", "coeff", "effective_date", "end_date", "has_limit", "name" },
+                values: new object[,]
+                {
+                    { 4, 100.0m, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, true, "Учасник бойових дій та членів родин загиблих в АТО (ООС)" },
+                    { 3, 50.0m, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, true, "Iнвалiди 2 групи по зору або з ураженням ОРА" },
+                    { 2, 50.0m, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, true, "Iнвалiди 1 групи по зору або з ураженням ОРА" },
+                    { 1, 100.0m, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Почесні громадяни міста" }
                 });
 
             migrationBuilder.InsertData(
@@ -551,14 +642,15 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 columns: new[] { "id", "end_date", "name", "start_date" },
                 values: new object[,]
                 {
-                    { 202005, new DateTime(2019, 5, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Травень 2019р.", new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 202004, new DateTime(2019, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), "Квітень 2019р.", new DateTime(2020, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 202002, new DateTime(2019, 2, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Лютий 2019р.", new DateTime(2020, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 202001, new DateTime(2019, 1, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Січень 2019р.", new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 202006, new DateTime(2019, 6, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), "Червень 2020р.", new DateTime(2020, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 202005, new DateTime(2019, 5, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Травень 2020р.", new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 202004, new DateTime(2019, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), "Квітень 2020р.", new DateTime(2020, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 202003, new DateTime(2019, 3, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Березень 2020р.", new DateTime(2020, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 202001, new DateTime(2019, 1, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Січень 2020р.", new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
                     { 201912, new DateTime(2019, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Грудень 2019р.", new DateTime(2019, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
                     { 201911, new DateTime(2019, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), "Листопад 2019р.", new DateTime(2019, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
                     { 201910, new DateTime(2019, 10, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Жовтень 2019р.", new DateTime(2019, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 201909, new DateTime(2019, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), "Вересень 2019р.", new DateTime(2019, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 202002, new DateTime(2019, 2, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Лютий 2020р.", new DateTime(2020, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
                     { 201908, new DateTime(2019, 8, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Серпень 2019р.", new DateTime(2019, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
                     { 201907, new DateTime(2019, 7, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Липень 2019р.", new DateTime(2019, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
                     { 201906, new DateTime(2019, 6, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), "Червень 2019р.", new DateTime(2019, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
@@ -567,8 +659,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     { 201903, new DateTime(2019, 3, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Березень 2019р.", new DateTime(2019, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
                     { 201902, new DateTime(2019, 2, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Лютий 2019р.", new DateTime(2019, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
                     { 201901, new DateTime(2019, 1, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Січень 2019р.", new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 202006, new DateTime(2019, 6, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), "Червень 2019р.", new DateTime(2020, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 202003, new DateTime(2019, 3, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Березень 2019р.", new DateTime(2020, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
+                    { 201909, new DateTime(2019, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), "Вересень 2019р.", new DateTime(2019, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.InsertData(
@@ -581,23 +672,35 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 columns: new[] { "id", "name" },
                 values: new object[,]
                 {
-                    { 3, "Багатоквартирні негазифіковані будинки" },
-                    { 1, "Населення (загальний тариф)" },
                     { 2, "Будинки з електроопалювальними установками" },
-                    { 4, "Багатодітні, прийомні сім'ї та дитячі будинки сімейного типу" }
+                    { 1, "Населення (загальний тариф)" },
+                    { 4, "Багатодітні, прийомні сім'ї та дитячі будинки сімейного типу" },
+                    { 3, "Багатоквартирні негазифіковані будинки" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "usage_categories",
+                columns: new[] { "id", "exemption_discount_norms", "name" },
+                values: new object[,]
+                {
+                  { 4, JsonSerializer.Serialize(new[] { new { EffectiveDate = new DateTime(2019, 1, 1), BaseKWh = 110, BaseKWhWithoutHotWater = 130, BasePerson = 1, KWhPerPerson = 30, MaxKWh = 230, MaxKWhWithoutHotWater = 250, BaseSquareMeter = 10.5m, SquareMeterPerPerson = 21m, KWhPerSquareMeter = 30 } }), "Електроопалювальна установка та електроплита" },
+                  { 3, JsonSerializer.Serialize(new[] { new { EffectiveDate = new DateTime(2019, 1, 1), BaseKWh = 70, BaseKWhWithoutHotWater = 100, BasePerson = 1, KWhPerPerson = 30, MaxKWh = 190, MaxKWhWithoutHotWater = 220, BaseSquareMeter = 10.5m, SquareMeterPerPerson = 21m, KWhPerSquareMeter = 30 } }), "Електроопалювальна установка" },
+                  { 2, JsonSerializer.Serialize(new[] { new { EffectiveDate = new DateTime(2019, 1, 1), BaseKWh = 110, BaseKWhWithoutHotWater = 130, BasePerson = 1, KWhPerPerson = 30, MaxKWh = 230, MaxKWhWithoutHotWater = 250 } }), "Електроплита" },
+                  { 1,  JsonSerializer.Serialize(new[] { new { EffectiveDate = new DateTime(2019, 1, 1), BaseKWh = 70, BaseKWhWithoutHotWater = 100, BasePerson = 1, KWhPerPerson = 30, MaxKWh = 190, MaxKWhWithoutHotWater = 220 } }) , "Звичайне споживання" }
+
                 });
 
             migrationBuilder.InsertData(
                 table: "zone_coeffs",
-                columns: new[] { "id", "start_date", "value", "zone_number", "zone_record" },
+                columns: new[] { "id", "discount_weight", "start_date", "value", "zone_number", "zone_record" },
                 values: new object[,]
                 {
-                    { 3, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1m, 2, 2 },
-                    { 4, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0.4m, 1, 3 },
-                    { 5, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1m, 2, 3 },
-                    { 6, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1.5m, 3, 3 },
-                    { 1, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1m, 1, 1 },
-                    { 2, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0.5m, 1, 2 }
+                    { 6, 0.21m, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1.5m, 3, 3 },
+                    { 3, 0.33m, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1m, 2, 2 },
+                    { 2, 0.67m, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0.5m, 1, 2 },
+                    { 1, 1m, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1m, 1, 1 },
+                    { 5, 0.33m, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1m, 2, 3 },
+                    { 4, 0.46m, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0.4m, 1, 3 }
                 });
 
             migrationBuilder.InsertData(
@@ -674,9 +777,14 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "ix_accounting_point_tariff_accounting_point_id",
-                table: "accounting_point_tariffs",
-                column: "accounting_point_id");
+                name: "ix_accounting_point_exemption_exemption_category_id",
+                table: "accounting_point_exemptions",
+                column: "exemption_category_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_accounting_point_exemption_person_id",
+                table: "accounting_point_exemptions",
+                column: "person_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_accounting_point_tariff_tariff_id",
@@ -692,6 +800,11 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 name: "ix_accounting_points_branch_office_id",
                 table: "accounting_points",
                 column: "branch_office_id");
+
+            migrationBuilder.CreateIndex(
+                name: "ix_accounting_points_building_type_id",
+                table: "accounting_points",
+                column: "building_type_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_accounting_points_distribution_system_operator_id",
@@ -716,6 +829,11 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 column: "owner_id");
 
             migrationBuilder.CreateIndex(
+                name: "ix_accounting_points_usage_category_id",
+                table: "accounting_points",
+                column: "usage_category_id");
+
+            migrationBuilder.CreateIndex(
                 name: "ix_addresses_street_id",
                 table: "addresses",
                 column: "street_id");
@@ -731,11 +849,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 column: "district_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_contract_accounting_point_id",
-                table: "contracts",
-                column: "accounting_point_id");
-
-            migrationBuilder.CreateIndex(
                 name: "ix_contract_customer_id",
                 table: "contracts",
                 column: "customer_id");
@@ -744,11 +857,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 name: "ix_districts_region_id",
                 table: "districts",
                 column: "region_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_invoice_detail_invoice_id",
-                table: "invoice_detail",
-                column: "invoice_id");
 
             migrationBuilder.CreateIndex(
                 name: "ix_invoice_payment_item_invoice_id",
@@ -832,13 +940,13 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "accounting_point_exemptions");
+
+            migrationBuilder.DropTable(
                 name: "accounting_point_tariffs");
 
             migrationBuilder.DropTable(
                 name: "contracts");
-
-            migrationBuilder.DropTable(
-                name: "invoice_detail");
 
             migrationBuilder.DropTable(
                 name: "invoice_payment_item");
@@ -848,6 +956,9 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
 
             migrationBuilder.DropTable(
                 name: "zone_coeffs");
+
+            migrationBuilder.DropTable(
+                name: "exemption_categories");
 
             migrationBuilder.DropTable(
                 name: "invoices");
@@ -868,10 +979,16 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 name: "branch_offices");
 
             migrationBuilder.DropTable(
+                name: "building_types");
+
+            migrationBuilder.DropTable(
                 name: "distribution_system_operators");
 
             migrationBuilder.DropTable(
                 name: "people");
+
+            migrationBuilder.DropTable(
+                name: "usage_categories");
 
             migrationBuilder.DropTable(
                 name: "payment_channels");

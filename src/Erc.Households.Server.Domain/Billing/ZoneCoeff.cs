@@ -19,6 +19,7 @@ namespace Erc.Households.Domain.Billing
         public ZoneNumber ZoneNumber { get; private set; }
         public ZoneRecord ZoneRecord { get; private set; }
         public decimal Value { get; private set; }
+        public decimal DiscountWeight { get; private set; }
         public DateTime StartDate { get; private set; }
     }
 }

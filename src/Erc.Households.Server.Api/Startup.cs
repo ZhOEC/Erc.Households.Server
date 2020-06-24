@@ -42,12 +42,7 @@ namespace Erc.Households.WebApi
 
             services.AddAutoMapper(System.Reflection.Assembly.GetExecutingAssembly());
 
-            services.AddSingleton<IBranchOfficeService>(
-                new BranchOfficeService(
-                    new ErcContext(
-                        new DbContextOptionsBuilder<ErcContext>().UseNpgsql(Configuration.GetConnectionString("ErcContext")).Options)
-                    )
-                );
+            services.AddSingleton<IBranchOfficeService>(provider => new BranchOfficeService(provider.CreateScope().ServiceProvider.GetService<ErcContext>()));
 
             services.AddDbContext<ErcContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("ErcContext")));
@@ -64,7 +59,7 @@ namespace Erc.Households.WebApi
 
             services.AddTransient<IUnitOfWork>(provider => new UnitOfWork(provider.GetService<ErcContext>(), provider.GetService<IBus>()));
 
-            services.AddMediatR(typeof(Startup)); ;
+            services.AddMediatR(typeof(Startup), typeof(CommandHandlers.CloseAccountingPointExemptionHandler), typeof(NotificationHandlers.AccountingPointExemptionClosedHandler)); 
 
             services.AddSingleton<IElasticClient>(new ElasticClient(new System.Uri(Configuration.GetConnectionString("Elasticsearch"))));
 

@@ -1,5 +1,6 @@
 ﻿using Erc.Households.Domain.Addresses;
 using Erc.Households.Domain.Billing;
+using Erc.Households.Domain.Exemptions;
 using Erc.Households.Domain.Extensions;
 using Erc.Households.Domain.Payments;
 using Erc.Households.Domain.Tariffs;
@@ -16,6 +17,7 @@ namespace Erc.Households.Domain.AccountingPoints
         private readonly List<AccountingPointTariff> _tariffsHistory = new List<AccountingPointTariff>();
         private List<Payment> _payments = new List<Payment>();
         private List<Invoice> _invoices = new List<Invoice>();
+        private List<AccountingPointExemption> _exemptions = new List<AccountingPointExemption>();
 
         BranchOffice _branchOffice;
         Person _owner;
@@ -32,7 +34,7 @@ namespace Erc.Households.Domain.AccountingPoints
         }
 
         public AccountingPoint(string eic, string name, ZoneRecord zoneRecord, DateTime contractStartDate, int tariffId, Address address,
-                               Person owner, int branchOfficeId, int dsoId, string currentUser)
+                               Person owner, int branchOfficeId, int dsoId, string currentUser, int usageCategoryId)
         {
             Eic = eic;
             Name = name;
@@ -43,6 +45,7 @@ namespace Erc.Households.Domain.AccountingPoints
             ZoneRecord = zoneRecord;
             OpenNewContract(contractStartDate, Owner, currentUser);
             SetTariff(tariffId, contractStartDate, currentUser);
+            UsageCategoryId = usageCategoryId;
         }
 
         public int Id { get; private set; }
@@ -56,30 +59,38 @@ namespace Erc.Households.Domain.AccountingPoints
         public ZoneRecord ZoneRecord { get; private set; }
         public DistributionSystemOperator DistributionSystemOperator
         {
-
             get => LazyLoader.Load(this, ref _distributionSystemOperator);
             private set { _distributionSystemOperator = value; }
         }
         public Contract CurrentContract => _contractsHistory.OrderByDescending(c => c.StartDate).ThenByDescending(c => c.Id).FirstOrDefault();
         public Tariff CurrentTariff => _tariffsHistory.FirstOrDefault(t => t.StartDate <= DateTime.Today).Tariff;
+        public int UsageCategoryId { get; private set; }
+        public int BuildingTypeId { get; private set; }
+        public AccountingPointExemption Exemption => Exemptions.FirstOrDefault(t => t.EffectiveDate <= DateTime.Today);
+        public BuildingType BuildingType { get; private set; }
+        public UsageCategory UsageCategory { get; private set; }
+
 
         public IReadOnlyCollection<Invoice> Invoices
         {
-
             get => LazyLoader.Load(this, ref _invoices);
             private set { _invoices = value.ToList(); }
         }
 
+        public IReadOnlyCollection<AccountingPointExemption> Exemptions
+        {
+            get => LazyLoader.Load(this, ref _exemptions);
+            private set { _exemptions = value.ToList(); }
+        }
+
         public IReadOnlyCollection<Payment> Payments
         {
-
             get => LazyLoader.Load(this, ref _payments);
             private set { Payments = value.ToList(); }
         }
 
         public Address Address
         {
-
             get => LazyLoader.Load(this, ref _address);
             private set { _address = value; }
         }
@@ -146,6 +157,13 @@ namespace Erc.Households.Domain.AccountingPoints
             }
             Debt -= payment.Amount;
             _payments.Add(payment);
+        }
+
+        public void AddInvoice(Invoice invoice)
+        {
+            _invoices.Add(invoice);
+            invoice.Calculate();
+            Debt += invoice.TotalAmountDue;
         }
     }
 }
