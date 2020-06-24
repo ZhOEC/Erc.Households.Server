@@ -32,6 +32,9 @@ namespace Erc.Households.Api.QueryHandlers.Payments
                 .Where(x => x.Batch.Id == request.PaymentsBatchId && (request.ShowProcessed || x.Status != Domain.Payments.PaymentStatus.Processed))
                 .ProjectTo<Payment>(_mapper.ConfigurationProvider)
                 .OrderByDescending(x => x.Id)
+                    .ThenBy(x => x.AccountingPointName)
+                    .ThenBy(x => x.PayerInfo)
+                    .ThenBy(x => x.Status)
                 .ToPagedListAsync(request.PageNumber, request.PageSize);
         }
     }

@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Erc.Households.Api.Queries.Payments;
 using Erc.Households.Api.Requests;
-using Erc.Households.DataAccess.Core;
 using Erc.Households.Domain.Payments;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -35,51 +34,35 @@ namespace Erc.Households.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post(NewPayment newPayment)
+        public async Task<ActionResult<Unit>> Post(NewPayment newPayment)
         {
-            Responses.Payment payment = null;
-            if (newPayment.BatchId is null && newPayment.Type == PaymentType.CorrectiveTransfer)
-            {
-                // TODO: implement the business logic of payment distribution by customer
-            }
-            else
-            {
-                payment = await _mediator.Send(new AddPayment(newPayment));
-            }
-
-            if (payment is null)
-                return NotFound();
-
-            return Ok(payment);
+            return await _mediator.Send(new CreatePaymentCommand(newPayment));
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(UpdatedPayment updatePayment)
+        public async Task<ActionResult<Unit>> Update(UpdatedPayment updatedPayment)
         {
-            var payment = await _mediator.Send(new UpdatePayment(updatePayment));
-
+            var payment = await _mediator.Send(new GetPaymentById(updatedPayment.Id));
+            
             if (payment is null)
                 return NotFound();
             else if (payment.Status == PaymentStatus.Processed)
                 return BadRequest("Платіж проведений, і не може редагуватися");
 
-            return Ok(payment);
+            return await _mediator.Send(new UpdatePaymentCommand(updatedPayment));
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<ActionResult<Unit>> Delete(int id)
         {
             var payment = await _mediator.Send(new GetPaymentById(id));
 
             if (payment is null)
                 return NotFound();
             else if (payment.Status == PaymentStatus.Processed)
-                return BadRequest("Платіж проведений, і поки не може бути видалений");
+                return BadRequest("Платіж проведений, і не може бути видалений");
 
-            if (!await _mediator.Send(new DeletePayment(payment.Id)))
-                return BadRequest();
-
-            return Ok();
+            return await _mediator.Send(new DeletePaymentCommand(payment.Id));
         }
     }
 }

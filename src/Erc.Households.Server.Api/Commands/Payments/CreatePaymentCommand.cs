@@ -3,11 +3,11 @@ using MediatR;
 
 namespace Erc.Households.Api.Queries.Payments
 {
-    public class AddPayment : IRequest<Responses.Payment>
+    public class CreatePaymentCommand : IRequest<Unit>
     {
         public NewPayment Payment { get; private set; }
 
-        public AddPayment(NewPayment payment)
+        public CreatePaymentCommand(NewPayment payment)
         {
             Payment = payment;
         }
