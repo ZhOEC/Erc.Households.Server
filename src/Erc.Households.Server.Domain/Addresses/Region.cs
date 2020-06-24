@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Erc.Households.Server.Domain.Addresses
+namespace Erc.Households.Domain.Addresses
 {
     public class Region
     {

@@ -1,7 +1,7 @@
-﻿using Erc.Households.Server.Events;
+﻿using Erc.Households.Events;
 using System.Collections.Generic;
 
-namespace Erc.Households.Server.Domain
+namespace Erc.Households.Domain
 {
     public interface IEntity
     {

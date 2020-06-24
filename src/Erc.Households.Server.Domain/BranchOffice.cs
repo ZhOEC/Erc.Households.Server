@@ -1,6 +1,7 @@
-﻿using System.Linq;
+﻿using Erc.Households.Domain.Billing;
+using System.Linq;
 
-namespace Erc.Households.Server.Domain
+namespace Erc.Households.Domain
 {
     public class BranchOffice
     {
@@ -9,8 +10,13 @@ namespace Erc.Households.Server.Domain
         public string StringId { get; set; }
         public int[] DistrictIds { get; private set; }
         public string Address { get; set; }
-        //public int CurrentPeriodId { get; private set; }
-        //public Billing.Period CurrentPeriod { get; private set; }
+        public int CurrentPeriodId { get; private set; }
+        public Period CurrentPeriod { get; private set; }
+
+        public void StartNewPeriod(Period period)
+        {
+            CurrentPeriod = period;
+        }
 
         public void AddDistrict(int districtId)
         {

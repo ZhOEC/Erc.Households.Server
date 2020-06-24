@@ -1,9 +1,7 @@
-﻿using Erc.Households.Server.Domain.Addresses;
+﻿using Erc.Households.Domain.Addresses;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Erc.Households.Server.Domain
+namespace Erc.Households.Domain
 {
     public class Person
     {
@@ -14,6 +12,7 @@ namespace Erc.Households.Server.Domain
         public string TaxCode { get; set; }
         public string IdCardNumber { get; set; }
         public DateTime IdCardIssuanceDate { get; set; }
+        public string IdCardIssuer { get; set; }
         public DateTime? IdCardExpDate { get; set; }
         public int? AddressId { get; set; }
         public string[] MobilePhones { get; set; }

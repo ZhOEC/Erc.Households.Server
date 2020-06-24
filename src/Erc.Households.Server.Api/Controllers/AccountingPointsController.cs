@@ -1,15 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AutoMapper;
-using Erc.Households.Server.Api.Authorization;
-using Erc.Households.Server.Core;
+using Erc.Households.Api.Authorization;
+using Erc.Households.Api.Queries.AccountingPoints;
+using Erc.Households.Api.Requests;
+using Erc.Households.Commands;
+using Erc.Households.DataAccess.Core;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Nest;
 
-namespace Erc.Households.Server.Api.Controllers
+namespace Erc.Households.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -18,20 +20,20 @@ namespace Erc.Households.Server.Api.Controllers
     {
         private readonly IElasticClient _elasticClient;
         readonly IUnitOfWork _unitOfWork;
-        readonly IMapper _mapper;
+        IMediator _mediator;
 
-        public AccountingPointsController(IElasticClient elasticClient, IUnitOfWork unitOfWork, IMapper mapper)
+        public AccountingPointsController(IElasticClient elasticClient, IUnitOfWork unitOfWork, IMediator mediator)
         {
             _elasticClient = elasticClient ?? throw new ArgumentNullException(nameof(elasticClient));
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
+            _mediator = mediator;
         }
 
         [HttpGet("_search")]
         public async Task<IActionResult> Search(string q)
         {
           var indices = string.Join(',', UserGroups.Select(c => c + "_accounting_points"));
-           
+            indices = "_all"; 
             var searchResponse = await _elasticClient.SearchAsync<SearchResult>(s => s
                 .Index(indices).Query(query => query
                     .MultiMatch(m => m
@@ -58,12 +60,12 @@ namespace Erc.Households.Server.Api.Controllers
         }
 
         [HttpPost("")]
-        public async Task<IActionResult> AddNew(Requests.NewAccountingPoint newAccountingPoint)
+        public async Task<IActionResult> AddNew(NewAccountingPoint newAccountingPoint)
         {
             var accountingPoint = new Domain.AccountingPoints.AccountingPoint(
                 newAccountingPoint.Eic, newAccountingPoint.Name, newAccountingPoint.ZoneRecord, newAccountingPoint.ContractStartDate,
                 newAccountingPoint.TariffId, newAccountingPoint.Address, newAccountingPoint.Owner,
-                newAccountingPoint.BranchOfficeId, newAccountingPoint.DsoId, User.Identity.Name);
+                newAccountingPoint.BranchOfficeId, newAccountingPoint.DsoId, User.Identity.Name, 1);
 
             await _unitOfWork.AccountingPointRepository.AddNewAsync(accountingPoint);
             await _unitOfWork.SaveWorkAsync();
@@ -71,11 +73,22 @@ namespace Erc.Households.Server.Api.Controllers
             return CreatedAtRoute("GetAccountingPoint", new { accountingPoint.Id }, new { accountingPoint.Id });
         }
 
-        [HttpGet("{id}", Name= "GetAccountingPoint")]
+        [HttpGet("{id}", Name = "GetAccountingPoint")]
         public async Task<IActionResult> Get(int id)
         {
-            var ap = await _unitOfWork.AccountingPointRepository.GetAsync(id);
-            return Ok(_mapper.Map<Reponses.AccountingPoint>(ap));
+            var ap = await _mediator.Send(new GetAccountingPointById(id));
+
+            return Ok(ap);
+        }
+
+        [HttpPost("{id}/closing-current-exemption")]
+        public async Task<IActionResult> CloseCurrentExemption(int id, ExemptionClosing exemptionClosing)
+        {
+            await _mediator.Send(new CloseAccountingPointExemption(id, exemptionClosing.Date, exemptionClosing.Note));
+            //await Task.Delay(TimeSpan.FromSeconds(3));
+            //await _unitOfWork.SaveWorkAsync();
+            
+            return Ok();
         }
 
         class SearchResult

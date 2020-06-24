@@ -1,13 +1,15 @@
-﻿using Erc.Households.Server.Domain;
-using Erc.Households.Server.Domain.AccountingPoints;
-using Erc.Households.Server.Domain.Addresses;
-using Erc.Households.Server.Domain.Billing;
-using Erc.Households.Server.Domain.Tariffs;
+﻿using Erc.Households.Domain;
+using Erc.Households.Domain.AccountingPoints;
+using Erc.Households.Domain.Addresses;
+using Erc.Households.Domain.Billing;
+using Erc.Households.Domain.Exemptions;
+using Erc.Households.Domain.Payments;
+using Erc.Households.Domain.Tariffs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 
-namespace Erc.Households.Server.DataAccess.EF
+namespace Erc.Households.EF.PostgreSQL
 {
     public class ErcContext : DbContext
     {
@@ -28,6 +30,13 @@ namespace Erc.Households.Server.DataAccess.EF
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Person> People { get; set; }
         public DbSet<ZoneCoeff> ZoneCoeffs { get; set; }
+        public DbSet<PaymentChannel> PaymentChannels { get; set; }
+        public DbSet<PaymentsBatch> PaymentBatches { get; set; }
+        public DbSet<Payment> Payments { get; set; }
+        public DbSet<Invoice> Invoices { get; set; }
+        public DbSet<ExemptionCategory> ExemptionCategories { get; set; }
+        public DbSet<BuildingType> BuildingTypes { get; set; }
+        public DbSet<UsageCategory> UsageCategories { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -38,16 +47,116 @@ namespace Erc.Households.Server.DataAccess.EF
         {
             modelBuilder.HasPostgresExtension("citext");
 
+            modelBuilder.Entity<UsageCategory>(entity =>
+            {
+                entity.Property(e => e.ExemptionDiscountNorms).HasColumnType("jsonb");
+
+                entity.HasData(
+                    new
+                    {
+                        Id = 1,
+                        Name = "Звичайне споживання",
+                    },
+                    new
+                    {
+                        Id = 2,
+                        Name = "Електроплита",
+                    },
+                    new
+                    {
+                        Id = 3,
+                        Name = "Електроопалювальна установка",
+                    },
+                    new
+                    {
+                        Id = 4,
+                        Name = "Електроопалювальна установка та електроплита",
+                    });
+
+                /* initial data
+                  { 4, JsonSerializer.Serialize(new[] { new { EffectiveDate = new DateTime(2019, 1, 1), BaseKWh = 110, BaseKWhWithoutHotWater = 130, BasePerson = 1, KWhPerPerson = 30, MaxKWh = 230, MaxKWhWithoutHotWater = 250, BaseSquareMeter = 10.5m, SquareMeterPerPerson = 21m, KWhPerSquareMeter = 30 } }), "Електроопалювальна установка та електроплита" },
+                  { 3, JsonSerializer.Serialize(new[] { new { EffectiveDate = new DateTime(2019, 1, 1), BaseKWh = 70, BaseKWhWithoutHotWater = 100, BasePerson = 1, KWhPerPerson = 30, MaxKWh = 190, MaxKWhWithoutHotWater = 220, BaseSquareMeter = 10.5m, SquareMeterPerPerson = 21m, KWhPerSquareMeter = 30 } }), "Електроопалювальна установка" },
+                  { 2, JsonSerializer.Serialize(new[] { new { EffectiveDate = new DateTime(2019, 1, 1), BaseKWh = 110, BaseKWhWithoutHotWater = 130, BasePerson = 1, KWhPerPerson = 30, MaxKWh = 230, MaxKWhWithoutHotWater = 250 } }), "Електроплита" },
+                  { 1,  JsonSerializer.Serialize(new[] { new { EffectiveDate = new DateTime(2019, 1, 1), BaseKWh = 70, BaseKWhWithoutHotWater = 100, BasePerson = 1, KWhPerPerson = 30, MaxKWh = 190, MaxKWhWithoutHotWater = 220 } }) , "Звичайне споживання" }
+                 */
+            });
+
+            modelBuilder.Entity<BuildingType>(entity =>
+            {
+                entity.HasData(
+                    new { Id = 1, Name = "1-2 поверхи", HeataingCorrection = 1.0940m },
+                    new { Id = 3, Name = "3 поверхи і більше", HeataingCorrection = 0.7980m }
+                    );
+            });
+
+            modelBuilder.Entity<ExemptionCategory>(entity =>
+            {
+                entity.Property(e => e.EffectiveDate).HasColumnType("date");
+                entity.Property(e => e.EndDate).HasColumnType("date");
+                entity.HasData(
+                    new { Id = 1, Name = "Почесні громадяни міста", Coeff = 100.0m, EffectiveDate = new DateTime(2019, 1, 1) },
+                    new { Id = 2, Name = "Iнвалiди 1 групи по зору або з ураженням ОРА", Coeff = 50.0m, EffectiveDate = new DateTime(2019, 1, 1), HasLimit = true },
+                    new { Id = 3, Name = "Iнвалiди 2 групи по зору або з ураженням ОРА", Coeff = 50.0m, EffectiveDate = new DateTime(2019, 1, 1), HasLimit = true },
+                    new { Id = 4, Name = "Учасник бойових дій та членів родин загиблих в АТО (ООС)", Coeff = 100.0m, EffectiveDate = new DateTime(2019, 1, 1), HasLimit = true }
+                    );
+            });
+
+            modelBuilder.Entity<PaymentsBatch>(entity =>
+            {
+                entity.Property(e => e.IncomingDate).HasColumnType("date");
+                
+                entity.HasMany(pb => pb.Payments)
+                .WithOne(p => p.Batch)
+                .HasForeignKey(p => p.BatchId);
+            });
+
             modelBuilder.Entity<Period>(entity =>
             {
+                entity.ToTable("periods");
+                entity.Property(e => e.StartDate).HasColumnType("date");
+                entity.Property(e => e.EndDate).HasColumnType("date");
                 entity.HasIndex(e => e.StartDate).IsUnique();
-                //entity.HasData(new Period(new DateTime(2019, 1, 1), new DateTime(2019, 1, 31)));
+                entity.HasData(
+                    new { Id = 201901, StartDate = new DateTime(2019, 1, 1), EndDate = new DateTime(2019, 1, 1).AddMonths(1).AddDays(-1), Name = "Січень 2019р."},
+                    new { Id = 201902, StartDate = new DateTime(2019, 2, 1), EndDate = new DateTime(2019, 2, 1).AddMonths(1).AddDays(-1), Name = "Лютий 2019р." },
+                    new { Id = 201903, StartDate = new DateTime(2019, 3, 1), EndDate = new DateTime(2019, 3, 1).AddMonths(1).AddDays(-1), Name = "Березень 2019р." },
+                    new { Id = 201904, StartDate = new DateTime(2019, 4, 1), EndDate = new DateTime(2019, 4, 1).AddMonths(1).AddDays(-1), Name = "Квітень 2019р." },
+                    new { Id = 201905, StartDate = new DateTime(2019, 5, 1), EndDate = new DateTime(2019, 5, 1).AddMonths(1).AddDays(-1), Name = "Травень 2019р." },
+                    new { Id = 201906, StartDate = new DateTime(2019, 6, 1), EndDate = new DateTime(2019, 6, 1).AddMonths(1).AddDays(-1), Name = "Червень 2019р." },
+                    new { Id = 201907, StartDate = new DateTime(2019, 7, 1), EndDate = new DateTime(2019, 7, 1).AddMonths(1).AddDays(-1), Name = "Липень 2019р." },
+                    new { Id = 201908, StartDate = new DateTime(2019, 8, 1), EndDate = new DateTime(2019, 8, 1).AddMonths(1).AddDays(-1), Name = "Серпень 2019р." },
+                    new { Id = 201909, StartDate = new DateTime(2019, 9, 1), EndDate = new DateTime(2019, 9, 1).AddMonths(1).AddDays(-1), Name = "Вересень 2019р." },
+                    new { Id = 201910, StartDate = new DateTime(2019, 10, 1), EndDate = new DateTime(2019, 10, 1).AddMonths(1).AddDays(-1), Name = "Жовтень 2019р." },
+                    new { Id = 201911, StartDate = new DateTime(2019, 11, 1), EndDate = new DateTime(2019, 11, 1).AddMonths(1).AddDays(-1), Name = "Листопад 2019р." },
+                    new { Id = 201912, StartDate = new DateTime(2019, 12, 1), EndDate = new DateTime(2019, 12, 1).AddMonths(1).AddDays(-1), Name = "Грудень 2019р." },
+                    new { Id = 202001, StartDate = new DateTime(2020, 1, 1), EndDate = new DateTime(2019, 1, 1).AddMonths(1).AddDays(-1), Name = "Січень 2020р." },
+                    new { Id = 202002, StartDate = new DateTime(2020, 2, 1), EndDate = new DateTime(2019, 2, 1).AddMonths(1).AddDays(-1), Name = "Лютий 2020р." },
+                    new { Id = 202003, StartDate = new DateTime(2020, 3, 1), EndDate = new DateTime(2019, 3, 1).AddMonths(1).AddDays(-1), Name = "Березень 2020р." },
+                    new { Id = 202004, StartDate = new DateTime(2020, 4, 1), EndDate = new DateTime(2019, 4, 1).AddMonths(1).AddDays(-1), Name = "Квітень 2020р." },
+                    new { Id = 202005, StartDate = new DateTime(2020, 5, 1), EndDate = new DateTime(2019, 5, 1).AddMonths(1).AddDays(-1), Name = "Травень 2020р." },
+                    new { Id = 202006, StartDate = new DateTime(2020, 6, 1), EndDate = new DateTime(2019, 6, 1).AddMonths(1).AddDays(-1), Name = "Червень 2020р." }
+                    );
+                entity.Property(e => e.Name).HasColumnType("citext")
+                    .IsRequired();
             });
-            
-            modelBuilder.Entity<ZoneCoeff>(e =>
+
+            modelBuilder.Entity<PaymentChannel>(entity =>
             {
-                e.HasData(
-                    new { Id = 1, ZoneNumber = ZoneNumber.T1, ZoneRecord = ZoneRecord.None, Value = 1m, DiscountWeight = 1, StartDate = new DateTime(2019, 1, 1) },
+                entity.Property(e => e.Name).HasColumnType("citext")
+                    .IsRequired();
+            });
+
+            modelBuilder.Entity<Payment>(entity =>
+            {
+                entity.Property(e => e.Amount).HasColumnType("decimal(10,2)");
+            });
+
+            modelBuilder.Entity<ZoneCoeff>(entity =>
+            {
+                entity.Property(e => e.StartDate).HasColumnType("date");
+
+                entity.HasData(
+                    new { Id = 1, ZoneNumber = ZoneNumber.T1, ZoneRecord = ZoneRecord.None, Value = 1m, DiscountWeight = 1m, StartDate = new DateTime(2019, 1, 1) },
                     new { Id = 2, ZoneNumber = ZoneNumber.T1, ZoneRecord = ZoneRecord.Two, Value = 0.5m, DiscountWeight = 0.67m, StartDate = new DateTime(2019, 1, 1) },
                     new { Id = 3, ZoneNumber = ZoneNumber.T2, ZoneRecord = ZoneRecord.Two, Value = 1m, DiscountWeight = 0.33m, StartDate = new DateTime(2019, 1, 1) },
                     new { Id = 4, ZoneNumber = ZoneNumber.T1, ZoneRecord = ZoneRecord.Three, Value = 0.4m, DiscountWeight = 0.46m, StartDate = new DateTime(2019, 1, 1) },
@@ -58,28 +167,37 @@ namespace Erc.Households.Server.DataAccess.EF
 
             modelBuilder.Entity<Invoice>(entity =>
             {
-                entity.Property(p => p.SalesT1).HasColumnType("decimal(8,5)");
-                entity.Property(p => p.SalesT2).HasColumnType("decimal(8,5)");
-                entity.Property(p => p.SalesT3).HasColumnType("decimal(8,5)");
-                entity.OwnsMany(e => e.InvoiceDetails, a => { a.WithOwner().HasForeignKey(d => d.InvoiceId); a.HasKey(d => d.Id); });
+                entity.Property(p => p.TotalAmountDue).HasColumnType("decimal(10,2)");
+                entity.Property(p => p.TotalDiscount).HasColumnType("decimal(10,2)");
+
+                entity.Property(e => e.FromDate).HasColumnType("date");
+                entity.Property(e => e.ToDate).HasColumnType("date");
+                entity.Property(b => b.UsageT1).HasColumnType("jsonb");
+                entity.Property(b => b.UsageT2).HasColumnType("jsonb");
+                entity.Property(b => b.UsageT3).HasColumnType("jsonb");
             });
 
-            modelBuilder.Entity<Contract>(e =>
-            {
-                e.ToTable("contracts")
-                    .Property(p => p.Logs).HasColumnType("jsonb");
-            });
+            //modelBuilder.Entity<Contract>(e =>
+            //{
+            //    e.ToTable("contracts")
+            //        .Property(p => p.Logs).HasColumnType("jsonb");
 
-            modelBuilder.Entity<AccountingPointTariff>(e =>
-            {
-                e.ToTable("accounting_point_tariffs");
+            //    e.Property(e => e.StartDate).HasColumnType("date");
+            //    e.Property(e => e.EndDate).HasColumnType("date");
+            //});
+
+            //modelBuilder.Entity<AccountingPointTariff>(e =>
+            //{
+            //    e.ToTable("accounting_point_tariffs");
+
+            //    e.Property(e => e.StartDate).HasColumnType("date");
+
+            //    e.Property(p => p.Logs).HasColumnType("jsonb");
                 
-                e.Property(p => p.Logs).HasColumnType("jsonb");
-                
-                e.HasOne(p => p.Tariff)
-                    .WithMany()
-                    .HasForeignKey(p => p.TariffId);
-            });
+            //    e.HasOne(p => p.Tariff)
+            //        .WithMany()
+            //        .HasForeignKey(p => p.TariffId);
+            //});
 
             modelBuilder.Entity<BranchOffice>(e =>
             {
@@ -95,28 +213,28 @@ namespace Erc.Households.Server.DataAccess.EF
                     .HasColumnType("citext")
                     .HasMaxLength(200).IsRequired();
                 e.HasData(
-                    new { Id = 1, /*CurrentPeriodId = 1,*/ Name = "Андрушівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "an", DistrictIds = new[] { 1 } },
-                    new { Id = 2, /*CurrentPeriodId = 1,*/ Name = "Баранiвський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "bn", DistrictIds = new[] { 2 } },
-                    new { Id = 3, /*CurrentPeriodId = 1,*/ Name = "Бердичiвський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "bd", DistrictIds = new[] { 3 } },
-                    new { Id = 4, /*CurrentPeriodId = 1,*/ Name = "Брусилівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "br", DistrictIds = new[] { 4 } },
-                    new { Id = 5, /*CurrentPeriodId = 1,*/ Name = "Хорошівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "hr", DistrictIds = new[] { 5 } },
-                    new { Id = 6, /*CurrentPeriodId = 1,*/ Name = "Ємільчинський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "em", DistrictIds = new[] { 6 } },
-                    new { Id = 7, /*CurrentPeriodId = 1,*/ Name = "Житомирський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "zt", DistrictIds = new[] { 7 } },
-                    new { Id = 8, /*CurrentPeriodId = 1,*/ Name = "Зарічанський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "zr", DistrictIds = new[] { 7 } },
-                    new { Id = 9, /*CurrentPeriodId = 1,*/ Name = "Коростенський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "kr", DistrictIds = new[] { 8, 10 } },
-                    new { Id = 10, /*CurrentPeriodId = 1,*/ Name = "Коростишiвський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "kt", DistrictIds = new[] { 9 } },
-                    new { Id = 11, /*CurrentPeriodId = 1,*/ Name = "Любарський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "lb", DistrictIds = new[] { 11 } },
-                    new { Id = 12, /*CurrentPeriodId = 1,*/ Name = "Малинський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "ml", DistrictIds = new[] { 12 } },
-                    new { Id = 13, /*CurrentPeriodId = 1,*/ Name = "Народицький ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "nr", DistrictIds = new[] { 13 } },
-                    new { Id = 14, /*CurrentPeriodId = 1,*/ Name = "Новоград-Волинський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "nv", DistrictIds = new[] { 14 } },
-                    new { Id = 15, /*CurrentPeriodId = 1,*/ Name = "Овруцький ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "ov", DistrictIds = new[] { 15 } },
-                    new { Id = 16, /*CurrentPeriodId = 1,*/ Name = "Олевський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "ol", DistrictIds = new[] { 16 } },
-                    new { Id = 17, /*CurrentPeriodId = 1,*/ Name = "Попільнянський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "pp", DistrictIds = new[] { 17, 20 } },
-                    new { Id = 18, /*CurrentPeriodId = 1,*/ Name = "Радомишльський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "rd", DistrictIds = new[] { 18 } },
-                    new { Id = 19, /*CurrentPeriodId = 1,*/ Name = "Романівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "rm", DistrictIds = new[] { 19 } },
-                    new { Id = 20, /*CurrentPeriodId = 1,*/ Name = "Пулинський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "pl", DistrictIds = new[] { 21 } },
-                    new { Id = 21, /*CurrentPeriodId = 1,*/ Name = "Черняхівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "ch", DistrictIds = new[] { 22 } },
-                    new { Id = 22, /*CurrentPeriodId = 1,*/ Name = "Чуднівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "cd", DistrictIds = new[] { 23 } }
+                    new { Id = 1, CurrentPeriodId = 201901, Name = "Андрушівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "an", DistrictIds = new[] { 1 } },
+                    new { Id = 2, CurrentPeriodId = 201901, Name = "Баранiвський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "bn", DistrictIds = new[] { 2 } },
+                    new { Id = 3, CurrentPeriodId = 201901, Name = "Бердичiвський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "bd", DistrictIds = new[] { 3 } },
+                    new { Id = 4, CurrentPeriodId = 201901, Name = "Брусилівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "br", DistrictIds = new[] { 4 } },
+                    new { Id = 5, CurrentPeriodId = 201901, Name = "Хорошівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "hr", DistrictIds = new[] { 5 } },
+                    new { Id = 6, CurrentPeriodId = 201901, Name = "Ємільчинський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "em", DistrictIds = new[] { 6 } },
+                    new { Id = 7, CurrentPeriodId = 201901, Name = "Житомирський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "zt", DistrictIds = new[] { 7 } },
+                    new { Id = 8, CurrentPeriodId = 201901, Name = "Зарічанський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "zr", DistrictIds = new[] { 7 } },
+                    new { Id = 9, CurrentPeriodId = 201901, Name = "Коростенський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "kr", DistrictIds = new[] { 8, 10 } },
+                    new { Id = 10, CurrentPeriodId = 201901, Name = "Коростишiвський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "kt", DistrictIds = new[] { 9 } },
+                    new { Id = 11, CurrentPeriodId = 201901, Name = "Любарський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "lb", DistrictIds = new[] { 11 } },
+                    new { Id = 12, CurrentPeriodId = 201901, Name = "Малинський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "ml", DistrictIds = new[] { 12 } },
+                    new { Id = 13, CurrentPeriodId = 201901, Name = "Народицький ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "nr", DistrictIds = new[] { 13 } },
+                    new { Id = 14, CurrentPeriodId = 201901, Name = "Новоград-Волинський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "nv", DistrictIds = new[] { 14 } },
+                    new { Id = 15, CurrentPeriodId = 201901, Name = "Овруцький ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "ov", DistrictIds = new[] { 15 } },
+                    new { Id = 16, CurrentPeriodId = 201901, Name = "Олевський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "ol", DistrictIds = new[] { 16 } },
+                    new { Id = 17, CurrentPeriodId = 201901, Name = "Попільнянський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "pp", DistrictIds = new[] { 17, 20 } },
+                    new { Id = 18, CurrentPeriodId = 201901, Name = "Радомишльський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "rd", DistrictIds = new[] { 18 } },
+                    new { Id = 19, CurrentPeriodId = 201901, Name = "Романівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "rm", DistrictIds = new[] { 19 } },
+                    new { Id = 20, CurrentPeriodId = 201901, Name = "Пулинський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "pl", DistrictIds = new[] { 21 } },
+                    new { Id = 21, CurrentPeriodId = 201901, Name = "Черняхівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "ch", DistrictIds = new[] { 22 } },
+                    new { Id = 22, CurrentPeriodId = 201901, Name = "Чуднівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "cd", DistrictIds = new[] { 23 } }
                     );
             });
 
@@ -206,14 +324,15 @@ namespace Erc.Households.Server.DataAccess.EF
 
                 e.HasOne(p => p.Street)
                     .WithMany();
-
-                //e.HasCheckConstraint("ck_address_building", "length(building) <= 10");
-                //e.HasCheckConstraint("ck_address_apt", "length[apt] <= 5");
+                
                 e.HasCheckConstraint("ck_address_zip", "zip ~ '^(\\d){5}$'");
             });
 
             modelBuilder.Entity<Person>(e =>
             {
+                e.Property(p => p.IdCardIssuer)
+                    .HasColumnType("citext");
+
                 e.Property(p => p.FirstName)
                     .HasColumnType("citext")
                     .HasMaxLength(50)
@@ -246,42 +365,62 @@ namespace Erc.Households.Server.DataAccess.EF
                 e.HasIndex(p => p.IdCardNumber).IsUnique();
             });
 
-            modelBuilder.Entity<AccountingPoint>(e =>
+            modelBuilder.Entity<AccountingPoint>(entity =>
             {
-                e.HasMany(p => p.TariffsHistory)
-                    .WithOne()
-                    .HasForeignKey(p => p.AccountingPointId);
+                entity.OwnsMany(p => p.Exemptions, r =>
+                {
+                    r.ToTable("accounting_point_exemptions")
+                        .WithOwner()
+                        .HasForeignKey(e => e.AccountingPointId);
+                    
+                    r.Property(e => e.EffectiveDate).HasColumnType("date");
+                    
+                    r.Property(e => e.EndDate).HasColumnType("date");
+                    
+                    r.Property(e => e.HasLimit).HasDefaultValue(true);
+                });
 
-                e.HasMany(p => p.ContractsHistory)
-                    .WithOne()
-                    .HasForeignKey(p => p.AccountingPointId);
+                entity.OwnsMany(p => p.TariffsHistory, t =>
+                {
+                    t.ToTable("accounting_point_tariffs").WithOwner().HasForeignKey(p => p.AccountingPointId);
+                    t.Property(p => p.Logs).HasColumnType("jsonb");
+                    t.Property(p => p.StartDate).HasColumnType("date");
+                });
 
-                e.Property(p => p.Name)
+                entity.OwnsMany(p => p.ContractsHistory, t =>
+                {
+                    t.ToTable("contracts").WithOwner().HasForeignKey(p => p.AccountingPointId);
+                    t.Property(p => p.Logs).HasColumnType("jsonb");
+                    t.Property(p => p.StartDate).HasColumnType("date");
+                    t.Property(p => p.EndDate).HasColumnType("date"); ;
+                });
+
+                entity.Property(p => p.Name)
                     .HasColumnType("citext")
                     .HasMaxLength(16)
                     .IsRequired();
 
-                e.Property(p => p.Eic)
+                entity.Property(p => p.Eic)
                     .HasColumnType("citext")
                     .HasMaxLength(16)
                     .IsRequired();
 
-                e.HasOne(p => p.Owner)
+                entity.HasOne(p => p.Owner)
                     .WithMany()
                     .HasForeignKey(p => p.OwnerId);
 
-                e.HasOne(p => p.Address)
+                entity.HasOne(p => p.Address)
                     .WithMany();
 
-                e.HasOne(p => p.DistributionSystemOperator)
+                entity.HasOne(p => p.DistributionSystemOperator)
                     .WithMany()
                     .HasForeignKey(p => p.DistributionSystemOperatorId);
 
-                e.Property(p => p.Id).HasIdentityOptions(10000000);
+                entity.Property(p => p.Id).HasIdentityOptions(10000000);
 
-                e.HasIndex(p => p.Name).IsUnique();
-                e.HasIndex(p => p.Eic).IsUnique();
-                e.HasCheckConstraint("CK_accounting_point_eic", "length(eic) = 16");
+                entity.HasIndex(p => p.Name).IsUnique();
+                entity.HasIndex(p => p.Eic).IsUnique();
+                entity.HasCheckConstraint("CK_accounting_point_eic", "length(eic) = 16");
             });
 
             modelBuilder.Entity<DistributionSystemOperator>(e =>
@@ -310,6 +449,8 @@ namespace Erc.Households.Server.DataAccess.EF
             {
                 e.ToTable("tariff_rates")
                     .Property(p => p.Value).HasColumnType("decimal(8,5)");
+                
+                e.Property(e => e.StartDate).HasColumnType("date");
 
                 e.HasData(
                     new TariffRate { Id = 1, StartDate = new DateTime(2017, 3, 1), Value = 0.9m, ConsumptionLimit = 100, TariffId = 1 },

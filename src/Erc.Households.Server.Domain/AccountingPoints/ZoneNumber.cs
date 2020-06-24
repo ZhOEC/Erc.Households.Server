@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Erc.Households.Server.Domain.AccountingPoints
+namespace Erc.Households.Domain.AccountingPoints
 {
     public enum ZoneNumber
     {

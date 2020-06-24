@@ -5,19 +5,17 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Erc.Households.Server.Api.Controllers
+namespace Erc.Households.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class VersionController : ControllerBase
     {
-        public IActionResult GetVersion()
+        [HttpGet]
+        public IActionResult GetVersion() => Ok(new
         {
-
-            return Ok(new
-            {
-                ServerTime = DateTime.Now.ToString("F")
-            });
-        }
+            OS = Environment.OSVersion.VersionString,
+            ServerTime = DateTime.Now.ToString("F")
+        });
     }
 }

@@ -17,7 +17,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Erc.Households.Backend.Api": {
+    "Erc.Households.Server.Api": {
       "commandName": "Project",
       "launchUrl": "weatherforecast",
       "environmentVariables": {

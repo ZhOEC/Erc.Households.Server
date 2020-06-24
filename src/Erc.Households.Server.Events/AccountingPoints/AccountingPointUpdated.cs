@@ -1,9 +1,9 @@
-﻿using Erc.Households.Server.Events;
+﻿using Erc.Households.Events;
 
-namespace Erc.Households.Server.Events.AccountingPoints
+namespace Erc.Households.Events.AccountingPoints
 {
     /// <summary>
-    /// Event rised after accouting point persisted in database.
+    /// Event rises after accounting point has persisted in database.
     /// </summary>
     public class AccountingPointUpdated: IEntityEvent
     {

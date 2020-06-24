@@ -1,17 +1,24 @@
-﻿using Erc.Households.Server.Domain.Addresses;
-using Erc.Households.Server.Domain.Extensions;
-using Erc.Households.Server.Domain.Tariffs;
-using Erc.Households.Server.Events;
+﻿using Erc.Households.Domain.Addresses;
+using Erc.Households.Domain.Billing;
+using Erc.Households.Domain.Exemptions;
+using Erc.Households.Domain.Extensions;
+using Erc.Households.Domain.Payments;
+using Erc.Households.Domain.Tariffs;
+using Erc.Households.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Erc.Households.Server.Domain.AccountingPoints
+namespace Erc.Households.Domain.AccountingPoints
 {
     public class AccountingPoint : IEntity
     {
         readonly List<Contract> _contractsHistory = new List<Contract>();
         private readonly List<AccountingPointTariff> _tariffsHistory = new List<AccountingPointTariff>();
+        private List<Payment> _payments = new List<Payment>();
+        private List<Invoice> _invoices = new List<Invoice>();
+        private List<AccountingPointExemption> _exemptions = new List<AccountingPointExemption>();
+
         BranchOffice _branchOffice;
         Person _owner;
         Address _address;
@@ -27,7 +34,7 @@ namespace Erc.Households.Server.Domain.AccountingPoints
         }
 
         public AccountingPoint(string eic, string name, ZoneRecord zoneRecord, DateTime contractStartDate, int tariffId, Address address,
-                               Person owner, int branchOfficeId, int dsoId, string currentUser)
+                               Person owner, int branchOfficeId, int dsoId, string currentUser, int usageCategoryId)
         {
             Eic = eic;
             Name = name;
@@ -38,6 +45,7 @@ namespace Erc.Households.Server.Domain.AccountingPoints
             ZoneRecord = zoneRecord;
             OpenNewContract(contractStartDate, Owner, currentUser);
             SetTariff(tariffId, contractStartDate, currentUser);
+            UsageCategoryId = usageCategoryId;
         }
 
         public int Id { get; private set; }
@@ -51,16 +59,38 @@ namespace Erc.Households.Server.Domain.AccountingPoints
         public ZoneRecord ZoneRecord { get; private set; }
         public DistributionSystemOperator DistributionSystemOperator
         {
-
             get => LazyLoader.Load(this, ref _distributionSystemOperator);
             private set { _distributionSystemOperator = value; }
         }
         public Contract CurrentContract => _contractsHistory.OrderByDescending(c => c.StartDate).ThenByDescending(c => c.Id).FirstOrDefault();
         public Tariff CurrentTariff => _tariffsHistory.FirstOrDefault(t => t.StartDate <= DateTime.Today).Tariff;
-        
+        public int UsageCategoryId { get; private set; }
+        public int BuildingTypeId { get; private set; }
+        public AccountingPointExemption Exemption => Exemptions.FirstOrDefault(t => t.EffectiveDate <= DateTime.Today);
+        public BuildingType BuildingType { get; private set; }
+        public UsageCategory UsageCategory { get; private set; }
+
+
+        public IReadOnlyCollection<Invoice> Invoices
+        {
+            get => LazyLoader.Load(this, ref _invoices);
+            private set { _invoices = value.ToList(); }
+        }
+
+        public IReadOnlyCollection<AccountingPointExemption> Exemptions
+        {
+            get => LazyLoader.Load(this, ref _exemptions);
+            private set { _exemptions = value.ToList(); }
+        }
+
+        public IReadOnlyCollection<Payment> Payments
+        {
+            get => LazyLoader.Load(this, ref _payments);
+            private set { Payments = value.ToList(); }
+        }
+
         public Address Address
         {
-
             get => LazyLoader.Load(this, ref _address);
             private set { _address = value; }
         }
@@ -103,6 +133,37 @@ namespace Erc.Households.Server.Domain.AccountingPoints
         public void SetTariff(int tariffId, DateTime date, string currentUser)
         {
             _tariffsHistory.Add(new AccountingPointTariff(tariffId, date, currentUser));
+        }
+
+        public void ProcessPayment(Payment payment)
+        {
+            if (payment.Amount > 0)
+            {
+                foreach (var invoice in _invoices.Where(i => !i.IsPaid).OrderBy(i => i.PeriodId).ThenBy(i => i.Id).ToList())
+                {
+                    var ipi = invoice.Pay(payment);
+                    payment.AddInvoicePaymentItem(ipi);
+                    if (payment.IsFullyUsed) break;
+                }
+            }
+            else
+            {
+                foreach (var invoice in _invoices.Where(i => i.TotalPaid > 0).OrderByDescending(i => i.PeriodId).ToList())
+                {
+                    var ipi = invoice.TakePaymentBack(payment);
+                    payment.AddInvoicePaymentItem(ipi);
+                    if (payment.IsFullyUsed) break;
+                }
+            }
+            Debt -= payment.Amount;
+            _payments.Add(payment);
+        }
+
+        public void AddInvoice(Invoice invoice)
+        {
+            _invoices.Add(invoice);
+            invoice.Calculate();
+            Debt += invoice.TotalAmountDue;
         }
     }
 }

@@ -1,9 +1,9 @@
-﻿using Erc.Households.Server.Domain.AccountingPoints;
+﻿using Erc.Households.Domain.AccountingPoints;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Erc.Households.Server.Domain.Billing
+namespace Erc.Households.Domain.Billing
 {
     public class ZoneCoeff
     {
@@ -19,6 +19,7 @@ namespace Erc.Households.Server.Domain.Billing
         public ZoneNumber ZoneNumber { get; private set; }
         public ZoneRecord ZoneRecord { get; private set; }
         public decimal Value { get; private set; }
+        public decimal DiscountWeight { get; private set; }
         public DateTime StartDate { get; private set; }
     }
 }

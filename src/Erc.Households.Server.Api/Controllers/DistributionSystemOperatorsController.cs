@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Erc.Households.Server.DataAccess.EF;
+using Erc.Households.EF.PostgreSQL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace Erc.Households.Server.Api.Controllers
+namespace Erc.Households.Api.Controllers
 {
     [Route("api/distribution-system-operators")]
     [ApiController]

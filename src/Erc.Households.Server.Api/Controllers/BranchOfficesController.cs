@@ -1,31 +1,31 @@
 ﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Erc.Households.Server.Api.Authorization;
-using Erc.Households.Server.DataAccess.EF;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using Erc.Households.BranchOfficeManagment.Core;
+using AutoMapper;
+using System.Collections.Generic;
+using System.Linq;
 
-namespace Erc.Households.Backend.Api.Controllers
+namespace Erc.Households.Api.Controllers
 {
     [Route("api/branch-offices")]
     [ApiController]
-    [Authorize(Roles = ApplicationRoles.Operator)]
-    public class BranchOfficesController : ControllerBase
+    [Authorize]
+    public class BranchOfficesController : ErcControllerBase
     {
-        private readonly ErcContext _ercContext;
+        private readonly IBranchOfficeService _branchOfficeService;
+        readonly IMapper _mapper;
 
-        public BranchOfficesController(ErcContext ercContext)
+        public BranchOfficesController(IBranchOfficeService branchOfficeService, IMapper mapper)
         {
-            _ercContext = ercContext ?? throw new ArgumentNullException(nameof(ercContext));
+            _branchOfficeService = branchOfficeService ?? throw new ArgumentNullException(nameof(branchOfficeService));
+            _mapper = mapper;
         }
 
         [HttpGet("")]
-        public async Task<IActionResult> GetAll()
+        public IActionResult GetAll()
         {
-            var groups = User.Claims.Where(c => string.Equals(c.Type, "Group", StringComparison.InvariantCultureIgnoreCase)).Select(c => c.Value);
-            return Ok(await _ercContext.BranchOffices.Where(bo => groups.Contains(bo.StringId)).ToListAsync());
+            return Ok(_mapper.Map<IEnumerable<Responses.BranchOffice>>(_branchOfficeService.GetList(UserGroups)));
         }
     }
 }

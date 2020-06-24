@@ -1,13 +1,13 @@
-﻿using Erc.Households.Server.Core;
-using Erc.Households.Server.DataAccess.EF;
-using Erc.Households.Server.Domain.AccountingPoints;
-using Erc.Households.Server.Events.AccountingPoints;
+﻿using Erc.Households.DataAccess.Core;
+using Erc.Households.EF.PostgreSQL;
+using Erc.Households.Domain.AccountingPoints;
+using Erc.Households.Events.AccountingPoints;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Erc.Households.Server.DataAccess
+namespace Erc.Households.DataAccess.EF
 {
     public class AccountingPointRepository : IAccountingPointRepository
     {
@@ -19,7 +19,8 @@ namespace Erc.Households.Server.DataAccess
         {
             _ercContext.Entry(accountingPoint.Owner).State = accountingPoint.Owner.Id == 0 ? EntityState.Added : EntityState.Modified;
             
-            accountingPoint.Address.Id = (await _ercContext.Addresses
+            accountingPoint.Address.Id = 
+                (await _ercContext.Addresses
                 .Where(a => a.StreetId == accountingPoint.Address.StreetId && a.Building == accountingPoint.Address.Building && ((a.Apt ?? string.Empty) == (accountingPoint.Address.Apt ?? string.Empty)))
                 .Select(a => (int?)a.Id)
                 .FirstOrDefaultAsync()) ?? 0;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Erc.Households.Server.ModelLogs
+namespace Erc.Households.ModelLogs
 {
     public abstract class LogableObjectBase : ILogable
     {
