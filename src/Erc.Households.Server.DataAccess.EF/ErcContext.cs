@@ -56,33 +56,36 @@ namespace Erc.Households.EF.PostgreSQL
                     {
                         Id = 1,
                         Name = "Звичайне споживання",
-                        ExemptionDiscountNorms = new[] { new { EffectivetDate = new DateTime(2019, 1, 1), BaseKWh = 70, BaseKWhWithoutHotWater = 100, BasePerson = 1, KWhPerPerson = 30, MaxKWh = 190, MaxKWhWithoutHotWater = 220 } }
                     },
                     new
                     {
                         Id = 2,
                         Name = "Електроплита",
-                        ExemptionDiscountNorms = new[] { new { EffectivetDate = new DateTime(2019, 1, 1), BaseKWh = 110, BaseKWhWithoutHotWater = 130, BasePerson = 1, KWhPerPerson = 30, MaxKWh = 230, MaxKWhWithoutHotWater = 250 } }
                     },
                     new
                     {
                         Id = 3,
                         Name = "Електроопалювальна установка",
-                        ExemptionDiscountNorms = new[] { new { EffectivetDate = new DateTime(2019, 1, 1), BaseKWh = 70, BaseKWhWithoutHotWater = 100, BasePerson = 1, KWhPerPerson = 30, MaxKWh = 190, MaxKWhWithoutHotWater = 220, BaseSquareMeter = 10.5m, SquareMeterPerPerson = 21m, KWhPerSquareMeter = 30 } }
                     },
                     new
                     {
                         Id = 4,
                         Name = "Електроопалювальна установка та електроплита",
-                        ExemptionDiscountNorms = new[] { new { EffectivetDate = new DateTime(2019, 1, 1), BaseKWh = 110, BaseKWhWithoutHotWater = 130, BasePerson = 1, KWhPerPerson = 30, MaxKWh = 230, MaxKWhWithoutHotWater = 250, BaseSquareMeter = 10.5m, SquareMeterPerPerson = 21m, KWhPerSquareMeter = 30 } }
                     });
+
+                /* initial data
+                  { 4, JsonSerializer.Serialize(new[] { new { EffectiveDate = new DateTime(2019, 1, 1), BaseKWh = 110, BaseKWhWithoutHotWater = 130, BasePerson = 1, KWhPerPerson = 30, MaxKWh = 230, MaxKWhWithoutHotWater = 250, BaseSquareMeter = 10.5m, SquareMeterPerPerson = 21m, KWhPerSquareMeter = 30 } }), "Електроопалювальна установка та електроплита" },
+                  { 3, JsonSerializer.Serialize(new[] { new { EffectiveDate = new DateTime(2019, 1, 1), BaseKWh = 70, BaseKWhWithoutHotWater = 100, BasePerson = 1, KWhPerPerson = 30, MaxKWh = 190, MaxKWhWithoutHotWater = 220, BaseSquareMeter = 10.5m, SquareMeterPerPerson = 21m, KWhPerSquareMeter = 30 } }), "Електроопалювальна установка" },
+                  { 2, JsonSerializer.Serialize(new[] { new { EffectiveDate = new DateTime(2019, 1, 1), BaseKWh = 110, BaseKWhWithoutHotWater = 130, BasePerson = 1, KWhPerPerson = 30, MaxKWh = 230, MaxKWhWithoutHotWater = 250 } }), "Електроплита" },
+                  { 1,  JsonSerializer.Serialize(new[] { new { EffectiveDate = new DateTime(2019, 1, 1), BaseKWh = 70, BaseKWhWithoutHotWater = 100, BasePerson = 1, KWhPerPerson = 30, MaxKWh = 190, MaxKWhWithoutHotWater = 220 } }) , "Звичайне споживання" }
+                 */
             });
 
             modelBuilder.Entity<BuildingType>(entity =>
             {
                 entity.HasData(
-                    new { Id = 1, Name = "1-2 поверхи", Coeff = 1.0940m },
-                    new { Id = 2, Name = "3 поверхи і більше", Coeff = 0.7980m }
+                    new { Id = 1, Name = "1-2 поверхи", HeataingCorrection = 1.0940m },
+                    new { Id = 3, Name = "3 поверхи і більше", HeataingCorrection = 0.7980m }
                     );
             });
 
@@ -362,18 +365,29 @@ namespace Erc.Households.EF.PostgreSQL
                 e.HasIndex(p => p.IdCardNumber).IsUnique();
             });
 
-            modelBuilder.Entity<AccountingPoint>(e =>
+            modelBuilder.Entity<AccountingPoint>(entity =>
             {
-                //e.OwnsMany(p => p.Exemptions, r => r.ToTable("exemptions").WithOwner().HasForeignKey(e => e.AccountingPointId));
+                entity.OwnsMany(p => p.Exemptions, r =>
+                {
+                    r.ToTable("accounting_point_exemptions")
+                        .WithOwner()
+                        .HasForeignKey(e => e.AccountingPointId);
+                    
+                    r.Property(e => e.EffectiveDate).HasColumnType("date");
+                    
+                    r.Property(e => e.EndDate).HasColumnType("date");
+                    
+                    r.Property(e => e.HasLimit).HasDefaultValue(true);
+                });
 
-                e.OwnsMany(p => p.TariffsHistory, t =>
+                entity.OwnsMany(p => p.TariffsHistory, t =>
                 {
                     t.ToTable("accounting_point_tariffs").WithOwner().HasForeignKey(p => p.AccountingPointId);
                     t.Property(p => p.Logs).HasColumnType("jsonb");
                     t.Property(p => p.StartDate).HasColumnType("date");
                 });
 
-                e.OwnsMany(p => p.ContractsHistory, t =>
+                entity.OwnsMany(p => p.ContractsHistory, t =>
                 {
                     t.ToTable("contracts").WithOwner().HasForeignKey(p => p.AccountingPointId);
                     t.Property(p => p.Logs).HasColumnType("jsonb");
@@ -381,32 +395,32 @@ namespace Erc.Households.EF.PostgreSQL
                     t.Property(p => p.EndDate).HasColumnType("date"); ;
                 });
 
-                e.Property(p => p.Name)
+                entity.Property(p => p.Name)
                     .HasColumnType("citext")
                     .HasMaxLength(16)
                     .IsRequired();
 
-                e.Property(p => p.Eic)
+                entity.Property(p => p.Eic)
                     .HasColumnType("citext")
                     .HasMaxLength(16)
                     .IsRequired();
 
-                e.HasOne(p => p.Owner)
+                entity.HasOne(p => p.Owner)
                     .WithMany()
                     .HasForeignKey(p => p.OwnerId);
 
-                e.HasOne(p => p.Address)
+                entity.HasOne(p => p.Address)
                     .WithMany();
 
-                e.HasOne(p => p.DistributionSystemOperator)
+                entity.HasOne(p => p.DistributionSystemOperator)
                     .WithMany()
                     .HasForeignKey(p => p.DistributionSystemOperatorId);
 
-                e.Property(p => p.Id).HasIdentityOptions(10000000);
+                entity.Property(p => p.Id).HasIdentityOptions(10000000);
 
-                e.HasIndex(p => p.Name).IsUnique();
-                e.HasIndex(p => p.Eic).IsUnique();
-                e.HasCheckConstraint("CK_accounting_point_eic", "length(eic) = 16");
+                entity.HasIndex(p => p.Name).IsUnique();
+                entity.HasIndex(p => p.Eic).IsUnique();
+                entity.HasCheckConstraint("CK_accounting_point_eic", "length(eic) = 16");
             });
 
             modelBuilder.Entity<DistributionSystemOperator>(e =>

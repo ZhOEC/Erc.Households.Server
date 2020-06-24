@@ -13,8 +13,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Erc.Households.EF.PostgreSQL.Migrations
 {
     [DbContext(typeof(ErcContext))]
-    [Migration("20200604103749_ExemtionCategories")]
-    partial class ExemtionCategories
+    [Migration("20200622071347_Initial_Create")]
+    partial class Initial_Create
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -22,7 +22,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
             modelBuilder
                 .HasAnnotation("Npgsql:PostgresExtension:citext", ",,")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
-                .HasAnnotation("ProductVersion", "3.1.4")
+                .HasAnnotation("ProductVersion", "3.1.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             modelBuilder.Entity("Erc.Households.Domain.AccountingPoints.AccountingPoint", b =>
@@ -40,6 +40,10 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
 
                     b.Property<int>("BranchOfficeId")
                         .HasColumnName("branch_office_id")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("BuildingTypeId")
+                        .HasColumnName("building_type_id")
                         .HasColumnType("integer");
 
                     b.Property<bool>("ContractIsSigned")
@@ -70,6 +74,10 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         .HasColumnName("owner_id")
                         .HasColumnType("integer");
 
+                    b.Property<int>("UsageCategoryId")
+                        .HasColumnName("usage_category_id")
+                        .HasColumnType("integer");
+
                     b.Property<int>("ZoneRecord")
                         .HasColumnName("zone_record")
                         .HasColumnType("integer");
@@ -82,6 +90,9 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
 
                     b.HasIndex("BranchOfficeId")
                         .HasName("ix_accounting_points_branch_office_id");
+
+                    b.HasIndex("BuildingTypeId")
+                        .HasName("ix_accounting_points_building_type_id");
 
                     b.HasIndex("DistributionSystemOperatorId")
                         .HasName("ix_accounting_points_distribution_system_operator_id");
@@ -97,9 +108,92 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     b.HasIndex("OwnerId")
                         .HasName("ix_accounting_points_owner_id");
 
+                    b.HasIndex("UsageCategoryId")
+                        .HasName("ix_accounting_points_usage_category_id");
+
                     b.ToTable("accounting_points");
 
                     b.HasCheckConstraint("CK_accounting_point_eic", "length(eic) = 16");
+                });
+
+            modelBuilder.Entity("Erc.Households.Domain.AccountingPoints.BuildingType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("id")
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<decimal>("HeataingCorrection")
+                        .HasColumnName("heataing_correction")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("Name")
+                        .HasColumnName("name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id")
+                        .HasName("pk_building_types");
+
+                    b.ToTable("building_types");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            HeataingCorrection = 1.0940m,
+                            Name = "1-2 поверхи"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            HeataingCorrection = 0.7980m,
+                            Name = "3 поверхи і більше"
+                        });
+                });
+
+            modelBuilder.Entity("Erc.Households.Domain.AccountingPoints.UsageCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnName("id")
+                        .HasColumnType("integer")
+                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<IEnumerable<ExemptionDiscountNorms>>("ExemptionDiscountNorms")
+                        .HasColumnName("exemption_discount_norms")
+                        .HasColumnType("jsonb");
+
+                    b.Property<string>("Name")
+                        .HasColumnName("name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id")
+                        .HasName("pk_usage_categories");
+
+                    b.ToTable("usage_categories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Звичайне споживання"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Електроплита"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Електроопалювальна установка"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Електроопалювальна установка та електроплита"
+                        });
                 });
 
             modelBuilder.Entity("Erc.Households.Domain.Addresses.Address", b =>
@@ -462,6 +556,10 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
 
                     b.Property<int>("TotalUnits")
                         .HasColumnName("total_units")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Type")
+                        .HasColumnName("type")
                         .HasColumnType("integer");
 
                     b.Property<Usage>("UsageT1")
@@ -1050,57 +1148,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         });
                 });
 
-            modelBuilder.Entity("Erc.Households.Domain.Exemptions.AccountingPointExemption", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("id")
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<int>("AccountingPointId")
-                        .HasColumnName("accounting_point_id")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Certificate")
-                        .HasColumnName("certificate")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("EffectiveDate")
-                        .HasColumnName("effective_date")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnName("end_date")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<int>("ExemptionCategoryId")
-                        .HasColumnName("exemption_category_id")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("HasLimit")
-                        .HasColumnName("has_limit")
-                        .HasColumnType("boolean");
-
-                    b.Property<int>("PersonId")
-                        .HasColumnName("person_id")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id")
-                        .HasName("pk_accounting_point_exemption");
-
-                    b.HasIndex("AccountingPointId")
-                        .HasName("ix_accounting_point_exemption_accounting_point_id");
-
-                    b.HasIndex("ExemptionCategoryId")
-                        .HasName("ix_accounting_point_exemption_exemption_category_id");
-
-                    b.HasIndex("PersonId")
-                        .HasName("ix_accounting_point_exemption_person_id");
-
-                    b.ToTable("accounting_point_exemption");
-                });
-
             modelBuilder.Entity("Erc.Households.Domain.Exemptions.ExemptionCategory", b =>
                 {
                     b.Property<int>("Id")
@@ -1164,7 +1211,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Coeff = 100.0m,
                             EffectiveDate = new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             HasLimit = true,
-                            Name = "Учасник бойових дій та членів родин загиблих в АТО(ООС) (Місцевий бюджет)"
+                            Name = "Учасник бойових дій та членів родин загиблих в АТО (ООС)"
                         });
                 });
 
@@ -1550,6 +1597,13 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Erc.Households.Domain.AccountingPoints.BuildingType", "BuildingType")
+                        .WithMany()
+                        .HasForeignKey("BuildingTypeId")
+                        .HasConstraintName("fk_accounting_points_building_types_building_type_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Erc.Households.Domain.DistributionSystemOperator", "DistributionSystemOperator")
                         .WithMany()
                         .HasForeignKey("DistributionSystemOperatorId")
@@ -1563,6 +1617,89 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         .HasConstraintName("fk_accounting_points_people_owner_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Erc.Households.Domain.AccountingPoints.UsageCategory", "UsageCategory")
+                        .WithMany()
+                        .HasForeignKey("UsageCategoryId")
+                        .HasConstraintName("fk_accounting_points_usage_categories_usage_category_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsMany("Erc.Households.Domain.AccountingPoints.AccountingPointExemption", "Exemptions", b1 =>
+                        {
+                            b1.Property<int>("AccountingPointId")
+                                .HasColumnName("accounting_point_id")
+                                .HasColumnType("integer");
+
+                            b1.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnName("id")
+                                .HasColumnType("integer")
+                                .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                            b1.Property<string>("Certificate")
+                                .HasColumnName("certificate")
+                                .HasColumnType("text");
+
+                            b1.Property<DateTime>("EffectiveDate")
+                                .HasColumnName("effective_date")
+                                .HasColumnType("date");
+
+                            b1.Property<DateTime?>("EndDate")
+                                .HasColumnName("end_date")
+                                .HasColumnType("date");
+
+                            b1.Property<int>("ExemptionCategoryId")
+                                .HasColumnName("exemption_category_id")
+                                .HasColumnType("integer");
+
+                            b1.Property<bool>("HasLimit")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnName("has_limit")
+                                .HasColumnType("boolean")
+                                .HasDefaultValue(true);
+
+                            b1.Property<string>("Note")
+                                .HasColumnName("note")
+                                .HasColumnType("text");
+
+                            b1.Property<int>("PersonId")
+                                .HasColumnName("person_id")
+                                .HasColumnType("integer");
+
+                            b1.Property<int>("PersonsNumber")
+                                .HasColumnName("persons_number")
+                                .HasColumnType("integer");
+
+                            b1.HasKey("AccountingPointId", "Id")
+                                .HasName("pk_accounting_point_exemption");
+
+                            b1.HasIndex("ExemptionCategoryId")
+                                .HasName("ix_accounting_point_exemption_exemption_category_id");
+
+                            b1.HasIndex("PersonId")
+                                .HasName("ix_accounting_point_exemption_person_id");
+
+                            b1.ToTable("accounting_point_exemptions");
+
+                            b1.WithOwner()
+                                .HasForeignKey("AccountingPointId")
+                                .HasConstraintName("fk_accounting_point_exemption_accounting_points_accounting_poin");
+
+                            b1.HasOne("Erc.Households.Domain.Exemptions.ExemptionCategory", "Category")
+                                .WithMany()
+                                .HasForeignKey("ExemptionCategoryId")
+                                .HasConstraintName("fk_accounting_point_exemption_exemption_categories_exemption_c")
+                                .OnDelete(DeleteBehavior.Cascade)
+                                .IsRequired();
+
+                            b1.HasOne("Erc.Households.Domain.Person", "Person")
+                                .WithMany()
+                                .HasForeignKey("PersonId")
+                                .HasConstraintName("fk_accounting_point_exemption_people_person_id")
+                                .OnDelete(DeleteBehavior.Cascade)
+                                .IsRequired();
+                        });
 
                     b.OwnsMany("Erc.Households.Domain.AccountingPoints.AccountingPointTariff", "TariffsHistory", b1 =>
                         {
@@ -1744,30 +1881,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         .WithMany()
                         .HasForeignKey("CurrentPeriodId")
                         .HasConstraintName("fk_branch_offices_period_current_period_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Erc.Households.Domain.Exemptions.AccountingPointExemption", b =>
-                {
-                    b.HasOne("Erc.Households.Domain.AccountingPoints.AccountingPoint", null)
-                        .WithMany("Exemptions")
-                        .HasForeignKey("AccountingPointId")
-                        .HasConstraintName("fk_accounting_point_exemption_accounting_points_accounting_poin")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Erc.Households.Domain.Exemptions.ExemptionCategory", "ExemptionCategory")
-                        .WithMany()
-                        .HasForeignKey("ExemptionCategoryId")
-                        .HasConstraintName("fk_accounting_point_exemption_exemption_categories_exemption_c")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Erc.Households.Domain.Person", "Person")
-                        .WithMany()
-                        .HasForeignKey("PersonId")
-                        .HasConstraintName("fk_accounting_point_exemption_people_person_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

@@ -19,6 +19,7 @@ namespace Erc.Households.Api.MapperProfiles
 
 			CreateMap<Domain.Billing.Invoice, Responses.Invoice>()
 				.ForMember(i => i.Type, s => s.MapFrom(_ => "Звичайний"));
+			CreateMap<Domain.AccountingPoints.AccountingPointExemption, Responses.AccountingPointExemption>();
 			//CreateMap<Domain.Billing.Usage, Responses.Usage>();
 				//.ForMember(d=>d.Calculations, opt=>opt.Ignore());
 				//.AfterMap((s, d) => d.CalculationItems = s.Calculations

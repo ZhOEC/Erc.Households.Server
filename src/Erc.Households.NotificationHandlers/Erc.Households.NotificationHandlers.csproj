@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Erc.Households.BranchOffices.Managment.Core\Erc.Households.BranchOfficeManagment.Core.csproj" />
+    <ProjectReference Include="..\Erc.Households.Notifications\Erc.Households.Notifications.csproj" />
+    <ProjectReference Include="..\Erc.Households.Server.DataAccess.EF\Erc.Households.EF.PostgreSQL.csproj" />
+  </ItemGroup>
+
+</Project>

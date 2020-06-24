@@ -59,7 +59,7 @@ namespace Erc.Households.WebApi
 
             services.AddTransient<IUnitOfWork>(provider => new UnitOfWork(provider.GetService<ErcContext>(), provider.GetService<IBus>()));
 
-            services.AddMediatR(typeof(Startup)); ;
+            services.AddMediatR(typeof(Startup), typeof(CommandHandlers.CloseAccountingPointExemptionHandler), typeof(NotificationHandlers.AccountingPointExemptionClosedHandler)); 
 
             services.AddSingleton<IElasticClient>(new ElasticClient(new System.Uri(Configuration.GetConnectionString("Elasticsearch"))));
 

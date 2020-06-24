@@ -3,20 +3,21 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    
   </PropertyGroup>
-
+ 
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="7.0.0" />
     <PackageReference Include="dBASE.NET" Version="1.2.1" />
     <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="6.3.2" />
     <PackageReference Include="MassTransit.RabbitMQ" Version="6.3.2" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="8.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.4">
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.1.4" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.1.5" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.8" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.3" />
     <PackageReference Include="NEST" Version="7.7.1" />
@@ -28,6 +29,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Erc.Households.BranchOfficeManagment.EF\Erc.Households.BranchOfficeManagment.EF.csproj" />
     <ProjectReference Include="..\Erc.Households.BranchOffices.Managment.Core\Erc.Households.BranchOfficeManagment.Core.csproj" />
+    <ProjectReference Include="..\Erc.Households.CommandHandlers\Erc.Households.CommandHandlers.csproj" />
+    <ProjectReference Include="..\Erc.Households.Commands\Erc.Households.Commands.csproj" />
+    <ProjectReference Include="..\Erc.Households.NotificationHandlers\Erc.Households.NotificationHandlers.csproj" />
     <ProjectReference Include="..\Erc.Households.Server.Core\Erc.Households.DataAccess.Core.csproj" />
     <ProjectReference Include="..\Erc.Households.Server.DataAccess.EF\Erc.Households.EF.PostgreSQL.csproj" />
     <ProjectReference Include="..\Erc.Households.Server.DataAccess\Erc.Households.DataAccess.EF.csproj" />

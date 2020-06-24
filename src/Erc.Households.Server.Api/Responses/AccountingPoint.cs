@@ -16,5 +16,14 @@ namespace Erc.Households.Api.Responses
         public string Eic { get; set; }
         public DateTime CurrentContractStartDate { get; set; }
         public decimal Debt { get; set; }
+        public AccountingPointExemption Exemption { get; set; }
+    }
+
+    public class AccountingPointExemption
+    {
+        public DateTime EffectiveDate { get; private set; }
+        public int PersonsNumber { get; private set; }
+        public string CategoryName { get; private set; }
+        public Person Person { get; private set; }
     }
 }

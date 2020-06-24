@@ -8,6 +8,6 @@ namespace Erc.Households.Domain.AccountingPoints
 
         public int Id { get; private set; }
         public string Name { get; private set; }
-        public ICollection<Billing.ExemptionDiscountNorms> ExemptionDiscountNorms { get; private set; }
+        public IEnumerable<Billing.ExemptionDiscountNorms> ExemptionDiscountNorms { get; private set; }
     }
 }

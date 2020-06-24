@@ -30,6 +30,8 @@ namespace Erc.Households.Api.QueryHandlers.AccountingPoints
                 .Include(a => a.Address.Street.City.District.Region)
                 .Include(a => a.DistributionSystemOperator)
                 .Include(a => a.BranchOffice)
+                .Include(a => a.Exemptions)
+                    .ThenInclude(e=>e.Category)
                 .FirstAsync(a => a.Id == request.Id);
             
                 return _mapper.Map<AccountingPoint>(ap);

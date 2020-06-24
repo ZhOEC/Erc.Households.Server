@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Erc.Households.Api.Authorization;
 using Erc.Households.Api.Queries.AccountingPoints;
+using Erc.Households.Api.Requests;
+using Erc.Households.Commands;
 using Erc.Households.DataAccess.Core;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -59,7 +61,7 @@ namespace Erc.Households.Api.Controllers
         }
 
         [HttpPost("")]
-        public async Task<IActionResult> AddNew(Requests.NewAccountingPoint newAccountingPoint)
+        public async Task<IActionResult> AddNew(NewAccountingPoint newAccountingPoint)
         {
             var accountingPoint = new Domain.AccountingPoints.AccountingPoint(
                 newAccountingPoint.Eic, newAccountingPoint.Name, newAccountingPoint.ZoneRecord, newAccountingPoint.ContractStartDate,
@@ -78,6 +80,16 @@ namespace Erc.Households.Api.Controllers
             var ap = await _mediator.Send(new GetAccountingPointById(id));
 
             return Ok(ap);
+        }
+
+        [HttpPost("{id}/closing-current-exemption")]
+        public async Task<IActionResult> CloseCurrentExemption(int id, ExemptionClosing exemptionClosing)
+        {
+            await _mediator.Send(new CloseAccountingPointExemption(id, exemptionClosing.Date, exemptionClosing.Note));
+            //await Task.Delay(TimeSpan.FromSeconds(3));
+            //await _unitOfWork.SaveWorkAsync();
+            
+            return Ok();
         }
 
         class SearchResult

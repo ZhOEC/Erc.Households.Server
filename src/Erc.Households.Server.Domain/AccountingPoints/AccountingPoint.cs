@@ -66,35 +66,31 @@ namespace Erc.Households.Domain.AccountingPoints
         public Tariff CurrentTariff => _tariffsHistory.FirstOrDefault(t => t.StartDate <= DateTime.Today).Tariff;
         public int UsageCategoryId { get; private set; }
         public int BuildingTypeId { get; private set; }
-
+        public AccountingPointExemption Exemption => Exemptions.FirstOrDefault(t => t.EffectiveDate <= DateTime.Today);
         public BuildingType BuildingType { get; private set; }
         public UsageCategory UsageCategory { get; private set; }
 
 
         public IReadOnlyCollection<Invoice> Invoices
         {
-
             get => LazyLoader.Load(this, ref _invoices);
             private set { _invoices = value.ToList(); }
         }
 
         public IReadOnlyCollection<AccountingPointExemption> Exemptions
         {
-
             get => LazyLoader.Load(this, ref _exemptions);
             private set { _exemptions = value.ToList(); }
         }
 
         public IReadOnlyCollection<Payment> Payments
         {
-
             get => LazyLoader.Load(this, ref _payments);
             private set { Payments = value.ToList(); }
         }
 
         public Address Address
         {
-
             get => LazyLoader.Load(this, ref _address);
             private set { _address = value; }
         }
@@ -161,6 +157,13 @@ namespace Erc.Households.Domain.AccountingPoints
             }
             Debt -= payment.Amount;
             _payments.Add(payment);
+        }
+
+        public void AddInvoice(Invoice invoice)
+        {
+            _invoices.Add(invoice);
+            invoice.Calculate();
+            Debt += invoice.TotalAmountDue;
         }
     }
 }
