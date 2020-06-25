@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Erc.Households.Api.Queries.Payments;
 using Erc.Households.Api.Requests;
+using Erc.Households.Commands.Payments;
 using Erc.Households.Domain.Payments;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -36,7 +37,8 @@ namespace Erc.Households.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Unit>> Post(NewPayment newPayment)
         {
-            return await _mediator.Send(new CreatePaymentCommand(newPayment));
+            return await _mediator.Send(new CreatePaymentCommand(newPayment.AccountingPointId, newPayment.PayDate, newPayment.Amount, 
+                                                                    newPayment.PayerInfo, newPayment.Type, newPayment.BatchId));
         }
 
         [HttpPut("{id}")]
@@ -49,7 +51,8 @@ namespace Erc.Households.Api.Controllers
             else if (payment.Status == PaymentStatus.Processed)
                 return BadRequest("Платіж проведений, і не може редагуватися");
 
-            return await _mediator.Send(new UpdatePaymentCommand(updatedPayment));
+            return await _mediator.Send(new UpdatePaymentCommand(updatedPayment.Id, updatedPayment.BatchId, updatedPayment.AccountingPointId, updatedPayment.PayDate,
+                                                                    updatedPayment.Amount, updatedPayment.PayerInfo, updatedPayment.Type));
         }
 
         [HttpDelete("{id}")]
@@ -62,7 +65,7 @@ namespace Erc.Households.Api.Controllers
             else if (payment.Status == PaymentStatus.Processed)
                 return BadRequest("Платіж проведений, і не може бути видалений");
 
-            return await _mediator.Send(new DeletePaymentCommand(payment.Id));
+            return await _mediator.Send(new DeletePaymentCommand(id));
         }
     }
 }

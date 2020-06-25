@@ -1,5 +1,4 @@
-﻿using Erc.Households.Domain.Payments;
-using System;
+﻿using System;
 
 namespace Erc.Households.Api.Requests
 {
@@ -10,6 +9,6 @@ namespace Erc.Households.Api.Requests
         public DateTime PayDate { get; set; }
         public decimal Amount { get; set; }
         public string PayerInfo { get; set; }
-        public PaymentType Type { get; set; }
+        public int Type { get; set; }
     }
 }

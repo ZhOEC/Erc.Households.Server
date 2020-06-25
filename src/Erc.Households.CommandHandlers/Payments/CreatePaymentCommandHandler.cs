@@ -1,4 +1,4 @@
-﻿using Erc.Households.Api.Queries.Payments;
+﻿using Erc.Households.Commands.Payments;
 using Erc.Households.Domain.Payments;
 using Erc.Households.EF.PostgreSQL;
 using MediatR;
@@ -7,7 +7,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Erc.Households.Api.QueryHandlers.Payments
+namespace Erc.Households.CommandHandlers.Payments
 {
     public class CreatePaymentCommandHandler : IRequestHandler<CreatePaymentCommand, Unit>
     {
@@ -20,19 +20,19 @@ namespace Erc.Households.Api.QueryHandlers.Payments
 
         public async Task<Unit> Handle(CreatePaymentCommand request, CancellationToken cancellationToken)
         {
-            var accountingPoint = await _ercContext.AccountingPoints.Include(x => x.BranchOffice).FirstOrDefaultAsync(x => x.Id == request.Payment.AccountingPointId);
+            var accountingPoint = await _ercContext.AccountingPoints.Include(x => x.BranchOffice).FirstOrDefaultAsync(x => x.Id == request.AccountingPointId);
             if (accountingPoint is null)
                 throw new Exception("Accounting point not found");
 
             var payment = new Payment(
-                    request.Payment.PayDate,
-                    request.Payment.Amount,
+                    request.PayDate,
+                    request.Amount,
                     accountingPoint.BranchOffice.CurrentPeriodId,
-                    request.Payment.Type,
-                    request.Payment.PayerInfo,
-                    request.Payment.AccountingPointId,
+                    (PaymentType)request.Type,
+                    request.PayerInfo,
+                    request.AccountingPointId,
                     null,
-                    request.Payment.BatchId
+                    request.BatchId
                 );
 
             await _ercContext.Payments.AddAsync(payment);

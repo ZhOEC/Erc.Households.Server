@@ -43,7 +43,7 @@ namespace Erc.Households.Domain.AccountingPoints
             BranchOfficeId = branchOfficeId;
             DistributionSystemOperatorId = dsoId;
             ZoneRecord = zoneRecord;
-            OpenNewContract(contractStartDate, Owner, currentUser);
+            OpenNewContract(contractStartDate, Owner, currentUser);   // Add check box about get paper invoice here
             SetTariff(tariffId, contractStartDate, currentUser);
             UsageCategoryId = usageCategoryId;
         }
