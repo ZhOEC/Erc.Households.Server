@@ -1,4 +1,5 @@
 ﻿using Erc.Households.Api.Queries.Payments;
+using Erc.Households.Domain.Payments;
 using Erc.Households.EF.PostgreSQL;
 using MediatR;
 using System;
@@ -19,9 +20,14 @@ namespace Erc.Households.Api.QueryHandlers.Payments
         public async Task<Unit> Handle(DeletePaymentCommand request, CancellationToken cancellationToken)
         {
             var payment = await _ercContext.Payments.FindAsync(request.Id);
-            _ercContext.Remove(payment);
 
-            return await _ercContext.SaveChangesAsync() > 0 ? Unit.Value : throw new Exception("Can't remove payment");
+            if (payment is null)
+                throw new Exception("Payment not exist");
+            else if (payment.Status == PaymentStatus.Processed)
+                throw new Exception("The payment has been made and cannot be removed");
+
+            _ercContext.Remove(payment);
+            return Unit.Value;
         }
     }
 }

@@ -36,7 +36,7 @@ namespace Erc.Households.CommandHandlers.Payments
                 );
 
             await _ercContext.Payments.AddAsync(payment);
-            return await _ercContext.SaveChangesAsync() > 0 ? Unit.Value : throw new Exception("Can't create payment");
+            return Unit.Value;
         }
     }
 }

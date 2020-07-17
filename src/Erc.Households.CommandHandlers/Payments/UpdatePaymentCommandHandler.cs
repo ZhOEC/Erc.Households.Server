@@ -1,4 +1,5 @@
 ﻿using Erc.Households.Api.Queries.Payments;
+using Erc.Households.Domain.Payments;
 using Erc.Households.EF.PostgreSQL;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -23,10 +24,12 @@ namespace Erc.Households.Api.QueryHandlers.Payments
 
             if (payment is null)
                 throw new Exception("Payment not exist");
+            else if (payment.Status == PaymentStatus.Processed)
+                throw new Exception("The payment has been made and cannot be edited");
 
-            _ercContext.Entry(payment).CurrentValues.SetValues(new { request.Id, request.BatchId, request.AccountingPointId, request.PayDate, 
-                                                                        request.Amount, request.PayerInfo, request.Type });
-            return await _ercContext.SaveChangesAsync() > 0 ? Unit.Value : throw new Exception("Can't update payment");
+            _ercContext.Entry(payment).CurrentValues.SetValues(request);
+
+            return Unit.Value;
         }
     }
 }

@@ -2,7 +2,7 @@
 using Erc.Households.Api.Queries.Payments;
 using Erc.Households.Api.Requests;
 using Erc.Households.Commands.Payments;
-using Erc.Households.Domain.Payments;
+using Erc.Households.DataAccess.Core;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,10 +13,12 @@ namespace Erc.Households.Api.Controllers
     public class PaymentsController : ControllerBase
     {
         private readonly IMediator _mediator;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public PaymentsController(IMediator mediator)
+        public PaymentsController(IMediator mediator, IUnitOfWork unitOfWork)
         {
             _mediator = mediator;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet]
@@ -37,35 +39,30 @@ namespace Erc.Households.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<Unit>> Post(NewPayment newPayment)
         {
-            return await _mediator.Send(new CreatePaymentCommand(newPayment.AccountingPointId, newPayment.PayDate, newPayment.Amount, 
-                                                                    newPayment.PayerInfo, newPayment.Type, newPayment.BatchId));
+            await _mediator.Send(new CreatePaymentCommand(newPayment.AccountingPointId, newPayment.PayDate, newPayment.Amount, 
+                                                          newPayment.PayerInfo, newPayment.Type, newPayment.BatchId));
+            await _unitOfWork.SaveWorkAsync();
+
+            return Ok();
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Unit>> Update(UpdatedPayment updatedPayment)
+        public async Task<IActionResult> Update(UpdatedPayment updatedPayment)
         {
-            var payment = await _mediator.Send(new GetPaymentById(updatedPayment.Id));
-            
-            if (payment is null)
-                return NotFound();
-            else if (payment.Status == PaymentStatus.Processed)
-                return BadRequest("Платіж проведений, і не може редагуватися");
+            await _mediator.Send(new UpdatePaymentCommand(updatedPayment.Id, updatedPayment.BatchId, updatedPayment.AccountingPointId, updatedPayment.PayDate,
+                                                          updatedPayment.Amount, updatedPayment.PayerInfo, updatedPayment.Type));
+            await _unitOfWork.SaveWorkAsync();
 
-            return await _mediator.Send(new UpdatePaymentCommand(updatedPayment.Id, updatedPayment.BatchId, updatedPayment.AccountingPointId, updatedPayment.PayDate,
-                                                                    updatedPayment.Amount, updatedPayment.PayerInfo, updatedPayment.Type));
+            return Ok();
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<Unit>> Delete(int id)
         {
-            var payment = await _mediator.Send(new GetPaymentById(id));
+            await _mediator.Send(new DeletePaymentCommand(id));
+            await _unitOfWork.SaveWorkAsync();
 
-            if (payment is null)
-                return NotFound();
-            else if (payment.Status == PaymentStatus.Processed)
-                return BadRequest("Платіж проведений, і не може бути видалений");
-
-            return await _mediator.Send(new DeletePaymentCommand(id));
+            return Ok();
         }
     }
 }
