@@ -13,12 +13,11 @@ namespace Erc.Households.ModelLogs
             _logs = new List<ObjectLog>();
         }
 
-        public IReadOnlyCollection<ObjectLog> Logs 
-        { 
+        public IReadOnlyCollection<ObjectLog> Logs
+        {
             get => _logs;
-            private set { _logs = value.ToList(); } 
+            private set { _logs = value.ToList(); }
         }
-        
 
         protected void AddLog(string operation, string user) => _logs.Add(new ObjectLog(operation, DateTime.Now, user));
     }

@@ -41,7 +41,8 @@ namespace Erc.Households.DataAccess.EF
                 PersonLastName = accountingPoint.Owner.LastName,
                 PersonPatronymic = accountingPoint.Owner.Patronymic,
                 PersonTaxCode = accountingPoint.Owner.TaxCode,
-                BranchOfficeStringId = accountingPoint.BranchOffice.StringId
+                BranchOfficeStringId = accountingPoint.BranchOffice.StringId,
+                BranchOfficeName = accountingPoint.BranchOffice.Name
             });
         }
         

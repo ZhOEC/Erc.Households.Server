@@ -4,7 +4,7 @@ using System;
 
 namespace Erc.Households.Domain.AccountingPoints
 {
-    public class Contract: LogableObjectBase
+    public class Contract : LogableObjectBase
     {
         Person _customer;
         private Action<object, string> LazyLoader { get; set; }
@@ -14,13 +14,14 @@ namespace Erc.Households.Domain.AccountingPoints
             LazyLoader = lazyLoader;
         }
 
-        public Contract(DateTime startDate, Person customer, string openUser)
+        public Contract(DateTime startDate, Person customer, string openUser, bool sendPaperBill)
         {
             StartDate = startDate;
             if (customer.Id == 0)
                 Customer = customer;
             else
                 CustomerId = customer.Id;
+            SendPaperBill = sendPaperBill;
             AddLog("open", openUser);
         }
 
@@ -29,6 +30,7 @@ namespace Erc.Households.Domain.AccountingPoints
         public int CustomerId { get; private set; }
         public DateTime StartDate { get; private set; }
         public DateTime? EndDate { get; private set; }
+        public bool SendPaperBill { get; private set; }
         public Person Customer 
         {
             get => LazyLoader.Load(this, ref _customer);

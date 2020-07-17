@@ -65,7 +65,8 @@ namespace Erc.Households.Api.Controllers
             var accountingPoint = new Domain.AccountingPoints.AccountingPoint(
                 newAccountingPoint.Eic, newAccountingPoint.Name, newAccountingPoint.ZoneRecord, newAccountingPoint.ContractStartDate,
                 newAccountingPoint.TariffId, newAccountingPoint.Address, newAccountingPoint.Owner,
-                newAccountingPoint.BranchOfficeId, newAccountingPoint.DsoId, User.Identity.Name, 1);
+                newAccountingPoint.BranchOfficeId, newAccountingPoint.DistributionSystemOperatorId, User.Identity.Name, newAccountingPoint.BuildingTypeId,
+                newAccountingPoint.UsageCategoryId, newAccountingPoint.SendPaperBill);
 
             await _unitOfWork.AccountingPointRepository.AddNewAsync(accountingPoint);
             await _unitOfWork.SaveWorkAsync();
@@ -88,6 +89,30 @@ namespace Erc.Households.Api.Controllers
             //await Task.Delay(TimeSpan.FromSeconds(3));
             //await _unitOfWork.SaveWorkAsync();
             
+            return Ok();
+        }
+
+        [HttpPost("{id}/open-new-contract")]
+        public async Task<IActionResult> OpenNewContract(int id, NewContract newContract)
+        {
+            await _mediator.Send(new OpenNewContractCommand(id, newContract.Owner.Id, newContract.ContractStartDate, newContract.SendPaperBill,
+                newContract.Owner.IdCardNumber, newContract.Owner.IdCardIssuanceDate, newContract.Owner.IdCardIssuer, newContract.Owner.IdCardExpDate, newContract.Owner.TaxCode,
+                newContract.Owner.FirstName, newContract.Owner.LastName, newContract.Owner.Patronymic, newContract.Owner.MobilePhones, newContract.Owner.Email, User.Identity.Name));
+            await _unitOfWork.SaveWorkAsync();
+
+            return Ok();
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateAccountingPoint(UpdatedAccountingPoint updatedAccountingPoint)
+        {
+            await _mediator.Send(new UpdateAccountingPointCommand(
+                updatedAccountingPoint.Id, updatedAccountingPoint.Eic, updatedAccountingPoint.Name, updatedAccountingPoint.BranchOfficeId, updatedAccountingPoint.DistributionSystemOperatorId, 
+                updatedAccountingPoint.Address.StreetId, updatedAccountingPoint.Address.Building, updatedAccountingPoint.Address.Apt, updatedAccountingPoint.Address.Zip, 
+                updatedAccountingPoint.BuildingTypeId, updatedAccountingPoint.UsageCategoryId));
+
+            await _unitOfWork.SaveWorkAsync();
+
             return Ok();
         }
 

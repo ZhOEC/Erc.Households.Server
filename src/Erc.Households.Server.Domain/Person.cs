@@ -16,6 +16,7 @@ namespace Erc.Households.Domain
         public DateTime? IdCardExpDate { get; set; }
         public int? AddressId { get; set; }
         public string[] MobilePhones { get; set; }
+        public string Email { get; set; }
         public Address Address { get; set; }
     }
 }
