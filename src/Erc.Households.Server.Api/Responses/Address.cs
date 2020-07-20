@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Erc.Households.Api.Responses
+﻿namespace Erc.Households.Api.Responses
 {
     public class Address
     {
-        public string CityName {get;set;}
-        public string StreetName { get; set; }
+        public int CityId { get; set; }
+        public int StreetId { get; set; }
+        public string Building { get; set; }
+        public string Apt { get; set; }
+        public string Zip { get; set; }
     }
 }

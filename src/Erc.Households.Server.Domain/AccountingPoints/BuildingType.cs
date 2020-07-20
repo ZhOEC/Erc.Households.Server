@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Erc.Households.Domain.AccountingPoints
+﻿namespace Erc.Households.Domain.AccountingPoints
 {
     public class BuildingType
     {

@@ -1,4 +1,8 @@
-﻿using Erc.Households.EF.PostgreSQL;
+﻿using Erc.Households.Api.Queries;
+using Erc.Households.Commands;
+using Erc.Households.Domain;
+using Erc.Households.EF.PostgreSQL;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -12,13 +16,15 @@ namespace Erc.Households.Api.Controllers
     public class PeopleController : ControllerBase
     {
         private readonly ErcContext _ercContext;
+        private readonly IMediator _mediator;
 
-        public PeopleController(ErcContext ercContext)
+        public PeopleController(ErcContext ercContext, IMediator mediator)
         {
             _ercContext = ercContext ?? throw new ArgumentNullException(nameof(ercContext));
+            _mediator = mediator;
         }
 
-        [HttpGet("")]
+        [HttpGet]
         public async Task<IActionResult> SearchPeople(string searchString)
         {
             if (!string.IsNullOrEmpty(searchString))
@@ -29,6 +35,16 @@ namespace Erc.Households.Api.Controllers
             {
                 return BadRequest();
             }
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetOne(int id) => Ok(await _mediator.Send(new GetPersonById(id)));
+
+        [HttpPut("{id}")]
+        public async Task<Unit> Update(Person person)
+        {
+            return await _mediator.Send(new UpdatePersonCommand(person.Id, person.IdCardNumber, person.IdCardIssuanceDate, person.IdCardIssuer, person.IdCardExpDate,
+                                                                person.MobilePhones, person.Email));
         }
     }
 }
