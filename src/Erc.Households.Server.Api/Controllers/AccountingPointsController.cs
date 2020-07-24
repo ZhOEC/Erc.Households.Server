@@ -86,7 +86,7 @@ namespace Erc.Households.Api.Controllers
         {
             await _mediator.Send(new CloseAccountingPointExemption(id, exemptionClosing.Date, exemptionClosing.Note));
             //await Task.Delay(TimeSpan.FromSeconds(3));
-            //await _unitOfWork.SaveWorkAsync();
+            await _unitOfWork.SaveWorkAsync();
             
             return Ok();
         }

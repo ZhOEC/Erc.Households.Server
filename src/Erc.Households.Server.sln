@@ -25,13 +25,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.BranchOffice
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.BranchOfficeManagment.Core", "Erc.Households.BranchOffices.Managment.Core\Erc.Households.BranchOfficeManagment.Core.csproj", "{5E04E8E3-ABDE-4468-B428-B4BD82D415EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Erc.Households.CommandHandlers", "Erc.Households.CommandHandlers\Erc.Households.CommandHandlers.csproj", "{F70DF444-F044-4F2A-9C28-9EE82F3D6A09}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.CommandHandlers", "Erc.Households.CommandHandlers\Erc.Households.CommandHandlers.csproj", "{F70DF444-F044-4F2A-9C28-9EE82F3D6A09}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Erc.Households.Commands", "Erc.Households.Commands\Erc.Households.Commands.csproj", "{C1EB947A-6893-442B-BB01-98290C94C5DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Commands", "Erc.Households.Commands\Erc.Households.Commands.csproj", "{C1EB947A-6893-442B-BB01-98290C94C5DF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Erc.Households.Notifications", "Erc.Households.Notifications\Erc.Households.Notifications.csproj", "{A61B57E9-FBDB-4A7A-837A-D1E4AD66E373}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Notifications", "Erc.Households.Notifications\Erc.Households.Notifications.csproj", "{A61B57E9-FBDB-4A7A-837A-D1E4AD66E373}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Erc.Households.NotificationHandlers", "Erc.Households.NotificationHandlers\Erc.Households.NotificationHandlers.csproj", "{96911E98-E7F7-4AB3-A7B3-F15DC525ADA1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.NotificationHandlers", "Erc.Households.NotificationHandlers\Erc.Households.NotificationHandlers.csproj", "{96911E98-E7F7-4AB3-A7B3-F15DC525ADA1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Erc.Households.Calculation", "Erc.Households.Calculation\Erc.Households.Calculation.csproj", "{2F9BDE54-359E-4B0F-B696-FA3DADE71207}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -95,12 +97,17 @@ Global
 		{96911E98-E7F7-4AB3-A7B3-F15DC525ADA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{96911E98-E7F7-4AB3-A7B3-F15DC525ADA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{96911E98-E7F7-4AB3-A7B3-F15DC525ADA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F9BDE54-359E-4B0F-B696-FA3DADE71207}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F9BDE54-359E-4B0F-B696-FA3DADE71207}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F9BDE54-359E-4B0F-B696-FA3DADE71207}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F9BDE54-359E-4B0F-B696-FA3DADE71207}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{0B2CA81D-4CD2-44B5-B114-2C424214223A} = {31B452B8-042A-4CA7-BCA2-54B67F89DB6E}
+		{2F9BDE54-359E-4B0F-B696-FA3DADE71207} = {31B452B8-042A-4CA7-BCA2-54B67F89DB6E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B51E0631-0D8E-4027-8015-D58B03364BF6}

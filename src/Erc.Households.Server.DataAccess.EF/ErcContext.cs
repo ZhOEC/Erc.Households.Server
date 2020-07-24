@@ -175,6 +175,8 @@ namespace Erc.Households.EF.PostgreSQL
                 entity.Property(b => b.UsageT1).HasColumnType("jsonb");
                 entity.Property(b => b.UsageT2).HasColumnType("jsonb");
                 entity.Property(b => b.UsageT3).HasColumnType("jsonb");
+
+                entity.HasOne(e => e.Tariff).WithMany();
             });
 
             //modelBuilder.Entity<Contract>(e =>

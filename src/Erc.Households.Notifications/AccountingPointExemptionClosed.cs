@@ -1,19 +1,16 @@
-﻿using MediatR;
+﻿using Erc.Households.Domain.AccountingPoints;
+using MediatR;
 using System;
 
 namespace Erc.Households.Notifications
 {
     public class AccountingPointExemptionClosed : INotification
     {
-        public int Id { get; }
-        public int AccountingPointId { get; }
-        public DateTime Date { get; }
+        public AccountingPointExemption Exemption { get; }
 
-        public AccountingPointExemptionClosed(int id, int accountingPointId, DateTime date)
+        public AccountingPointExemptionClosed(AccountingPointExemption exemption)
         {
-            Id = id;
-            AccountingPointId = accountingPointId;
-            Date = date;
+            Exemption = exemption;
         }
     }
 }
