@@ -21,6 +21,18 @@ namespace Erc.Households.Domain.AccountingPoints
         public Exemptions.ExemptionCategory Category { get; private set; }
         public Person Person { get; private set; }
 
+        public void Open(int accountingPointId, int categoryId, DateTime date, string certificate, int personCount, bool limit, string note, Person person)
+        {
+            AccountingPointId = accountingPointId;
+            ExemptionCategoryId = categoryId;
+            EffectiveDate = date;
+            Certificate = certificate;
+            PersonsNumber = personCount;
+            HasLimit = limit;
+            Note = note;
+            Person = person;
+        }
+
         public void Close(DateTime date, string note)
         {
             EndDate = date >= EffectiveDate ? date : throw new ArgumentOutOfRangeException(nameof(date), "Дата закртиття пільги не може бути меньшою за дату відкртиття");

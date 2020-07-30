@@ -6,6 +6,7 @@ using Erc.Households.Api.Queries.AccountingPoints;
 using Erc.Households.Api.Requests;
 using Erc.Households.Commands;
 using Erc.Households.DataAccess.Core;
+using Erc.Households.Notifications;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -80,6 +81,16 @@ namespace Erc.Households.Api.Controllers
             var ap = await _mediator.Send(new GetAccountingPointById(id));
 
             return Ok(ap);
+        }
+        
+        [HttpPost("{id}/open-exemption")]
+        public async Task<IActionResult> OpenExemption(int id, ExemptionOpening exemptionOpening)
+        {
+            await _mediator.Send(new OpenAccountingPointExemptionCommand(id, exemptionOpening.ExemptionCategoryId, exemptionOpening.Date, exemptionOpening.Certificate, exemptionOpening.PersonCount,
+                exemptionOpening.Limit, exemptionOpening.Note, exemptionOpening.Person));
+            await _unitOfWork.SaveWorkAsync();
+
+            return Ok();
         }
 
         [HttpPost("{id}/closing-current-exemption")]
