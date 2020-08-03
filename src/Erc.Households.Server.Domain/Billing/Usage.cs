@@ -26,8 +26,8 @@ namespace Erc.Households.Domain.Billing
         public void AddCalculation(UsageCalculation usageCalculation)
         {
             _calculations.Add(usageCalculation);
-            //Charge += usageCalculation.Charge;
-            //Discount += usageCalculation.Discount;
+            Charge += usageCalculation.Charge;
+            Discount += usageCalculation.Discount;
         }
     }
 }

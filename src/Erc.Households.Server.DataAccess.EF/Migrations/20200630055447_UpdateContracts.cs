@@ -27,18 +27,18 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 nullable: false,
                 defaultValue: true);
 
-            migrationBuilder.CreateIndex(
-                name: "ix_payment_batches_branch_office_id",
-                table: "payment_batches",
-                column: "branch_office_id");
+            //migrationBuilder.CreateIndex(
+            //    name: "ix_payment_batches_branch_office_id",
+            //    table: "payment_batches",
+            //    column: "branch_office_id");
 
-            migrationBuilder.AddForeignKey(
-                name: "fk_payment_batches_branch_offices_branch_office_id",
-                table: "payment_batches",
-                column: "branch_office_id",
-                principalTable: "branch_offices",
-                principalColumn: "id",
-                onDelete: ReferentialAction.Cascade);
+            //migrationBuilder.AddForeignKey(
+            //    name: "fk_payment_batches_branch_offices_branch_office_id",
+            //    table: "payment_batches",
+            //    column: "branch_office_id",
+            //    principalTable: "branch_offices",
+            //    principalColumn: "id",
+            //    onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
                 name: "fk_payments_payment_batches_batch_id",

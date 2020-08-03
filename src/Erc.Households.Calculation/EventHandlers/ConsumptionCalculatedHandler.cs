@@ -71,7 +71,7 @@ namespace Erc.Households.Calculation.EventHandlers
 
                  await _ercContext.Invoices
                     .Where(i => i.AccountingPointId == ac.Id && i.FromDate.Month == context.Message.FromDate.Month && i.FromDate.Year == context.Message.FromDate.Year)
-                    .ToListAsync()
+                    .ToArrayAsync()
                     .ContinueWith(t=>
                     {
                         var newInvoice = new Invoice(context.Message.Id, context.Message.PeriodId, ac.Debt,

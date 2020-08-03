@@ -10,9 +10,9 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 name: "fk_payments_payment_batches_batch_id",
                 table: "payments");
 
-            migrationBuilder.DropColumn(
-                name: "name",
-                table: "payment_batches");
+            //migrationBuilder.DropColumn(
+            //    name: "name",
+            //    table: "payment_batches");
 
             migrationBuilder.AlterColumn<int>(
                 name: "batch_id",

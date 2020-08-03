@@ -169,6 +169,7 @@ namespace Erc.Households.EF.PostgreSQL
             {
                 entity.Property(p => p.TotalAmountDue).HasColumnType("decimal(10,2)");
                 entity.Property(p => p.TotalDiscount).HasColumnType("decimal(10,2)");
+                entity.Property(p => p.TotalCharge).HasColumnType("decimal(10,2)");
 
                 entity.Property(e => e.FromDate).HasColumnType("date");
                 entity.Property(e => e.ToDate).HasColumnType("date");
@@ -177,6 +178,7 @@ namespace Erc.Households.EF.PostgreSQL
                 entity.Property(b => b.UsageT3).HasColumnType("jsonb");
 
                 entity.HasOne(e => e.Tariff).WithMany();
+                entity.HasIndex(p => p.DsoConsumptionId).IsUnique();
             });
 
             //modelBuilder.Entity<Contract>(e =>

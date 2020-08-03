@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 
 namespace Erc.Households.Domain.Billing
 {
@@ -139,25 +138,28 @@ namespace Erc.Households.Domain.Billing
 
         public void Calculate(IEnumerable<Invoice> invalidInvoices)
         {
-            if (invalidInvoices.Any())
-            {
-                UsageT1.Units += invalidInvoices.Sum(i => i.UsageT1.Units);
-                if (UsageT2 != null) UsageT2.Units += invalidInvoices.Sum(i => i.UsageT2?.Units ?? 0);
-                if (UsageT3 != null) UsageT3.Units += invalidInvoices.Sum(i => i.UsageT3?.Units ?? 0);
-            }
-
             var tariffRates = Tariff.Rates.Where(t => t.StartDate < ToDate).GroupBy(tr => tr.StartDate).OrderByDescending(tr => tr.Key).First();
 
-            foreach (var tr in tariffRates.OrderBy(tr => tr.ConsumptionLimit ?? int.MaxValue))
+            if (UsageT1.Units != 0 || UsageT2 != null || UsageT3 != null)
             {
-                if (UsageT1.Units > UsageT1.Calculations.Sum(c => c.Units) || UsageT1.Units < 0) CalculateInternal(() => UsageT1, tr);
-                if (UsageT2?.Units > UsageT2?.Calculations.Sum(c => c.Units) || UsageT2?.Units < 0) CalculateInternal(() => UsageT2, tr);
-                if (UsageT3?.Units > UsageT3?.Calculations.Sum(c => c.Units) || UsageT3?.Units < 0) CalculateInternal(() => UsageT3, tr);
-            }
+                if (invalidInvoices.Any())
+                {
+                    UsageT1.Units += invalidInvoices.Sum(i => i.UsageT1.Units);
+                    if (UsageT2 != null) UsageT2.Units += invalidInvoices.Sum(i => i.UsageT2?.Units ?? 0);
+                    if (UsageT3 != null) UsageT3.Units += invalidInvoices.Sum(i => i.UsageT3?.Units ?? 0);
+                }
 
-            if (invalidInvoices.Any())
-                foreach (var usageExpression in GetUsagesExpressions())
-                    AddInvalidCalculationInternal(usageExpression);
+                foreach (var tr in tariffRates.OrderBy(tr => tr.ConsumptionLimit ?? int.MaxValue))
+                {
+                    if (UsageT1.Units > UsageT1.Calculations.Sum(c => c.Units) || UsageT1.Units < 0) CalculateInternal(() => UsageT1, tr);
+                    if (UsageT2?.Units > UsageT2?.Calculations.Sum(c => c.Units) || UsageT2?.Units < 0) CalculateInternal(() => UsageT2, tr);
+                    if (UsageT3?.Units > UsageT3?.Calculations.Sum(c => c.Units) || UsageT3?.Units < 0) CalculateInternal(() => UsageT3, tr);
+                }
+
+                if (invalidInvoices.Any())
+                    foreach (var usageExpression in GetUsagesExpressions())
+                        AddInvalidCalculationInternal(usageExpression);
+            }
 
             TotalUnits = UsageT1.Units + (UsageT2?.Units ?? 0) + (UsageT3?.Units ?? 0);
             TotalDiscount = UsageT1.Discount + (UsageT2?.Discount ?? 0) + (UsageT3?.Discount ?? 0);
@@ -179,22 +181,35 @@ namespace Erc.Households.Domain.Billing
                                          {
                                              Units = 0 - c.Units,
                                              Charge = 0 - c.Charge,
-                                             Discount = 0 - c.Discount,
-                                             DiscountUnits = 0 - c.DiscountUnits,
+                                             Discount = 0,
+                                             DiscountUnits = 0,
                                              PriceValue = tariffRates.Min(tr => tr.Value)
                                          });
                                      });
                 else
                 {
-                    var invoices = invalidInvoices.Where(ii => ii.GetUsage(zoneNumber).Units > 0);
-                    usage.AddCalculation(new UsageCalculation
-                    {
-                        Units = 0 - invoices.Sum(ii => ii.GetUsage(zoneNumber).Units),
-                        Charge = 0 - invoices.Sum(ii => ii.GetUsage(zoneNumber).Charge),
-                        Discount = 0 - invoices.Sum(ii => ii.GetUsage(zoneNumber).Discount),
-                        DiscountUnits = 0 - invoices.Sum(ii => ii.GetUsage(zoneNumber).DiscountUnits),
-                        PriceValue = tariffRates.OrderBy(t => t.Value).First().Value
-                    }); ;
+                    //var invoices = invalidInvoices.Where(ii => ii.GetUsage(zoneNumber).Units > 0);
+                    //var minTariffRate = tariffRates.OrderBy(tr => tr.ConsumptionLimit ?? int.MaxValue).First();
+                    //var consumptionMonthLimit = minTariffRate.ConsumptionLimit ?? int.MaxValue;
+
+                    //if (invoices.Sum(ii => ii.TotalUnits) > consumptionMonthLimit)
+                    //{
+                    //    var units = zoneNumber switch
+                    //    {
+                    //        2 when ZoneRecord == ZoneRecord.Two => consumptionMonthLimit - UsageT1.Calculations.Where(c => c.PriceValue == tr.Value).FirstOrDefault().Units,
+                    //        3 => consumptionMonthLimit - UsageT1.Calculations.Where(c => c.PriceValue == tr.Value).FirstOrDefault().Units + UsageT2.Calculations.Where(c => c.PriceValue == tr.Value).FirstOrDefault().Units,
+                    //        _ => (int)decimal.Round(consumptionMonthLimit * usage.Units / (decimal)(UsageT1.Units + (UsageT2?.Units ?? 0) + (UsageT3?.Units ?? 0)), MidpointRounding.AwayFromZero)
+                    //    };
+                    //}
+                    //else
+                    //    usage.AddCalculation(new UsageCalculation
+                    //    {
+                    //        Units = 0 - invoices.Sum(ii => ii.GetUsage(zoneNumber).Units),
+                    //        Charge = 0 - invoices.Sum(ii => ii.GetUsage(zoneNumber).Charge),
+                    //        Discount = 0 - invoices.Sum(ii => ii.GetUsage(zoneNumber).Discount),
+                    //        DiscountUnits = 0 - invoices.Sum(ii => ii.GetUsage(zoneNumber).DiscountUnits),
+                    //        PriceValue = minTariffRate.Value
+                    //    });
                 }
 
                 usage.Units = usage.Calculations.Sum(c => c.Units);
