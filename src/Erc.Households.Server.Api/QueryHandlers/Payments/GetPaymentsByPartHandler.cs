@@ -35,6 +35,7 @@ namespace Erc.Households.Api.QueryHandlers.Payments
                     .ThenBy(x => x.AccountingPointName)
                     .ThenBy(x => x.PayerInfo)
                     .ThenBy(x => x.Status)
+                .AsNoTracking()
                 .ToPagedListAsync(request.PageNumber, request.PageSize);
         }
     }

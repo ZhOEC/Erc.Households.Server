@@ -19,7 +19,7 @@ namespace Erc.Households.Api.QueryHandlers.Payments
 
         public async Task<PaymentChannel> Handle(GetPaymentChannelById request, CancellationToken cancellationToken)
         {
-            return await _ercContext.PaymentChannels.FirstOrDefaultAsync(x => x.Id == request.PaymentChannelId);
+            return await _ercContext.PaymentChannels.AsNoTracking().FirstOrDefaultAsync(x => x.Id == request.PaymentChannelId);
         }
     }
 }

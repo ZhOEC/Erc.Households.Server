@@ -34,7 +34,7 @@ namespace Erc.Households.Domain.AccountingPoints
         }
 
         public AccountingPoint(string eic, string name, ZoneRecord zoneRecord, DateTime contractStartDate, int tariffId, Address address,
-                               Person owner, int branchOfficeId, int dsoId, string currentUser, int usageCategoryId)
+                               Person owner, int branchOfficeId, int dsoId, string currentUser, int buildingTypeId, int usageCategoryId, bool sendPaperBill)
         {
             Eic = eic;
             Name = name;
@@ -43,8 +43,9 @@ namespace Erc.Households.Domain.AccountingPoints
             BranchOfficeId = branchOfficeId;
             DistributionSystemOperatorId = dsoId;
             ZoneRecord = zoneRecord;
-            OpenNewContract(contractStartDate, Owner, currentUser);
+            OpenNewContract(contractStartDate, Owner, currentUser, sendPaperBill);
             SetTariff(tariffId, contractStartDate, currentUser);
+            BuildingTypeId = buildingTypeId;
             UsageCategoryId = usageCategoryId;
         }
 
@@ -69,7 +70,6 @@ namespace Erc.Households.Domain.AccountingPoints
         public AccountingPointExemption Exemption => Exemptions.FirstOrDefault(t => t.EffectiveDate <= DateTime.Today && (t.EndDate ?? DateTime.MaxValue) > DateTime.Today);
         public BuildingType BuildingType { get; private set; }
         public UsageCategory UsageCategory { get; private set; }
-
 
         public IReadOnlyCollection<Invoice> Invoices
         {
@@ -123,10 +123,10 @@ namespace Erc.Households.Domain.AccountingPoints
             }
         }
 
-        public void OpenNewContract(DateTime openDate, Person customer, string currentUser)
+        public void OpenNewContract(DateTime openDate, Person customer, string currentUser, bool sendPaperBill)
         {
             CloseCurrentContract(openDate, currentUser);
-            _contractsHistory.Add(new Contract(openDate, customer, currentUser));
+            _contractsHistory.Add(new Contract(openDate, customer, currentUser, sendPaperBill));
             ContractIsSigned = true;
         }
 
@@ -164,6 +164,15 @@ namespace Erc.Households.Domain.AccountingPoints
             _invoices.Add(invoice);
             //invoice.Calculate();
             Debt += invoice.TotalAmountDue;
+        }
+
+        public void SetNewAddress(Address address)
+        {
+            if (address.Id == 0)
+            {
+                _address = address;
+            }
+            else AddressId = address.Id;
         }
     }
 }

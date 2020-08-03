@@ -25,6 +25,7 @@ namespace Erc.Households.Api.QueryHandlers.AccountingPoints
         {
             return await _ercContext.Payments
                 .ProjectTo<Payment>(_mapper.ConfigurationProvider)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.Id == request.Id);
         }
     }

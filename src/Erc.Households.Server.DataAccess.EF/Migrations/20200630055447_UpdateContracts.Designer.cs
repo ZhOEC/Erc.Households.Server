@@ -6,15 +6,17 @@ using Erc.Households.EF.PostgreSQL;
 using Erc.Households.ModelLogs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Erc.Households.EF.PostgreSQL.Migrations
 {
     [DbContext(typeof(ErcContext))]
-    partial class ErcContextModelSnapshot : ModelSnapshot
+    [Migration("20200630055447_UpdateContracts")]
+    partial class UpdateContracts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -515,10 +517,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     b.Property<Guid>("DsoConsumptionId")
                         .HasColumnName("dso_consumption_id")
                         .HasColumnType("uuid");
-
-                    b.Property<decimal?>("ExemptionCoeff")
-                        .HasColumnName("exemption_coeff")
-                        .HasColumnType("numeric");
 
                     b.Property<DateTime>("FromDate")
                         .HasColumnName("from_date")
@@ -1374,10 +1372,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     b.Property<int?>("AddressId")
                         .HasColumnName("address_id")
                         .HasColumnType("integer");
-
-                    b.Property<string>("Email")
-                        .HasColumnName("email")
-                        .HasColumnType("text");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
