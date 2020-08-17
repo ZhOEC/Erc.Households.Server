@@ -35,7 +35,7 @@ namespace Erc.Households.Calculation.EventHandlers
 
             if (ac is null)
             {
-                return;
+                throw new ArgumentOutOfRangeException("Accountingpoint not found in the database!");
             }
             else
             {

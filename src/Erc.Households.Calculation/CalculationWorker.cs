@@ -43,8 +43,11 @@ namespace Erc.Households.Calculation
                         c.Username(rabbitMq["Username"]);
                         c.Password(rabbitMq["Password"]);
                     });
+                    cfg.UseDelayedExchangeMessageScheduler();
                     cfg.UseConcurrencyLimit(int.Parse(rabbitMq["ConcurrencyLimit"] ?? "8"));
                     cfg.ConfigureEndpoints(ctx);
+                    cfg.UseScheduledRedelivery(r => r.Interval(5, TimeSpan.FromDays(7)));
+                    cfg.UseMessageRetry(r => r.None());
                 });
             });
             services.AddDbContext<ErcContext>(options =>

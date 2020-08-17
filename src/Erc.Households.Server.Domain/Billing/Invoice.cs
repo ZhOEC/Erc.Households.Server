@@ -181,9 +181,9 @@ namespace Erc.Households.Domain.Billing
                                          {
                                              Units = 0 - c.Units,
                                              Charge = 0 - c.Charge,
-                                             Discount = 0,
-                                             DiscountUnits = 0,
-                                             PriceValue = tariffRates.Min(tr => tr.Value)
+                                             Discount = c.Discount,
+                                             DiscountUnits = c.DiscountUnits,
+                                             PriceValue = c.PriceValue
                                          });
                                      });
                 else
