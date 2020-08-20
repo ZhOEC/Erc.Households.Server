@@ -43,7 +43,7 @@ namespace Erc.Households.Api.Helpers
             {
                 listPayments.Add(
                     new Payment(
-                        DateTime.ParseExact(record[paymentChannel.DateFieldName].ToString(), paymentChannel.TextDateFormat, CultureInfo.InvariantCulture),
+                        DateTime.ParseExact(record[paymentChannel.DateFieldName].ToString(), paymentChannel.TextDateFormat, new CultureInfo(CultureInfo.CurrentCulture.ToString())),
                         Convert.ToDecimal(record[paymentChannel.SumFieldName].ToString()),
                         _branchOfficeService.GetOne(branchOfficeId).CurrentPeriodId,
                         paymentChannel.PaymentsType,

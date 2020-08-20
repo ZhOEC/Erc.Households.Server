@@ -1,6 +1,5 @@
 ﻿using Erc.Households.Domain.Addresses;
 using Erc.Households.Domain.Billing;
-using Erc.Households.Domain.Exemptions;
 using Erc.Households.Domain.Extensions;
 using Erc.Households.Domain.Payments;
 using Erc.Households.Domain.Tariffs;
@@ -173,6 +172,13 @@ namespace Erc.Households.Domain.AccountingPoints
                 _address = address;
             }
             else AddressId = address.Id;
+        }
+
+        public void SetExemption(AccountingPointExemption exemption)
+        {
+            if (!Exemptions.Any(x => x.EndDate <= exemption.EffectiveDate))
+                _exemptions.Add(exemption);
+            else throw new ArgumentOutOfRangeException(nameof(exemption.EffectiveDate), "Дата відкриття пільги пересікається з попередньою пільгою");
         }
     }
 }
