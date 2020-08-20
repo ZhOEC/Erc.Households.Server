@@ -1,30 +1,29 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using MassTransit;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Zt.Energy.Dso;
 
 namespace Erc.Households.DsoBridge
 {
     public class BridgeService : IHostedService
     {
-        private readonly ILogger<BridgeService> _logger;
+        readonly IBusControl _busControl;
+       
 
-        public BridgeService(ILogger<BridgeService> logger)
+        public BridgeService(IBusControl busControl)
         {
-            _logger = logger;
+            _busControl = busControl;
         }
 
-        public Task StartAsync(CancellationToken cancellationToken)
+        public async Task StartAsync(CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            await _busControl.StartAsync();
         }
 
-        public Task StopAsync(CancellationToken cancellationToken)
+        public async Task StopAsync(CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            await _busControl.StopAsync();
         }
     }
 }

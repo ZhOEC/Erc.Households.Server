@@ -1,30 +1,14 @@
-﻿using Erc.Households.Domain.AccountingPoints;
-using Erc.Households.Domain.Billing;
-using Erc.Households.EF.PostgreSQL;
-using MassTransit;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using MassTransit;
 using System.Threading.Tasks;
-using Zt.Energy.Dso.Events;
 
-namespace Erc.Households.Calculation.EventHandlers
+namespace Erc.Households.DsoBridge.EventHandlers
 {
-    public class ConsumptionCalculatedHandler : IConsumer<ConsumptionCalculated>
+    public class ConsumptionCalculatedHandler : IConsumer<Zt.Energy.Dso.Events.Households.ConsumptionCalculated>
     {
-        
+        readonly IErcBus _ercBus;
 
-        public ConsumptionCalculatedHandler(IBus bus)
-        {
-           
-        }
+        public ConsumptionCalculatedHandler(IErcBus bus) => _ercBus = bus;
 
-        public async Task Consume(ConsumeContext<ConsumptionCalculated> context)
-        {
-            
-            
-        }
+        public async Task Consume(ConsumeContext<Zt.Energy.Dso.Events.Households.ConsumptionCalculated> context) => await _ercBus.Publish<Events.AccountingPoints.ConsumptionCalculated>(context.Message);
     }
 }

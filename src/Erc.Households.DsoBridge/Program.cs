@@ -7,6 +7,7 @@ using MassTransit;
 using MassTransit.MultiBus;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Zt.Energy;
 using Zt.Energy.Dso;
 
 namespace Erc.Households.DsoBridge
@@ -22,9 +23,9 @@ namespace Erc.Households.DsoBridge
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
-                    services.AddMassTransit(s =>
+                   
+                    services.AddMassTransit<IErcBus>(s =>
                     {
-                        s.AddConsumers(System.Reflection.Assembly.GetExecutingAssembly());
                         s.UsingRabbitMq((ctx, cfg) =>
                         {
                             var rabbitMq = hostContext.Configuration.GetSection("RabbitMQ");
@@ -38,9 +39,9 @@ namespace Erc.Households.DsoBridge
                         });
                     });
 
-                    services.AddMassTransit<IZtoeBus>(s =>
+                    services.AddMassTransit(s =>
                     {
-                        s.AddConsumers(System.Reflection.Assembly.GetExecutingAssembly());
+                        s.AddConsumer<EventHandlers.ConsumptionCalculatedHandler>();
                         s.UsingRabbitMq((ctx, cfg) =>
                         {
                             var rabbitMq = hostContext.Configuration.GetSection("ZtoeRabbitMQ");

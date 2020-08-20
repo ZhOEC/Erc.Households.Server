@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Zt.Energy.Dso.Events
+namespace Erc.Households.Events.AccountingPoints
 {
 #pragma warning disable IDE1006 // Naming Styles
     public interface ConsumptionCalculated
@@ -22,7 +22,7 @@ namespace Zt.Energy.Dso.Events
         int? UsageT2 { get; }
         int? UsageT3 { get; }
         string MeterNumber { get; }
-        public int ZoneRecord { get; } 
+        int ZoneRecord { get; } 
         DateTime GenerationDate { get; }
     }
 }

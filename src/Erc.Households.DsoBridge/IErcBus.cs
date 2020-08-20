@@ -3,9 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Zt.Energy.Dso
+namespace Erc.Households.DsoBridge
 {
-    public interface IZtoeBus : IBus
+    public interface IErcBus : IBus
     {
     }
 }
