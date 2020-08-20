@@ -27,5 +27,12 @@ namespace Erc.Households.Api.Controllers
         {
             return Ok(_mapper.Map<IEnumerable<Responses.BranchOffice>>(_branchOfficeService.GetList(UserGroups)));
         }
+
+        [HttpPost("{id}/new-period")]
+        public IActionResult StartNewPeriod(int id)
+        {
+            _branchOfficeService.StartNewPeriod(id);
+            return Ok();
+        }
     }
 }

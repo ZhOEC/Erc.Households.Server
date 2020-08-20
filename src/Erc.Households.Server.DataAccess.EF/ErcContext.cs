@@ -134,7 +134,8 @@ namespace Erc.Households.EF.PostgreSQL
                     new { Id = 202003, StartDate = new DateTime(2020, 3, 1), EndDate = new DateTime(2019, 3, 1).AddMonths(1).AddDays(-1), Name = "Березень 2020р." },
                     new { Id = 202004, StartDate = new DateTime(2020, 4, 1), EndDate = new DateTime(2019, 4, 1).AddMonths(1).AddDays(-1), Name = "Квітень 2020р." },
                     new { Id = 202005, StartDate = new DateTime(2020, 5, 1), EndDate = new DateTime(2019, 5, 1).AddMonths(1).AddDays(-1), Name = "Травень 2020р." },
-                    new { Id = 202006, StartDate = new DateTime(2020, 6, 1), EndDate = new DateTime(2019, 6, 1).AddMonths(1).AddDays(-1), Name = "Червень 2020р." }
+                    new { Id = 202006, StartDate = new DateTime(2020, 6, 1), EndDate = new DateTime(2019, 6, 1).AddMonths(1).AddDays(-1), Name = "Червень 2020р." },
+                    new { Id = 202007, StartDate = new DateTime(2020, 7, 1), EndDate = new DateTime(2019, 7, 1).AddMonths(1).AddDays(-1), Name = "Липень 2020р." }
                     );
                 entity.Property(e => e.Name).HasColumnType("citext")
                     .IsRequired();
@@ -197,11 +198,17 @@ namespace Erc.Households.EF.PostgreSQL
             //    e.Property(e => e.StartDate).HasColumnType("date");
 
             //    e.Property(p => p.Logs).HasColumnType("jsonb");
-                
+
             //    e.HasOne(p => p.Tariff)
             //        .WithMany()
             //        .HasForeignKey(p => p.TariffId);
             //});
+
+            modelBuilder.Entity<AccountingPointDebtHistory>(entity =>
+            {
+                entity.HasKey(e => new { e.AccountingPointId, e.PeriodId });
+                entity.Property(p => p.DebtValue).HasColumnType("decimal(10,2)");
+            });
 
             modelBuilder.Entity<BranchOffice>(e =>
             {

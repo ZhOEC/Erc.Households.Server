@@ -54,6 +54,8 @@ namespace Erc.Households.BranchOfficeManagment.EF
                     .FirstOrDefault(b => b.CurrentPeriod.StartDate == branchOffice.CurrentPeriod.EndDate.AddDays(1))
                     ?.CurrentPeriod;
 
+                using var transaction = _ercContext.Database.BeginTransaction();
+
                 if (period is null)
                 {
                     period = new Period(branchOffice.CurrentPeriod.EndDate.AddDays(1), branchOffice.CurrentPeriod.EndDate.AddMonths(1));
@@ -62,6 +64,9 @@ namespace Erc.Households.BranchOfficeManagment.EF
 
                 branchOffice.StartNewPeriod(period);
                 _ercContext.SaveChanges();
+                _ercContext.Database.ExecuteSqlInterpolated($"insert into accounting_point_balance_histories(accounting_point_id, period_id, balance_value) select id, {period.Id}, debt from accounting_points");
+
+                transaction.Commit();
             }
         }
     }
