@@ -6,21 +6,23 @@ using Erc.Households.EF.PostgreSQL;
 using Erc.Households.ModelLogs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Erc.Households.EF.PostgreSQL.Migrations
 {
     [DbContext(typeof(ErcContext))]
-    partial class ErcContextModelSnapshot : ModelSnapshot
+    [Migration("20200706085626_AddExemptionCoeff")]
+    partial class AddExemptionCoeff
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Npgsql:PostgresExtension:citext", ",,")
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn)
-                .HasAnnotation("ProductVersion", "3.1.6")
+                .HasAnnotation("ProductVersion", "3.1.5")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             modelBuilder.Entity("Erc.Households.Domain.AccountingPoints.AccountingPoint", b =>
@@ -50,7 +52,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
 
                     b.Property<decimal>("Debt")
                         .HasColumnName("debt")
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("numeric");
 
                     b.Property<int>("DistributionSystemOperatorId")
                         .HasColumnName("distribution_system_operator_id")
@@ -492,26 +494,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     b.ToTable("streets");
                 });
 
-            modelBuilder.Entity("Erc.Households.Domain.Billing.AccountingPointDebtHistory", b =>
-                {
-                    b.Property<int>("AccountingPointId")
-                        .HasColumnName("accounting_point_id")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("PeriodId")
-                        .HasColumnName("period_id")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal>("DebtValue")
-                        .HasColumnName("debt_value")
-                        .HasColumnType("decimal(10,2)");
-
-                    b.HasKey("AccountingPointId", "PeriodId")
-                        .HasName("pk_accounting_point_debt_history");
-
-                    b.ToTable("accounting_point_debt_history");
-                });
-
             modelBuilder.Entity("Erc.Households.Domain.Billing.Invoice", b =>
                 {
                     b.Property<int>("Id")
@@ -570,7 +552,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
 
                     b.Property<decimal>("TotalCharge")
                         .HasColumnName("total_charge")
-                        .HasColumnType("decimal(10,2)");
+                        .HasColumnType("numeric");
 
                     b.Property<decimal>("TotalDiscount")
                         .HasColumnName("total_discount")
@@ -605,10 +587,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
 
                     b.HasIndex("AccountingPointId")
                         .HasName("ix_invoices_accounting_point_id");
-
-                    b.HasIndex("DsoConsumptionId")
-                        .IsUnique()
-                        .HasName("ix_invoices_dso_consumption_id");
 
                     b.HasIndex("PeriodId")
                         .HasName("ix_invoices_period_id");
@@ -673,7 +651,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         .HasColumnType("date");
 
                     b.HasKey("Id")
-                        .HasName("pk_periods");
+                        .HasName("pk_period");
 
                     b.HasIndex("StartDate")
                         .IsUnique()
@@ -769,51 +747,44 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         new
                         {
                             Id = 202001,
-                            EndDate = new DateTime(2020, 1, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2019, 1, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Січень 2020р.",
                             StartDate = new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = 202002,
-                            EndDate = new DateTime(2020, 2, 29, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2019, 2, 28, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Лютий 2020р.",
                             StartDate = new DateTime(2020, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = 202003,
-                            EndDate = new DateTime(2020, 3, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2019, 3, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Березень 2020р.",
                             StartDate = new DateTime(2020, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = 202004,
-                            EndDate = new DateTime(2020, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2019, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Квітень 2020р.",
                             StartDate = new DateTime(2020, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = 202005,
-                            EndDate = new DateTime(2020, 5, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2019, 5, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Травень 2020р.",
                             StartDate = new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             Id = 202006,
-                            EndDate = new DateTime(2020, 6, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndDate = new DateTime(2019, 6, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Name = "Червень 2020р.",
                             StartDate = new DateTime(2020, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            Id = 202007,
-                            EndDate = new DateTime(2020, 7, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Name = "Липень 2020р.",
-                            StartDate = new DateTime(2020, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
 
@@ -1406,10 +1377,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         .HasColumnName("address_id")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Email")
-                        .HasColumnName("email")
-                        .HasColumnType("text");
-
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnName("first_name")
@@ -1805,10 +1772,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                                 .HasColumnName("logs")
                                 .HasColumnType("jsonb");
 
-                            b1.Property<bool>("SendPaperBill")
-                                .HasColumnName("send_paper_bill")
-                                .HasColumnType("boolean");
-
                             b1.Property<DateTime>("StartDate")
                                 .HasColumnName("start_date")
                                 .HasColumnType("date");
@@ -1876,7 +1839,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
 
             modelBuilder.Entity("Erc.Households.Domain.Billing.Invoice", b =>
                 {
-                    b.HasOne("Erc.Households.Domain.AccountingPoints.AccountingPoint", "AccountingPoint")
+                    b.HasOne("Erc.Households.Domain.AccountingPoints.AccountingPoint", null)
                         .WithMany("Invoices")
                         .HasForeignKey("AccountingPointId")
                         .HasConstraintName("fk_invoices_accounting_points_accounting_point_id")
@@ -1886,7 +1849,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     b.HasOne("Erc.Households.Domain.Billing.Period", "Period")
                         .WithMany()
                         .HasForeignKey("PeriodId")
-                        .HasConstraintName("fk_invoices_periods_period_id")
+                        .HasConstraintName("fk_invoices_period_period_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1920,7 +1883,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     b.HasOne("Erc.Households.Domain.Billing.Period", "CurrentPeriod")
                         .WithMany()
                         .HasForeignKey("CurrentPeriodId")
-                        .HasConstraintName("fk_branch_offices_periods_current_period_id")
+                        .HasConstraintName("fk_branch_offices_period_current_period_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -1940,7 +1903,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     b.HasOne("Erc.Households.Domain.Billing.Period", "Period")
                         .WithMany()
                         .HasForeignKey("PeriodId")
-                        .HasConstraintName("fk_payments_periods_period_id")
+                        .HasConstraintName("fk_payments_period_period_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

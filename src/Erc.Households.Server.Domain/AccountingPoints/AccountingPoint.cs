@@ -66,7 +66,7 @@ namespace Erc.Households.Domain.AccountingPoints
         public Tariff CurrentTariff => _tariffsHistory.FirstOrDefault(t => t.StartDate <= DateTime.Today).Tariff;
         public int UsageCategoryId { get; private set; }
         public int BuildingTypeId { get; private set; }
-        public AccountingPointExemption Exemption => Exemptions.FirstOrDefault(t => t.EffectiveDate <= DateTime.Today);
+        public AccountingPointExemption Exemption => Exemptions.FirstOrDefault(t => t.EffectiveDate <= DateTime.Today && (t.EndDate ?? DateTime.MaxValue) > DateTime.Today);
         public BuildingType BuildingType { get; private set; }
         public UsageCategory UsageCategory { get; private set; }
 
@@ -161,7 +161,7 @@ namespace Erc.Households.Domain.AccountingPoints
         public void AddInvoice(Invoice invoice)
         {
             _invoices.Add(invoice);
-            invoice.Calculate();
+            //invoice.Calculate();
             Debt += invoice.TotalAmountDue;
         }
 

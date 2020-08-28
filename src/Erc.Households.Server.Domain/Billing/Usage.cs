@@ -1,24 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Erc.Households.Domain.Billing
 {
     public class Usage
     {
-        //public Usage() { }
-
-        //public Usage(int presentMeterReading, int previousMeterReading, int units, decimal kz = 1, decimal discountWeight = 1 /*, decimal charge, decimal kz = 1, decimal discountWeight = 1, int discountUnits = 0, decimal discount = 0*/)
-        //{
-        //    PresentMeterReading = presentMeterReading;
-        //    PreviousMeterReading = previousMeterReading;
-        //    Units = units;
-        //    //Charge = charge;
-        //    //Discount = discount;
-        //    //DiscountUnits = discountUnits;
-        //    Kz = kz;
-        //    DiscountWeight = discountWeight;
-        //}
+        private List<UsageCalculation> _calculations = new List<UsageCalculation>();
 
         public int? PresentMeterReading { get; set; }
         public int? PreviousMeterReading { get; set; }
@@ -27,7 +16,18 @@ namespace Erc.Households.Domain.Billing
         public decimal Discount { get; set; }
         public int DiscountUnits { get; set; }
         public decimal Kz { get; set; }
-        public decimal DiscountWeight { get; set; } 
-        public IEnumerable<UsageCalculation> Calculations { get; set; } = new HashSet<UsageCalculation>();
+        public decimal DiscountWeight { get; set; }
+        public IEnumerable<UsageCalculation> Calculations 
+        { 
+            get => _calculations; 
+            set => _calculations = value.ToList(); 
+        }
+
+        public void AddCalculation(UsageCalculation usageCalculation)
+        {
+            _calculations.Add(usageCalculation);
+            Charge += usageCalculation.Charge;
+            Discount += usageCalculation.Discount;
+        }
     }
 }

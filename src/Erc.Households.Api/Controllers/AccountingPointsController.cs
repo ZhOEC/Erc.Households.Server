@@ -98,13 +98,13 @@ namespace Erc.Households.Api.Controllers
         {
             await _mediator.Send(new CloseAccountingPointExemption(id, exemptionClosing.Date, exemptionClosing.Note));
             //await Task.Delay(TimeSpan.FromSeconds(3));
-            //await _unitOfWork.SaveWorkAsync();
+            await _unitOfWork.SaveWorkAsync();
             
             return Ok();
         }
 
         [HttpPost("{id}/open-new-contract")]
-        public async Task<IActionResult> OpenNewContract(int id, NewContract newContract)
+        public async Task<IActionResult> OpenNewContractObsolete(int id, NewContract newContract)
         {
             await _mediator.Send(new OpenNewContractCommand(id, newContract.Owner.Id, newContract.ContractStartDate, newContract.SendPaperBill,
                 newContract.Owner.IdCardNumber, newContract.Owner.IdCardIssuanceDate, newContract.Owner.IdCardIssuer, newContract.Owner.IdCardExpDate, newContract.Owner.TaxCode,
@@ -113,6 +113,20 @@ namespace Erc.Households.Api.Controllers
 
             return Ok();
         }
+
+        [HttpPost("{id}/contract")]
+        public async Task<IActionResult> OpenNewContract(int id, NewContract newContract) => 
+            await _mediator.Send(new OpenNewContractCommand(id, newContract.Owner.Id, newContract.ContractStartDate,
+                                                            newContract.SendPaperBill, newContract.Owner.IdCardNumber,
+                                                            newContract.Owner.IdCardIssuanceDate,
+                                                            newContract.Owner.IdCardIssuer,
+                                                            newContract.Owner.IdCardExpDate, newContract.Owner.TaxCode,
+                                                            newContract.Owner.FirstName, newContract.Owner.LastName,
+                                                            newContract.Owner.Patronymic, newContract.Owner.MobilePhones,
+                                                            newContract.Owner.Email, User.Identity.Name))
+                .ContinueWith(_ => _unitOfWork.SaveWorkAsync())
+                .Unwrap()
+                .ContinueWith(_ => Ok());
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAccountingPoint(UpdatedAccountingPoint updatedAccountingPoint)

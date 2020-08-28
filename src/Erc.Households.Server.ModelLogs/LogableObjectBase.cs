@@ -19,6 +19,6 @@ namespace Erc.Households.ModelLogs
             private set { _logs = value.ToList(); }
         }
 
-        protected void AddLog(string operation, string user) => _logs.Add(new ObjectLog(operation, DateTime.Now, user));
+        protected void AddLog(string operation, string user) { }
     }
 }
