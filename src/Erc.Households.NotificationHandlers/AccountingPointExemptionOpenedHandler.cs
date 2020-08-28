@@ -14,8 +14,9 @@ namespace Erc.Households.NotificationHandlers
             _ercContext = ercContext;
         }
 
-        public async Task Handle(AccountingPointExemptionOpened notification, CancellationToken cancellationToken)
+        public Task Handle(AccountingPointExemptionOpened notification, CancellationToken cancellationToken)
         {
+            return Task.CompletedTask;
         }
     }
 }

@@ -1,18 +1,17 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
-WORKDIR /app
 EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
-WORKDIR /src
-COPY ["Erc.Households.Api/Erc.Households.Api.csproj", "Erc.Households.Api/"]
-RUN dotnet restore "Erc.Households.Api/Erc.Households.Api.csproj"
+ARG HTTP_PROXY=http://10.67.2.49:50514
+ARG HTTPS_PROXY=http://10.67.2.49:50514
+
 COPY . .
-WORKDIR "/src/Erc.Households.Api"
-RUN dotnet build "Erc.Households.Api.csproj" -c Release -o /app/build
+RUN dotnet restore "Erc.Households.Api/Erc.Households.Api.csproj"
 
 FROM build AS publish
+WORKDIR "Erc.Households.Api"
 RUN dotnet publish "Erc.Households.Api.csproj" -c Release -o /app/publish
 
 FROM base AS final
