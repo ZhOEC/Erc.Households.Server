@@ -10,5 +10,7 @@ namespace Erc.Households.Domain.Billing
         public decimal PriceValue { get; set; }
         public int Units { get; set; }
         public decimal Charge { get; set; }
+        public int DiscountUnits { get; set; }
+        public decimal Discount { get; set; }
     }
 }

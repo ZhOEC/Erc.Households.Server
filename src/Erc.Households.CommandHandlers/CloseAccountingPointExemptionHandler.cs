@@ -25,8 +25,8 @@ namespace Erc.Households.CommandHandlers
             var ac = await _ercContext.AccountingPoints.FindAsync(request.AccountingPointId);
             if (ac.Exemption != null)
             {
-                ac.Exemption?.Close(request.Date, request.Note);
-                await _mediator.Publish(new AccountingPointExemptionClosed(ac?.Exemption.Id ?? 0, request.AccountingPointId, request.Date));
+                ac.Exemption.Close(request.Date, request.Note);
+                await _mediator.Publish(new AccountingPointExemptionClosed(ac.Exemption));
             }
         }
     }

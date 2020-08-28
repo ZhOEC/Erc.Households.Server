@@ -25,7 +25,8 @@ namespace Erc.Households.NotificationHandlers
 
         public async Task Handle(AccountingPointExemptionClosed notification, CancellationToken cancellationToken)
         {
-            var ac = await _ercContext.AccountingPoints.FindAsync(notification.AccountingPointId);
+            var ac = await _ercContext.AccountingPoints.FindAsync(notification.Exemption.AccountingPointId);
+            
             var currentPeriodId = _branchOfficeService.GetOne(ac.BranchOfficeId).CurrentPeriodId;
             var invoiceFactory = new Dictionary<int, Func<Invoice, DateTime, DateTime, decimal, Invoice>>()
             {
@@ -33,7 +34,7 @@ namespace Erc.Households.NotificationHandlers
                     1, (inv, fromDate, toDate, k) =>
                     {
                         var usageT1 = MakeCorrectiveUsage(inv.UsageT1, k);
-                        return  new Invoice(currentPeriodId, fromDate, toDate, inv.TariffId, usageT1, InvoiceType.Recalculation, note: "Скасування пільги");
+                        return  new Invoice(ac.Id, currentPeriodId, fromDate, toDate, inv.TariffId, usageT1, InvoiceType.Recalculation, note: "Скасування пільги", inv.ExemptionCoeff);
                     }
                 },
 
@@ -43,7 +44,7 @@ namespace Erc.Households.NotificationHandlers
                         var usageT1 = MakeCorrectiveUsage(inv.UsageT1, k);
                         var usageT2 = MakeCorrectiveUsage(inv.UsageT2, k);
 
-                        return  new Invoice(currentPeriodId, fromDate, toDate, inv.TariffId, usageT1, usageT2, InvoiceType.Recalculation, note: "Скасування пільги");
+                        return  new Invoice(ac.Id, currentPeriodId, fromDate, toDate, inv.TariffId, usageT1, usageT2, InvoiceType.Recalculation, note: "Скасування пільги", inv.ExemptionCoeff);
                     }
                 },
 
@@ -54,16 +55,19 @@ namespace Erc.Households.NotificationHandlers
                         var usageT2 = MakeCorrectiveUsage(inv.UsageT2, k);
                         var usageT3 = MakeCorrectiveUsage(inv.UsageT3, k);
 
-                        return  new Invoice(currentPeriodId, fromDate, toDate, inv.TariffId, usageT1, usageT2, usageT3, InvoiceType.Recalculation, note: "Скасування пільги");
+                        return  new Invoice(ac.Id, currentPeriodId, fromDate, toDate, inv.TariffId, usageT1, usageT2, usageT3, InvoiceType.Recalculation, note: "Скасування пільги", inv.ExemptionCoeff);
                     }
                 }
             };
 
-            var invoices = await _ercContext.Invoices.Where(i => i.AccountingPointId == notification.AccountingPointId && i.ToDate > notification.Date.AddDays(1)).ToArrayAsync();
+            var invoices = await _ercContext.Invoices
+                .Include(i => i.Tariff)
+                    .ThenInclude(t => t.Rates)
+                .Where(i => i.AccountingPointId == notification.Exemption.AccountingPointId && i.ToDate > notification.Exemption.EndDate.Value.AddDays(1)).ToArrayAsync();
             
             foreach (var inv in invoices)
             {
-                var fromDate = (inv.FromDate <= notification.Date && inv.ToDate > notification.Date) ? notification.Date.AddDays(1) : inv.FromDate;
+                var fromDate = (inv.FromDate <= notification.Exemption.EndDate && inv.ToDate > notification.Exemption.EndDate) ? notification.Exemption.EndDate.Value.AddDays(1) : inv.FromDate;
                 var k = (decimal)(inv.ToDate - fromDate).Days / (inv.ToDate - inv.FromDate).Days;
                 var newInvoice = invoiceFactory[inv.ZoneCount](inv, fromDate, inv.ToDate, k);
                 _ercContext.Entry(newInvoice).State = EntityState.Added;
@@ -76,7 +80,7 @@ namespace Erc.Households.NotificationHandlers
                     Units = 0,
                     DiscountUnits = 0 - (int)decimal.Round(existingUsage.DiscountUnits * k, MidpointRounding.AwayFromZero),
                     Charge = 0,
-                    Discount = 0 - decimal.Round(existingUsage.Discount * k, 2, MidpointRounding.AwayFromZero),
+                    Discount = 0,
                     DiscountWeight = existingUsage.DiscountWeight,
                     Kz = existingUsage.Kz
                 };
