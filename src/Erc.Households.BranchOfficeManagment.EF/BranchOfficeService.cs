@@ -50,9 +50,8 @@ namespace Erc.Households.BranchOfficeManagment.EF
             lock (_sync)
             {
                 var branchOffice = _branchOffices.First(b => b.Id == branchOfficeId);
-                var period = _branchOffices
-                    .FirstOrDefault(b => b.CurrentPeriod.StartDate == branchOffice.CurrentPeriod.EndDate.AddDays(1))
-                    ?.CurrentPeriod;
+                var period = _ercContext.Periods
+                    .FirstOrDefault(p => p.StartDate == branchOffice.CurrentPeriod.EndDate.AddDays(1));
 
                 using var transaction = _ercContext.Database.BeginTransaction();
 
@@ -64,7 +63,7 @@ namespace Erc.Households.BranchOfficeManagment.EF
 
                 branchOffice.StartNewPeriod(period);
                 _ercContext.SaveChanges();
-                _ercContext.Database.ExecuteSqlInterpolated($"insert into accounting_point_balance_histories(accounting_point_id, period_id, balance_value) select id, {period.Id}, debt from accounting_points");
+                _ercContext.Database.ExecuteSqlInterpolated($"insert into accounting_point_debt_history(accounting_point_id, period_id, debt_value) select id, {period.Id}, debt from accounting_points where branch_office_Id={branchOfficeId}");
 
                 transaction.Commit();
             }

@@ -20,10 +20,10 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     table.PrimaryKey("pk_accounting_point_debt_history", x => new { x.accounting_point_id, x.period_id });
                 });
 
-            migrationBuilder.InsertData(
-                table: "periods",
-                columns: new[] { "id", "end_date", "name", "start_date" },
-                values: new object[] { 202007, new DateTime(2019, 7, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Липень 2020р.", new DateTime(2020, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) });
+            //migrationBuilder.InsertData(
+            //    table: "periods",
+            //    columns: new[] { "id", "end_date", "name", "start_date" },
+            //    values: new object[] { 202007, new DateTime(2020, 7, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Липень 2020р.", new DateTime(2020, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

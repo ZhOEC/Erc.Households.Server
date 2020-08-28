@@ -44,6 +44,11 @@ namespace Erc.Households.WebApi
             CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
             CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().WithExposedHeaders("X-Total-Count"));
+            });
+
             services.AddAutoMapper(System.Reflection.Assembly.GetExecutingAssembly());
 
             services.AddSingleton<IBranchOfficeService>(provider => new BranchOfficeService(provider.CreateScope().ServiceProvider.GetService<ErcContext>()));
@@ -99,7 +104,7 @@ namespace Erc.Households.WebApi
 
             app.UseRouting();
 
-            app.UseCors(builder=>builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod().WithExposedHeaders("X-Total-Count"));
+            app.UseCors(); //builder=>builder
 
             app.UseAuthentication();
             

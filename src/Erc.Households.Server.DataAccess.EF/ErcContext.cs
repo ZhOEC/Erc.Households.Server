@@ -37,6 +37,7 @@ namespace Erc.Households.EF.PostgreSQL
         public DbSet<ExemptionCategory> ExemptionCategories { get; set; }
         public DbSet<BuildingType> BuildingTypes { get; set; }
         public DbSet<UsageCategory> UsageCategories { get; set; }
+        public DbSet<Period> Periods { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -129,13 +130,13 @@ namespace Erc.Households.EF.PostgreSQL
                     new { Id = 201910, StartDate = new DateTime(2019, 10, 1), EndDate = new DateTime(2019, 10, 1).AddMonths(1).AddDays(-1), Name = "Жовтень 2019р." },
                     new { Id = 201911, StartDate = new DateTime(2019, 11, 1), EndDate = new DateTime(2019, 11, 1).AddMonths(1).AddDays(-1), Name = "Листопад 2019р." },
                     new { Id = 201912, StartDate = new DateTime(2019, 12, 1), EndDate = new DateTime(2019, 12, 1).AddMonths(1).AddDays(-1), Name = "Грудень 2019р." },
-                    new { Id = 202001, StartDate = new DateTime(2020, 1, 1), EndDate = new DateTime(2019, 1, 1).AddMonths(1).AddDays(-1), Name = "Січень 2020р." },
-                    new { Id = 202002, StartDate = new DateTime(2020, 2, 1), EndDate = new DateTime(2019, 2, 1).AddMonths(1).AddDays(-1), Name = "Лютий 2020р." },
-                    new { Id = 202003, StartDate = new DateTime(2020, 3, 1), EndDate = new DateTime(2019, 3, 1).AddMonths(1).AddDays(-1), Name = "Березень 2020р." },
-                    new { Id = 202004, StartDate = new DateTime(2020, 4, 1), EndDate = new DateTime(2019, 4, 1).AddMonths(1).AddDays(-1), Name = "Квітень 2020р." },
-                    new { Id = 202005, StartDate = new DateTime(2020, 5, 1), EndDate = new DateTime(2019, 5, 1).AddMonths(1).AddDays(-1), Name = "Травень 2020р." },
-                    new { Id = 202006, StartDate = new DateTime(2020, 6, 1), EndDate = new DateTime(2019, 6, 1).AddMonths(1).AddDays(-1), Name = "Червень 2020р." },
-                    new { Id = 202007, StartDate = new DateTime(2020, 7, 1), EndDate = new DateTime(2019, 7, 1).AddMonths(1).AddDays(-1), Name = "Липень 2020р." }
+                    new { Id = 202001, StartDate = new DateTime(2020, 1, 1), EndDate = new DateTime(2020, 1, 31), Name = "Січень 2020р." },
+                    new { Id = 202002, StartDate = new DateTime(2020, 2, 1), EndDate = new DateTime(2020, 2, 29), Name = "Лютий 2020р." },
+                    new { Id = 202003, StartDate = new DateTime(2020, 3, 1), EndDate = new DateTime(2020, 3, 31), Name = "Березень 2020р." },
+                    new { Id = 202004, StartDate = new DateTime(2020, 4, 1), EndDate = new DateTime(2020, 4, 30), Name = "Квітень 2020р." },
+                    new { Id = 202005, StartDate = new DateTime(2020, 5, 1), EndDate = new DateTime(2020, 5, 31), Name = "Травень 2020р." },
+                    new { Id = 202006, StartDate = new DateTime(2020, 6, 1), EndDate = new DateTime(2020, 6, 30), Name = "Червень 2020р." },
+                    new { Id = 202007, StartDate = new DateTime(2020, 7, 1), EndDate = new DateTime(2020, 7, 31), Name = "Липень 2020р." }
                     );
                 entity.Property(e => e.Name).HasColumnType("citext")
                     .IsRequired();
@@ -390,6 +391,8 @@ namespace Erc.Households.EF.PostgreSQL
                     
                     r.Property(e => e.HasLimit).HasDefaultValue(true);
                 });
+                
+                entity.Property(p => p.Debt).HasColumnType("decimal(10,2)");
 
                 entity.OwnsMany(p => p.TariffsHistory, t =>
                 {

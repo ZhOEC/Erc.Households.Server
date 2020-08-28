@@ -25,10 +25,10 @@ namespace Erc.Households.Api.Controllers
         [HttpGet("")]
         public IActionResult GetAll()
         {
-            return Ok(_mapper.Map<IEnumerable<Responses.BranchOffice>>(_branchOfficeService.GetList(UserGroups)));
+            return Ok(_mapper.Map<IEnumerable<Responses.BranchOffice>>(_branchOfficeService.GetList(UserGroups)).OrderBy(bo=>bo.Name));
         }
 
-        [HttpPost("{id}/new-period")]
+        [HttpPost("{id}/periods")]
         public IActionResult StartNewPeriod(int id)
         {
             _branchOfficeService.StartNewPeriod(id);
