@@ -50,7 +50,7 @@ namespace Erc.Households.DsoBridge
                                 c.Username(rabbitMq["Username"]);
                                 c.Password(rabbitMq["Password"]);
                             });
-                            cfg.UseConcurrencyLimit(int.Parse(rabbitMq["ConcurrencyLimit"] ?? "8"));
+                           
                             cfg.ConfigureEndpoints(ctx);
                         });
                     });

@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.DataAccess.E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Events", "Erc.Households.Server.Events\Erc.Households.Events.csproj", "{2BACAD3C-E570-4C9C-B8E7-77FBAD124F41}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.BranchOfficeManagment.EF", "Erc.Households.BranchOfficeManagment.EF\Erc.Households.BranchOfficeManagment.EF.csproj", "{A5765419-531B-42E1-AF2A-0225F3167123}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.BranchOfficeManagment", "Erc.Households.BranchOfficeManagment\Erc.Households.BranchOfficeManagment.csproj", "{A5765419-531B-42E1-AF2A-0225F3167123}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.BranchOfficeManagment.Core", "Erc.Households.BranchOffices.Managment.Core\Erc.Households.BranchOfficeManagment.Core.csproj", "{5E04E8E3-ABDE-4468-B428-B4BD82D415EC}"
 EndProject
@@ -35,7 +35,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Notification
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Calculation", "Erc.Households.Calculation\Erc.Households.Calculation.csproj", "{2F9BDE54-359E-4B0F-B696-FA3DADE71207}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Erc.Households.DsoBridge", "Erc.Households.DsoBridge\Erc.Households.DsoBridge.csproj", "{23D3BAEC-A3FC-4D8F-AFA4-E73CC706D74B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.DsoBridge", "Erc.Households.DsoBridge\Erc.Households.DsoBridge.csproj", "{23D3BAEC-A3FC-4D8F-AFA4-E73CC706D74B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -51,7 +51,10 @@ namespace Erc.Households.WebApi
 
             services.AddAutoMapper(System.Reflection.Assembly.GetExecutingAssembly());
 
-            services.AddSingleton<IBranchOfficeService>(provider => new BranchOfficeService(provider.CreateScope().ServiceProvider.GetService<ErcContext>()));
+            services.AddSingleton<IBranchOfficeService>(
+                new BranchOfficeManagment.BranchOfficeService(
+                    new BranchOfficeDbContext(new DbContextOptionsBuilder<BranchOfficeDbContext>().UseNpgsql(Configuration.GetConnectionString("ErcContext")).Options)
+                ));
 
             services.AddDbContext<ErcContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("ErcContext")));
