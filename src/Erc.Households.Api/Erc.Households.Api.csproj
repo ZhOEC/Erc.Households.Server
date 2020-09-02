@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Erc.Households.BranchOfficeManagment.EF\Erc.Households.BranchOfficeManagment.csproj" />
+    <ProjectReference Include="..\Erc.Households.BranchOfficeManagment\Erc.Households.BranchOfficeManagment.csproj" />
     <ProjectReference Include="..\Erc.Households.BranchOffices.Managment.Core\Erc.Households.BranchOfficeManagment.Core.csproj" />
     <ProjectReference Include="..\Erc.Households.CommandHandlers\Erc.Households.CommandHandlers.csproj" />
     <ProjectReference Include="..\Erc.Households.Commands\Erc.Households.Commands.csproj" />

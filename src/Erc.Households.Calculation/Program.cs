@@ -35,7 +35,7 @@ namespace Erc.Households.Calculation
                                 c.Password(rabbitMq["Password"]);
                             });
                           
-                            cfg.UseConcurrencyLimit(int.Parse(rabbitMq["ConcurrencyLimit"] ?? "8"));
+                            cfg.UseConcurrencyLimit(1);
                             cfg.ConfigureEndpoints(ctx);
                         });
                     });

@@ -73,7 +73,7 @@ namespace Erc.Households.Calculation.EventHandlers
                     .ToArrayAsync()
                     .ContinueWith(t=>
                     {
-                        var newInvoice = new Invoice(context.Message.Id, context.Message.PeriodId, ac.Debt,
+                        var newInvoice = new Invoice(context.Message.Id, /*context.Message.PeriodId*/ 202007, ac.Debt,
                                               context.Message.FromDate, context.Message.ToDate,
                                               context.Message.MeterNumber, tariff, usageT1, usageT2, usageT3, exemption);
 
