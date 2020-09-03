@@ -12,19 +12,22 @@ namespace Erc.Households.BranchOfficeManagment
     public class BranchOfficeService : IBranchOfficeService
     {
         readonly BranchOfficeDbContext _dbContext;
+        readonly IEnumerable<BranchOffice> _branchOffices;
+        readonly List<Period> _periods;
         readonly object _sync = new object();
 
         public BranchOfficeService(BranchOfficeDbContext dbContext)
         {
             _dbContext = dbContext;
+            _periods = _dbContext.Periods.ToList();
+            _branchOffices = _dbContext.BranchOffices.ToArray();
         }
 
         public IEnumerable<BranchOffice> GetList(params int[] branchOfficeIds)
         {
             lock (_sync)
             {
-                return _dbContext.BranchOffices
-                    .Include(b => b.CurrentPeriod)
+                return _branchOffices
                     .Where(b => branchOfficeIds.Contains(b.Id)).ToArray();
             }
         }
@@ -33,8 +36,7 @@ namespace Erc.Households.BranchOfficeManagment
         {
             lock (_sync)
             {
-                return _dbContext.BranchOffices
-                    .Include(b => b.CurrentPeriod)
+                return _branchOffices
                     .Where(b => branchOfficeIds.Contains(b.StringId)).ToArray();
             }
         }
@@ -43,8 +45,7 @@ namespace Erc.Households.BranchOfficeManagment
         {
             lock (_sync)
             {
-                return _dbContext.BranchOffices
-                    .Include(b => b.CurrentPeriod)
+                return _branchOffices
                     .First(b => b.Id == id);
             }
         }
@@ -53,9 +54,8 @@ namespace Erc.Households.BranchOfficeManagment
         {
             lock (_sync)
             {
-                var branchOffice = _dbContext.BranchOffices.First(b => b.Id == branchOfficeId);
-                var period = _dbContext.Periods
-                    .FirstOrDefault(p => p.StartDate == branchOffice.CurrentPeriod.EndDate.AddDays(1));
+                var branchOffice = _branchOffices.First(b => b.Id == branchOfficeId);
+                var period = _periods.FirstOrDefault(p => p.StartDate == branchOffice.CurrentPeriod.EndDate.AddDays(1));
 
                 using var transaction = _dbContext.Database.BeginTransaction();
 
@@ -63,6 +63,7 @@ namespace Erc.Households.BranchOfficeManagment
                 {
                     period = new Period(branchOffice.CurrentPeriod.EndDate.AddDays(1), branchOffice.CurrentPeriod.EndDate.AddMonths(1));
                     _dbContext.Entry(period).State = EntityState.Added;
+                    _periods.Add(period);
                 }
 
                 branchOffice.StartNewPeriod(period);

@@ -1,4 +1,5 @@
 using AutoMapper;
+using Erc.Households.Api.UserNotifications;
 using Erc.Households.BranchOfficeManagment.Core;
 using Erc.Households.BranchOfficeManagment.EF;
 using Erc.Households.DataAccess.Core;
@@ -46,10 +47,12 @@ namespace Erc.Households.WebApi
 
             services.AddCors(options =>
             {
-                options.AddDefaultPolicy(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().WithExposedHeaders("X-Total-Count"));
+                options.AddDefaultPolicy(builder => builder.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader().WithExposedHeaders("X-Total-Count").AllowCredentials());
             });
 
             services.AddAutoMapper(System.Reflection.Assembly.GetExecutingAssembly());
+
+            services.AddSingleton(new ConnectedClientsRepository());
 
             services.AddSingleton<IBranchOfficeService>(
                 new BranchOfficeManagment.BranchOfficeService(
@@ -66,6 +69,23 @@ namespace Erc.Households.WebApi
                 {
                     Configuration.Bind("JwtSettings", options);
                     options.TokenValidationParameters.NameClaimType = "username";
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            var accessToken = context.Request.Query["access_token"];
+
+                            // If the request is for our hub...
+                            var path = context.HttpContext.Request.Path;
+                            if (!string.IsNullOrEmpty(accessToken) &&
+                                (path.StartsWithSegments("/user-notification-hub")))
+                            {
+                                // Read the token out of the query string
+                                context.Token = accessToken;
+                            }
+                            return System.Threading.Tasks.Task.CompletedTask;
+                        }
+                    };
                 });
 
             services.AddTransient<IClaimsTransformation, Helpers.ClaimTransformation>();
@@ -91,6 +111,8 @@ namespace Erc.Households.WebApi
                 }));
             });
 
+            services.AddSignalR();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Erc.Households.Api", Version = "v1" });
@@ -104,10 +126,12 @@ namespace Erc.Households.WebApi
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            
             app.UseRouting();
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
 
-            app.UseCors(); //builder=>builder
+            app.UseCors(); 
 
             app.UseAuthentication();
             
@@ -123,6 +147,7 @@ namespace Erc.Households.WebApi
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<Api.UserNotifications.UserNotificationHub>("/user-notification-hub");
             });
         }
 
