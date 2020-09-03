@@ -21,6 +21,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Nest;
+using System.Collections;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -46,9 +47,12 @@ namespace Erc.Households.WebApi
             CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
 
             services.AddCors(options =>
-            {
-                options.AddDefaultPolicy(builder => builder.WithOrigins("http://localhost:4200").AllowAnyMethod().AllowAnyHeader().WithExposedHeaders("X-Total-Count").AllowCredentials());
-            });
+                options.AddDefaultPolicy(builder =>
+                builder.WithOrigins(Configuration.GetSection("WebOrigins").Get<string[]>())
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .WithExposedHeaders("X-Total-Count").AllowCredentials())
+            );
 
             services.AddAutoMapper(System.Reflection.Assembly.GetExecutingAssembly());
 
