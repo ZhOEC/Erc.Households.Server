@@ -2,7 +2,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MassTransit;
 using Microsoft.Extensions.Hosting;
-using Zt.Energy.Dso;
+using Zt.Energy.Ztoec;
 
 namespace Erc.Households.DsoBridge
 {
