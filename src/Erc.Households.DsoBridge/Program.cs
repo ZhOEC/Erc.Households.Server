@@ -1,3 +1,4 @@
+using Erc.Households.DsoBridge.Bus;
 using GreenPipes;
 using MassTransit;
 using MassTransit.MultiBus;
@@ -35,7 +36,7 @@ namespace Erc.Households.DsoBridge
 
                     services.AddMassTransit(s =>
                     {
-                        s.AddConsumer<EventHandlers.ConsumptionCalculatedHandler>();
+                        s.AddConsumer<EventHandlers.ConsumptionCalculatedHandler>(typeof(EventHandlers.ConsumptionCalculatedHandlerDefinition));
                         s.UsingRabbitMq((ctx, cfg) =>
                         {
                             var rabbitMq = hostContext.Configuration.GetSection("ZtoeRabbitMQ");

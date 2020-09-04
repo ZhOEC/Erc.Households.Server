@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Zt.Energy.Ztoec.Events.Households
+namespace Erc.Households.DsoBridge.Events.Ztoec
 {
 #pragma warning disable IDE1006 // Naming Styles
     public interface ConsumptionCalculated
