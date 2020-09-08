@@ -36,17 +36,21 @@ namespace Erc.Households.DsoBridge
 
                     services.AddMassTransit(s =>
                     {
-                        s.AddConsumer<EventHandlers.ConsumptionCalculatedHandler>(typeof(EventHandlers.ConsumptionCalculatedHandlerDefinition));
+                        var rabbitMq = hostContext.Configuration.GetSection("ZtoeRabbitMQ");
+                        s.AddConsumer<EventHandlers.ConsumptionCalculatedHandler>(typeof(EventHandlers.ConsumptionCalculatedHandlerDefinition)).Endpoint(e =>
+                        {
+                            // override the default endpoint name
+                            e.Name = rabbitMq["ConsumptionEndpoint"];
+                        }); 
+
                         s.UsingRabbitMq((ctx, cfg) =>
                         {
-                            var rabbitMq = hostContext.Configuration.GetSection("ZtoeRabbitMQ");
+                            
                             cfg.Host(rabbitMq["ConnectionString"], c =>
                             {
                                 c.Username(rabbitMq["Username"]);
                                 c.Password(rabbitMq["Password"]);
                             });
-                           
-                            cfg.ConfigureEndpoints(ctx);
                         });
                     });
 

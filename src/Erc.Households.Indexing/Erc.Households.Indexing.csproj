@@ -6,12 +6,12 @@
     <DockerfileTag>erc/households/indexing</DockerfileTag>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="MassTransit" Version="7.0.2" />
-    <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.0.2" />
-    <PackageReference Include="MassTransit.RabbitMQ" Version="7.0.2" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.6" />
+    <PackageReference Include="MassTransit" Version="7.0.4" />
+    <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.0.4" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="7.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.1.7" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
-    <PackageReference Include="NEST" Version="7.8.1" />
+    <PackageReference Include="NEST" Version="7.9.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Erc.Households.Server.Events\Erc.Households.Events.csproj" />
