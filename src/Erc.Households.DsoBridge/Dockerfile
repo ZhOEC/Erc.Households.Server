@@ -6,9 +6,12 @@ WORKDIR /app
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 ARG HTTP_PROXY=http://10.67.2.49:50514
 ARG HTTPS_PROXY=http://10.67.2.49:50514
+ARG NO_PROXY=http://10.67.1.234
+
 WORKDIR /src
 COPY ["Erc.Households.DsoBridge/Erc.Households.DsoBridge.csproj", "Erc.Households.DsoBridge/"]
-RUN dotnet restore "Erc.Households.DsoBridge/Erc.Households.DsoBridge.csproj"
+COPY NuGet.Config ./
+RUN dotnet restore --configfile NuGet.Config "Erc.Households.DsoBridge/Erc.Households.DsoBridge.csproj"
 COPY . .
 WORKDIR "/src/Erc.Households.DsoBridge"
 RUN dotnet build "Erc.Households.DsoBridge.csproj" -c Release -o /app/build
