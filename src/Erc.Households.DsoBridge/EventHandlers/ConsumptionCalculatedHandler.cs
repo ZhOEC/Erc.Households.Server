@@ -1,5 +1,7 @@
 ﻿using Erc.Households.DsoBridge.Bus;
 using MassTransit;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Erc.Households.DsoBridge.EventHandlers
@@ -9,13 +11,8 @@ namespace Erc.Households.DsoBridge.EventHandlers
         readonly IErcBus _ercBus;
 
         public ConsumptionCalculatedHandler(IErcBus bus) => _ercBus = bus;
-               
-        public async Task Consume(ConsumeContext<Batch<Ztoe.Shared.DsoEvents.Households.ConsumptionCalculated>> context)
-        {
-            for (int i = 0; i < context.Message.Length; i++)
-            {
-                await _ercBus.Publish<Events.AccountingPoints.ConsumptionCalculated>(context.Message[i].Message);
-            }
-        }
+
+        public async Task Consume(ConsumeContext<Batch<Ztoe.Shared.DsoEvents.Households.ConsumptionCalculated>> context) => 
+            await Task.WhenAll(context.Message.Select(m => _ercBus.Publish<Events.AccountingPoints.ConsumptionCalculated>(m.Message)).ToList());
     }
 }
