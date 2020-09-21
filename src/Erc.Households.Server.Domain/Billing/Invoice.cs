@@ -49,7 +49,9 @@ namespace Erc.Households.Domain.Billing
             
         }
 
-        public Invoice(Guid dsoId, int periodId, decimal incomingBalance, DateTime fromDate, DateTime toDate, string counterSerialNumber, Tariff tariff, Usage usageT1, Usage usageT2, Usage usageT3, AccountingPointExemption exemption = null, InvoiceType type = InvoiceType.Common, string note = null)
+        public Invoice(Guid dsoId, int periodId, decimal incomingBalance, DateTime fromDate, DateTime toDate, string counterSerialNumber, Tariff tariff, 
+            ZoneRecord zoneRecord, Usage usageT1, Usage usageT2, Usage usageT3, 
+            AccountingPointExemption exemption = null, InvoiceType type = InvoiceType.Common, string note = null)
         {
             DsoConsumptionId = dsoId;
             IncomingBalance = incomingBalance;
@@ -66,6 +68,7 @@ namespace Erc.Households.Domain.Billing
             CounterSerialNumber = counterSerialNumber;
 
             _exemption = exemption;
+            ZoneRecord = zoneRecord;
         }
 
         public int Id { get; private set; }
@@ -84,7 +87,8 @@ namespace Erc.Households.Domain.Billing
             3 => UsageT3,
             _ => throw new ArgumentOutOfRangeException()
         };
-
+        public Usage GetUsage(Expression<Func<Usage>> expression) => expression.Compile().Invoke();
+        
         public IEnumerable<Expression<Func<Usage>>> GetUsagesExpressions()
         {
             yield return () => UsageT1;
@@ -114,7 +118,7 @@ namespace Erc.Households.Domain.Billing
         }
         public IEnumerable<InvoicePaymentItem> InvoicePaymentItems => _invoicePaymentItems.AsReadOnly();
         public Period Period { get; private set; }
-        public ZoneRecord ZoneRecord { get; set; }
+        public ZoneRecord ZoneRecord { get; private set; }
         public Guid DsoConsumptionId { get; set; }
 
         public InvoicePaymentItem Pay(Payment payment)
@@ -136,7 +140,7 @@ namespace Erc.Households.Domain.Billing
             return ipi;
         }
 
-        public void Calculate(IEnumerable<Invoice> invalidInvoices)
+        public void Calculate(IEnumerable<Invoice> invalidInvoices=default)
         {
             var tariffRates = Tariff.Rates.Where(t => t.StartDate < ToDate).GroupBy(tr => tr.StartDate).OrderByDescending(tr => tr.Key).First();
 
@@ -173,21 +177,19 @@ namespace Erc.Households.Domain.Billing
                     return;
 
                 var zoneNumber = Convert.ToInt32(((MemberExpression)usageExpr.Body).Member.Name.Substring(6));
-                var calculations = invalidInvoices.SelectMany(i => i.GetUsage(zoneNumber).Calculations).ToList();
-                if (calculations.Any())
-                    calculations.ForEach(c =>
-                                     {
-                                         usage.AddCalculation(new UsageCalculation
-                                         {
-                                             Units = 0 - c.Units,
-                                             Charge = 0 - c.Charge,
-                                             Discount = c.Discount,
-                                             DiscountUnits = c.DiscountUnits,
-                                             PriceValue = c.PriceValue
-                                         });
-                                     });
-                else
-                {
+                var calculations = invalidInvoices.SelectMany(i => i.GetUsage(usageExpr).Calculations.Where(c => c.Units != 0)).ToList();
+                calculations.ForEach(c =>
+                    {
+                        usage.AddCalculation(new UsageCalculation
+                        {
+                            Units = -c.Units,
+                            Charge = -c.Charge,
+                            Discount = -c.Discount,
+                            DiscountUnits = -c.DiscountUnits,
+                            PriceValue = c.PriceValue
+                        });
+                    });
+                
                     //var invoices = invalidInvoices.Where(ii => ii.GetUsage(zoneNumber).Units > 0);
                     //var minTariffRate = tariffRates.OrderBy(tr => tr.ConsumptionLimit ?? int.MaxValue).First();
                     //var consumptionMonthLimit = minTariffRate.ConsumptionLimit ?? int.MaxValue;
@@ -210,7 +212,7 @@ namespace Erc.Households.Domain.Billing
                     //        DiscountUnits = 0 - invoices.Sum(ii => ii.GetUsage(zoneNumber).DiscountUnits),
                     //        PriceValue = minTariffRate.Value
                     //    });
-                }
+                
 
                 usage.Units = usage.Calculations.Sum(c => c.Units);
                 usage.Charge = usage.Calculations.Sum(c => c.Charge);
@@ -221,14 +223,15 @@ namespace Erc.Households.Domain.Billing
             void CalculateInternal(Expression<Func<Usage>> usageExpr, TariffRate tr)
             {
                 var usage = usageExpr.Compile().Invoke();
-                var zoneNumber = Convert.ToInt32(((MemberExpression)usageExpr.Body).Member.Name.Substring(6));
+                var usageName = ((MemberExpression)usageExpr.Body).Member.Name;
                 var consumptionMonthLimit = GetConsumptionMonthLimitInternal(tr, FromDate, ToDate);
                 var units = usage.Units - usage.Calculations.Sum(c => c.Units);
                 if (units > consumptionMonthLimit)
-                    units = zoneNumber switch
+                    units = usageName switch
                     {
-                        2 when UsageT3 is null => consumptionMonthLimit - UsageT1.Calculations.Where(c => c.PriceValue == tr.Value).FirstOrDefault().Units,
-                        3 => consumptionMonthLimit - UsageT1.Calculations.Where(c => c.PriceValue == tr.Value).FirstOrDefault().Units + UsageT2.Calculations.Where(c => c.PriceValue == tr.Value).FirstOrDefault().Units,
+                        "UsageT1" when ZoneRecord == ZoneRecord.None => consumptionMonthLimit - UsageT1.Calculations.Where(c => c.PriceValue == tr.Value).Sum(c=>c.Units),
+                        "UsageT2" when ZoneRecord == ZoneRecord.Two => consumptionMonthLimit - UsageT1.Calculations.Where(c => c.PriceValue == tr.Value).Single().Units,
+                        "UsageT3" => consumptionMonthLimit - UsageT1.Calculations.Where(c => c.PriceValue == tr.Value).Single().Units + UsageT2.Calculations.Where(c => c.PriceValue == tr.Value).Single().Units,
                         _ => (int)decimal.Round(consumptionMonthLimit * usage.Units / (decimal)(UsageT1.Units + (UsageT2?.Units ?? 0) + (UsageT3?.Units ?? 0)), MidpointRounding.AwayFromZero)
                     };
 

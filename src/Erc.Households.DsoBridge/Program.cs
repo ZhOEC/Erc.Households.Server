@@ -18,7 +18,6 @@ namespace Erc.Households.DsoBridge
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
-                   
                     services.AddMassTransit<IErcBus>(s =>
                     {
                         s.UsingRabbitMq((ctx, cfg) =>
@@ -29,20 +28,13 @@ namespace Erc.Households.DsoBridge
                                 c.Username(rabbitMq["Username"]);
                                 c.Password(rabbitMq["Password"]);
                             });
-                            cfg.UseConcurrencyLimit(int.Parse(rabbitMq["ConcurrencyLimit"] ?? "8"));
-                            cfg.ConfigureEndpoints(ctx);
                         });
                     });
 
                     services.AddMassTransit(s =>
                     {
                         var rabbitMq = hostContext.Configuration.GetSection("ZtoeRabbitMQ");
-                        s.AddConsumer<EventHandlers.ConsumptionCalculatedHandler>(typeof(EventHandlers.ConsumptionCalculatedHandlerDefinition));//.Endpoint(e =>
-                        //{
-                        //    // override the default endpoint name
-                        //    e.Name = rabbitMq["ConsumptionEndpoint"];
-                        //}); 
-
+                        s.AddConsumer<EventHandlers.ConsumptionCalculatedHandler>(typeof(EventHandlers.ConsumptionCalculatedHandlerDefinition)).Endpoint(cfg => cfg.Name = "consumption-calculated-ztoec");
                         s.UsingRabbitMq((ctx, cfg) =>
                         {
                             
@@ -51,9 +43,8 @@ namespace Erc.Households.DsoBridge
                                 c.Username(rabbitMq["Username"]);
                                 c.Password(rabbitMq["Password"]);
                             });
-                            cfg.ConfigureEndpoints(ctx);
+                            //cfg.ConfigureEndpoints(ctx);
                         });
-                        
                     });
 
                     services.AddHostedService<BridgeService>();
