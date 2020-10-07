@@ -3,8 +3,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Erc.Households.Domain.Tariffs;
 using Erc.Households.EF.PostgreSQL;
+using Erc.Households.Domain.Shared;
+using Erc.Households.Domain.Shared.Tariffs;
 
 namespace Erc.Households.Api.Controllers
 {
@@ -20,11 +21,11 @@ namespace Erc.Households.Api.Controllers
         }
 
         [HttpGet("")]
-        public async Task<IActionResult> GetAll() 
-            => Ok(await _ercContext.Tariffs
+        public async Task<IActionResult> GetAll(Commodity commodity = Commodity.ElectricPower)
+            => Ok(await _ercContext.Tariffs.Where(t => t.Commodity == commodity)
                 .Include(t => t.Rates)
-                .OrderBy(t=>t.Id)
-                .ToListAsync());
+                .OrderBy(t => t.Id)
+                .ToArrayAsync());
 
         [HttpPost("")]
         public async Task<IActionResult> AddNew(Tariff tariff)
@@ -91,12 +92,11 @@ namespace Erc.Households.Api.Controllers
             var tariff = await _ercContext.Tariffs.Include(t => t.Rates).FirstOrDefaultAsync(t => t.Id == id);
             var rate = tariff?.Rates.FirstOrDefault(tr => tr.Id == rateId);
 
-            if (rate is null)
-                return NotFound();
-
-            tariff.RemoveRate(rate);
-
-            await _ercContext.SaveChangesAsync();
+            if (rate != null)
+            {
+                tariff.RemoveRate(rate);
+                await _ercContext.SaveChangesAsync();
+            }
 
             return Ok();
         }

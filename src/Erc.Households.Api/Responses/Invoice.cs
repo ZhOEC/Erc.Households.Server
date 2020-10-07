@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Erc.Households.CalculateStrategies.Core;
+using System;
 
 namespace Erc.Households.Api.Responses
 {
@@ -11,10 +9,10 @@ namespace Erc.Households.Api.Responses
         public DateTime Date { get; set; }
         public DateTime FromDate { get; set; }
         public DateTime ToDate { get; set; }
-        public Domain.Billing.Usage UsageT1 { get; set; }
-        public Domain.Billing.Usage UsageT2 { get; set; }
-        public Domain.Billing.Usage UsageT3 { get; set; }
-        public int TotalUnits { get; set; }
+        public Usage UsageT1 { get; set; }
+        public Usage UsageT2 { get; set; }
+        public Usage UsageT3 { get; set; }
+        public decimal TotalUnits { get; set; }
         public decimal TotalDiscount { get; set; }
         public decimal TotalAmountDue { get; set; }
         public decimal TotalCharge { get; set; }

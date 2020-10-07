@@ -4,7 +4,8 @@ using Erc.Households.Domain.Addresses;
 using Erc.Households.Domain.Billing;
 using Erc.Households.Domain.Exemptions;
 using Erc.Households.Domain.Payments;
-using Erc.Households.Domain.Tariffs;
+using Erc.Households.Domain.Shared;
+using Erc.Households.Domain.Shared.Tariffs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -18,6 +19,8 @@ namespace Erc.Households.EF.PostgreSQL
         public ErcContext(DbContextOptions<ErcContext> options) : base(options)
         {
         }
+
+        static ErcContext() => Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<Commodity>();
 
         public DbSet<AccountingPoint> AccountingPoints { get; set; }
         public DbSet<DistributionSystemOperator> DistributionSystemOperators { get; set; }
@@ -46,6 +49,7 @@ namespace Erc.Households.EF.PostgreSQL
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.HasPostgresEnum<Commodity>();
             modelBuilder.HasPostgresExtension("citext");
 
             modelBuilder.Entity<UsageCategory>(entity =>
@@ -136,7 +140,9 @@ namespace Erc.Households.EF.PostgreSQL
                     new { Id = 202004, StartDate = new DateTime(2020, 4, 1), EndDate = new DateTime(2020, 4, 30), Name = "Квітень 2020р." },
                     new { Id = 202005, StartDate = new DateTime(2020, 5, 1), EndDate = new DateTime(2020, 5, 31), Name = "Травень 2020р." },
                     new { Id = 202006, StartDate = new DateTime(2020, 6, 1), EndDate = new DateTime(2020, 6, 30), Name = "Червень 2020р." },
-                    new { Id = 202007, StartDate = new DateTime(2020, 7, 1), EndDate = new DateTime(2020, 7, 31), Name = "Липень 2020р." }
+                    new { Id = 202007, StartDate = new DateTime(2020, 7, 1), EndDate = new DateTime(2020, 7, 31), Name = "Липень 2020р." },
+                    new { Id = 202008, StartDate = new DateTime(2020, 8, 1), EndDate = new DateTime(2020, 8, 31), Name = "Серпень 2020р." },
+                    new { Id = 202009, StartDate = new DateTime(2020, 9, 1), EndDate = new DateTime(2020, 9, 30), Name = "Вересень 2020р." }
                     );
                 entity.Property(e => e.Name).HasColumnType("citext")
                     .IsRequired();
@@ -179,7 +185,7 @@ namespace Erc.Households.EF.PostgreSQL
                 entity.Property(b => b.UsageT2).HasColumnType("jsonb");
                 entity.Property(b => b.UsageT3).HasColumnType("jsonb");
 
-                entity.HasOne(e => e.Tariff).WithMany();
+                entity.HasOne<Tariff>("Tariff").WithMany();
                 entity.HasIndex(p => p.DsoConsumptionId).IsUnique();
             });
 
@@ -211,42 +217,43 @@ namespace Erc.Households.EF.PostgreSQL
                 entity.Property(p => p.DebtValue).HasColumnType("decimal(10,2)");
             });
 
-            modelBuilder.Entity<BranchOffice>(e =>
+            modelBuilder.Entity<BranchOffice>(entity =>
             {
-                e.Property(p => p.StringId)
+                entity.Property(p => p.StringId)
                     .HasColumnType("citext")
                     .HasMaxLength(2).IsRequired();
 
-                e.Property(p => p.Address)
+                entity.Property(p => p.Address)
                     .HasColumnType("citext")
                     .HasMaxLength(500).IsRequired();
 
-                e.Property(p => p.Name)
+                entity.Property(p => p.Name)
                     .HasColumnType("citext")
                     .HasMaxLength(200).IsRequired();
-                e.HasData(
-                    new { Id = 1, CurrentPeriodId = 201901, Name = "Андрушівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "an", DistrictIds = new[] { 1 } },
-                    new { Id = 2, CurrentPeriodId = 201901, Name = "Баранiвський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "bn", DistrictIds = new[] { 2 } },
-                    new { Id = 3, CurrentPeriodId = 201901, Name = "Бердичiвський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "bd", DistrictIds = new[] { 3 } },
-                    new { Id = 4, CurrentPeriodId = 201901, Name = "Брусилівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "br", DistrictIds = new[] { 4 } },
-                    new { Id = 5, CurrentPeriodId = 201901, Name = "Хорошівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "hr", DistrictIds = new[] { 5 } },
-                    new { Id = 6, CurrentPeriodId = 201901, Name = "Ємільчинський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "em", DistrictIds = new[] { 6 } },
-                    new { Id = 7, CurrentPeriodId = 201901, Name = "Житомирський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "zt", DistrictIds = new[] { 7 } },
-                    new { Id = 8, CurrentPeriodId = 201901, Name = "Зарічанський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "zr", DistrictIds = new[] { 7 } },
-                    new { Id = 9, CurrentPeriodId = 201901, Name = "Коростенський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "kr", DistrictIds = new[] { 8, 10 } },
-                    new { Id = 10, CurrentPeriodId = 201901, Name = "Коростишiвський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "kt", DistrictIds = new[] { 9 } },
-                    new { Id = 11, CurrentPeriodId = 201901, Name = "Любарський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "lb", DistrictIds = new[] { 11 } },
-                    new { Id = 12, CurrentPeriodId = 201901, Name = "Малинський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "ml", DistrictIds = new[] { 12 } },
-                    new { Id = 13, CurrentPeriodId = 201901, Name = "Народицький ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "nr", DistrictIds = new[] { 13 } },
-                    new { Id = 14, CurrentPeriodId = 201901, Name = "Новоград-Волинський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "nv", DistrictIds = new[] { 14 } },
-                    new { Id = 15, CurrentPeriodId = 201901, Name = "Овруцький ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "ov", DistrictIds = new[] { 15 } },
-                    new { Id = 16, CurrentPeriodId = 201901, Name = "Олевський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "ol", DistrictIds = new[] { 16 } },
-                    new { Id = 17, CurrentPeriodId = 201901, Name = "Попільнянський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "pp", DistrictIds = new[] { 17, 20 } },
-                    new { Id = 18, CurrentPeriodId = 201901, Name = "Радомишльський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "rd", DistrictIds = new[] { 18 } },
-                    new { Id = 19, CurrentPeriodId = 201901, Name = "Романівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "rm", DistrictIds = new[] { 19 } },
-                    new { Id = 20, CurrentPeriodId = 201901, Name = "Пулинський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "pl", DistrictIds = new[] { 21 } },
-                    new { Id = 21, CurrentPeriodId = 201901, Name = "Черняхівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "ch", DistrictIds = new[] { 22 } },
-                    new { Id = 22, CurrentPeriodId = 201901, Name = "Чуднівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "cd", DistrictIds = new[] { 23 } }
+                entity.HasData(
+                    new { Id = 1, CurrentPeriodId = 201901, Name = "Андрушівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "an", DistrictIds = new[] { 1 }, AvailableCommodities = new[] { Commodity.ElectricPower } },
+                    new { Id = 2, CurrentPeriodId = 201901, Name = "Баранiвський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "bn", DistrictIds = new[] { 2 }, AvailableCommodities = new[] { Commodity.ElectricPower } },
+                    new { Id = 3, CurrentPeriodId = 201901, Name = "Бердичiвський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "bd", DistrictIds = new[] { 3 }, AvailableCommodities = new[] { Commodity.ElectricPower } },
+                    new { Id = 4, CurrentPeriodId = 201901, Name = "Брусилівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "br", DistrictIds = new[] { 4 }, AvailableCommodities = new[] { Commodity.ElectricPower } },
+                    new { Id = 5, CurrentPeriodId = 201901, Name = "Хорошівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "hr", DistrictIds = new[] { 5 }, AvailableCommodities = new[] { Commodity.ElectricPower } },
+                    new { Id = 6, CurrentPeriodId = 201901, Name = "Ємільчинський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "em", DistrictIds = new[] { 6 }, AvailableCommodities = new[] { Commodity.ElectricPower } },
+                    new { Id = 7, CurrentPeriodId = 201901, Name = "Житомирський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "zt", DistrictIds = new[] { 7 }, AvailableCommodities = new[] { Commodity.ElectricPower } },
+                    new { Id = 8, CurrentPeriodId = 201901, Name = "Зарічанський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "zr", DistrictIds = new[] { 7 }, AvailableCommodities = new[] { Commodity.ElectricPower } },
+                    new { Id = 9, CurrentPeriodId = 201901, Name = "Коростенський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "kr", DistrictIds = new[] { 8, 10 }, AvailableCommodities = new[] { Commodity.ElectricPower } },
+                    new { Id = 10, CurrentPeriodId = 201901, Name = "Коростишiвський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "kt", DistrictIds = new[] { 9 }, AvailableCommodities = new[] { Commodity.ElectricPower } },
+                    new { Id = 11, CurrentPeriodId = 201901, Name = "Любарський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "lb", DistrictIds = new[] { 11 }, AvailableCommodities = new[] { Commodity.ElectricPower } },
+                    new { Id = 12, CurrentPeriodId = 201901, Name = "Малинський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "ml", DistrictIds = new[] { 12 }, AvailableCommodities = new[] { Commodity.ElectricPower } },
+                    new { Id = 13, CurrentPeriodId = 201901, Name = "Народицький ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "nr", DistrictIds = new[] { 13 }, AvailableCommodities = new[] { Commodity.ElectricPower } },
+                    new { Id = 14, CurrentPeriodId = 201901, Name = "Новоград-Волинський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "nv", DistrictIds = new[] { 14 }, AvailableCommodities = new[] { Commodity.ElectricPower } },
+                    new { Id = 15, CurrentPeriodId = 201901, Name = "Овруцький ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "ov", DistrictIds = new[] { 15 }, AvailableCommodities = new[] { Commodity.ElectricPower } },
+                    new { Id = 16, CurrentPeriodId = 201901, Name = "Олевський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "ol", DistrictIds = new[] { 16 }, AvailableCommodities = new[] { Commodity.ElectricPower } },
+                    new { Id = 17, CurrentPeriodId = 201901, Name = "Попільнянський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "pp", DistrictIds = new[] { 17, 20 }, AvailableCommodities = new[] { Commodity.ElectricPower } },
+                    new { Id = 18, CurrentPeriodId = 201901, Name = "Радомишльський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "rd", DistrictIds = new[] { 18 }, AvailableCommodities = new[] { Commodity.ElectricPower } },
+                    new { Id = 19, CurrentPeriodId = 201901, Name = "Романівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "rm", DistrictIds = new[] { 19 }, AvailableCommodities = new[] { Commodity.ElectricPower } },
+                    new { Id = 20, CurrentPeriodId = 201901, Name = "Пулинський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "pl", DistrictIds = new[] { 21 }, AvailableCommodities = new[] { Commodity.ElectricPower } },
+                    new { Id = 21, CurrentPeriodId = 201901, Name = "Черняхівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "ch", DistrictIds = new[] { 22 }, AvailableCommodities = new[] { Commodity.ElectricPower } },
+                    new { Id = 22, CurrentPeriodId = 201901, Name = "Чуднівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "cd", DistrictIds = new[] { 23 }, AvailableCommodities = new[] { Commodity.ElectricPower } },
+                    new { Id = -1, CurrentPeriodId = 201901, Name = "Центральний офіс", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "co", DistrictIds = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23 }, AvailableCommodities = new[] { Commodity.NaturalGas } }
                     );
             });
 
@@ -337,7 +344,7 @@ namespace Erc.Households.EF.PostgreSQL
                 e.HasOne(p => p.Street)
                     .WithMany();
                 
-                e.HasCheckConstraint("ck_address_zip", "zip ~ '^(\\d){5}$'");
+                //e.HasCheckConstraint("ck_address_zip", "zip ~ '^(\\d){5}$'");
             });
 
             modelBuilder.Entity<Person>(e =>
@@ -379,6 +386,8 @@ namespace Erc.Households.EF.PostgreSQL
 
             modelBuilder.Entity<AccountingPoint>(entity =>
             {
+                entity.Property(e => e.Commodity).HasDefaultValue(Commodity.ElectricPower);
+
                 entity.OwnsMany(p => p.Exemptions, r =>
                 {
                     r.ToTable("accounting_point_exemptions")
@@ -406,7 +415,8 @@ namespace Erc.Households.EF.PostgreSQL
                     t.ToTable("contracts").WithOwner().HasForeignKey(p => p.AccountingPointId);
                     t.Property(p => p.Logs).HasColumnType("jsonb");
                     t.Property(p => p.StartDate).HasColumnType("date");
-                    t.Property(p => p.EndDate).HasColumnType("date"); ;
+                    t.Property(p => p.EndDate).HasColumnType("date");
+                    t.Property(v => v.SendPaperBill).HasDefaultValue(true);
                 });
 
                 entity.Property(p => p.Name)
@@ -437,25 +447,30 @@ namespace Erc.Households.EF.PostgreSQL
                 entity.HasCheckConstraint("CK_accounting_point_eic", "length(eic) = 16");
             });
 
-            modelBuilder.Entity<DistributionSystemOperator>(e =>
+            modelBuilder.Entity<DistributionSystemOperator>(entity =>
             {
-                e.Property(p => p.Name).HasMaxLength(200);
-                e.HasData(new { Id = 1, Name = "АТ «Житомиробленерго»" }, new { Id = 2, Name = "АТ «Укрзалізниця»" });
+                entity.Property(p => p.Name).HasMaxLength(200);
+                entity.HasData(
+                    new { Id = 1, Name = "АТ «Житомиробленерго»", Commodity = Commodity.ElectricPower }, 
+                    new { Id = 2, Name = "АТ «Укрзалізниця»", Commodity = Commodity.ElectricPower },
+                    new { Id = 101, Name = "АТ «ЖИТОМИРГАЗ»", Commodity = Commodity.NaturalGas }
+                    );
             });
 
-            modelBuilder.Entity<Tariff>(e =>
+            modelBuilder.Entity<Tariff>(entity =>
             {
-                e.Property(p => p.Name)
+                entity.Property(p => p.Name)
                     .HasColumnType("citext")
                     .HasMaxLength(200);
                 
-                e.HasMany(p => p.Rates).WithOne();
+                entity.HasMany(p => p.Rates).WithOne();
                 
-                e.HasData(
-                     new { Id = 1, Name = "Населення (загальний тариф)" },
-                     new { Id = 2, Name = "Будинки з електроопалювальними установками" },
-                     new { Id = 3, Name = "Багатоквартирні негазифіковані будинки" },
-                     new { Id = 4, Name = "Багатодітні, прийомні сім'ї та дитячі будинки сімейного типу" }
+                entity.HasData(
+                     new { Id = 1, Name = "Населення (загальний тариф)", Commodity = Commodity.ElectricPower },
+                     new { Id = 2, Name = "Будинки з електроопалювальними установками", Commodity = Commodity.ElectricPower },
+                     new { Id = 3, Name = "Багатоквартирні негазифіковані будинки", Commodity = Commodity.ElectricPower },
+                     new { Id = 4, Name = "Багатодітні, прийомні сім'ї та дитячі будинки сімейного типу", Commodity = Commodity.ElectricPower },
+                     new { Id = 101, Name = "Природний газ для населення", Commodity = Commodity.NaturalGas }
                     );
             });
 

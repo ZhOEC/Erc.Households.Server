@@ -1,7 +1,6 @@
 using AutoMapper;
 using Erc.Households.Api.UserNotifications;
 using Erc.Households.BranchOfficeManagment.Core;
-using Erc.Households.BranchOfficeManagment.EF;
 using Erc.Households.DataAccess.Core;
 using Erc.Households.DataAccess.EF;
 using Erc.Households.EF.PostgreSQL;
@@ -21,7 +20,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Nest;
-using System.Collections;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -58,10 +56,7 @@ namespace Erc.Households.WebApi
 
             services.AddSingleton(new ConnectedClientsRepository());
 
-            services.AddSingleton<IBranchOfficeService>(
-                new BranchOfficeManagment.BranchOfficeService(
-                    new BranchOfficeDbContext(new DbContextOptionsBuilder<BranchOfficeDbContext>().UseNpgsql(Configuration.GetConnectionString("ErcContext")).Options)
-                ));
+            services.AddTransient<IBranchOfficeService, BranchOfficeManagment.BranchOfficeService>();
 
             services.AddDbContext<ErcContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("ErcContext")));
@@ -151,7 +146,7 @@ namespace Erc.Households.WebApi
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHub<Api.UserNotifications.UserNotificationHub>("/user-notification-hub");
+                endpoints.MapHub<UserNotificationHub>("/user-notification-hub");
             });
         }
 

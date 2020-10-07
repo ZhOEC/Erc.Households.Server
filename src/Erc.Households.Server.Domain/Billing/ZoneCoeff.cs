@@ -1,4 +1,5 @@
 ﻿using Erc.Households.Domain.AccountingPoints;
+using Erc.Households.Domain.Shared;
 using System;
 using System.Collections.Generic;
 using System.Text;

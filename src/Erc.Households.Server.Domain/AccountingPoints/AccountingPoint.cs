@@ -2,7 +2,8 @@
 using Erc.Households.Domain.Billing;
 using Erc.Households.Domain.Extensions;
 using Erc.Households.Domain.Payments;
-using Erc.Households.Domain.Tariffs;
+using Erc.Households.Domain.Shared;
+using Erc.Households.Domain.Shared.Tariffs;
 using Erc.Households.Events;
 using System;
 using System.Collections.Generic;
@@ -32,7 +33,7 @@ namespace Erc.Households.Domain.AccountingPoints
             LazyLoader = lazyLoader;
         }
 
-        public AccountingPoint(string eic, string name, ZoneRecord zoneRecord, DateTime contractStartDate, int tariffId, Address address,
+        public AccountingPoint(string eic, string name, Commodity commodity,  DateTime contractStartDate, int tariffId, Address address,
                                Person owner, int branchOfficeId, int dsoId, string currentUser, int buildingTypeId, int usageCategoryId, bool sendPaperBill)
         {
             Eic = eic;
@@ -41,11 +42,11 @@ namespace Erc.Households.Domain.AccountingPoints
             Owner = owner;
             BranchOfficeId = branchOfficeId;
             DistributionSystemOperatorId = dsoId;
-            ZoneRecord = zoneRecord;
             OpenNewContract(contractStartDate, Owner, currentUser, sendPaperBill);
             SetTariff(tariffId, contractStartDate, currentUser);
             BuildingTypeId = buildingTypeId;
             UsageCategoryId = usageCategoryId;
+            Commodity = commodity;
         }
 
         public int Id { get; private set; }
@@ -57,6 +58,7 @@ namespace Erc.Households.Domain.AccountingPoints
         public int BranchOfficeId { get; private set; }
         public decimal Debt { get; private set; }
         public ZoneRecord ZoneRecord { get; private set; }
+        public Commodity Commodity { get; private set; }
         public DistributionSystemOperator DistributionSystemOperator
         {
             get => LazyLoader.Load(this, ref _distributionSystemOperator);
@@ -161,16 +163,12 @@ namespace Erc.Households.Domain.AccountingPoints
         public void AddInvoice(Invoice invoice)
         {
             _invoices.Add(invoice);
-            //invoice.Calculate();
             Debt += invoice.TotalAmountDue;
         }
 
         public void SetNewAddress(Address address)
         {
-            if (address.Id == 0)
-            {
-                _address = address;
-            }
+            if (address.Id == 0) _address = address;
             else AddressId = address.Id;
         }
 
@@ -178,7 +176,7 @@ namespace Erc.Households.Domain.AccountingPoints
         {
             if (!Exemptions.Any(x => x.EndDate <= exemption.EffectiveDate))
                 _exemptions.Add(exemption);
-            else throw new ArgumentOutOfRangeException(nameof(exemption.EffectiveDate), "Дата відкриття пільги пересікається з попередньою пільгою");
+            else throw new ArgumentOutOfRangeException(nameof(exemption.EffectiveDate), "Нова пільга не може бути відкрита у період дії іншої пільги.");
         }
     }
 }

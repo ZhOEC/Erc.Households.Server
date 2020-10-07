@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Erc.Households.CalculateStrategies.Core\Erc.Households.CalculateStrategies.Core.csproj" />
+    <ProjectReference Include="..\Erc.Households.Server.DataAccess.EF\Erc.Households.EF.PostgreSQL.csproj" />
+  </ItemGroup>
+
+</Project>
