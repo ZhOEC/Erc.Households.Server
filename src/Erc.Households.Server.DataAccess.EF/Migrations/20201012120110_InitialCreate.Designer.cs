@@ -4,17 +4,20 @@ using System.Collections.Generic;
 using Erc.Households.CalculateStrategies.Core;
 using Erc.Households.Domain.Billing;
 using Erc.Households.Domain.Shared;
+using Erc.Households.Domain.Shared.Tariffs;
+using Erc.Households.EF.PostgreSQL;
 using Erc.Households.ModelLogs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Erc.Households.EF.PostgreSQL.Migrations
 {
     [DbContext(typeof(ErcContext))]
-    [Migration("20200925111729_DecimalUsage")]
-    partial class DecimalUsage
+    [Migration("20201012120110_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -237,8 +240,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         .HasName("ix_addresses_street_id");
 
                     b.ToTable("addresses");
-
-                    b.HasCheckConstraint("ck_address_zip", "zip ~ '^(\\d){5}$'");
                 });
 
             modelBuilder.Entity("Erc.Households.Domain.Addresses.City", b =>
@@ -1243,6 +1244,12 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 2,
                             Commodity = Commodity.ElectricPower,
                             Name = "АТ «Укрзалізниця»"
+                        },
+                        new
+                        {
+                            Id = 101,
+                            Commodity = Commodity.NaturalGas,
+                            Name = "АТ «ЖИТОМИРГАЗ»"
                         });
                 });
 
@@ -1536,7 +1543,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     b.ToTable("people");
                 });
 
-            modelBuilder.Entity("Erc.Households.Domain.Tariffs.Tariff", b =>
+            modelBuilder.Entity("Erc.Households.Domain.Shared.Tariffs.Tariff", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1552,6 +1559,10 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         .HasColumnName("name")
                         .HasColumnType("citext")
                         .HasMaxLength(200);
+
+                    b.Property<List<TariffRate>>("Rates")
+                        .HasColumnName("rates")
+                        .HasColumnType("jsonb");
 
                     b.HasKey("Id")
                         .HasName("pk_tariffs");
@@ -1582,111 +1593,12 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 4,
                             Commodity = Commodity.ElectricPower,
                             Name = "Багатодітні, прийомні сім'ї та дитячі будинки сімейного типу"
-                        });
-                });
-
-            modelBuilder.Entity("Erc.Households.Domain.Tariffs.TariffRate", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("id")
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<int?>("ConsumptionLimit")
-                        .HasColumnName("consumption_limit")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("HeatingConsumptionLimit")
-                        .HasColumnName("heating_consumption_limit")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime?>("HeatingEndDay")
-                        .HasColumnName("heating_end_day")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<DateTime?>("HeatingStartDay")
-                        .HasColumnName("heating_start_day")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnName("start_date")
-                        .HasColumnType("date");
-
-                    b.Property<int>("TariffId")
-                        .HasColumnName("tariff_id")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal>("Value")
-                        .HasColumnName("value")
-                        .HasColumnType("decimal(8,5)");
-
-                    b.HasKey("Id")
-                        .HasName("pk_tariff_rate");
-
-                    b.HasIndex("TariffId")
-                        .HasName("ix_tariff_rate_tariff_id");
-
-                    b.ToTable("tariff_rates");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            ConsumptionLimit = 100,
-                            StartDate = new DateTime(2017, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TariffId = 1,
-                            Value = 0.9m
                         },
                         new
                         {
-                            Id = 2,
-                            StartDate = new DateTime(2017, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TariffId = 1,
-                            Value = 1.68m
-                        },
-                        new
-                        {
-                            Id = 3,
-                            ConsumptionLimit = 100,
-                            HeatingConsumptionLimit = 3000,
-                            HeatingEndDay = new DateTime(2020, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            HeatingStartDay = new DateTime(2019, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            StartDate = new DateTime(2017, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TariffId = 2,
-                            Value = 0.90m
-                        },
-                        new
-                        {
-                            Id = 4,
-                            StartDate = new DateTime(2017, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TariffId = 2,
-                            Value = 1.68m
-                        },
-                        new
-                        {
-                            Id = 5,
-                            ConsumptionLimit = 100,
-                            HeatingConsumptionLimit = 3000,
-                            HeatingEndDay = new DateTime(2020, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            HeatingStartDay = new DateTime(2019, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            StartDate = new DateTime(2017, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TariffId = 3,
-                            Value = 0.90m
-                        },
-                        new
-                        {
-                            Id = 6,
-                            StartDate = new DateTime(2017, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TariffId = 3,
-                            Value = 1.68m
-                        },
-                        new
-                        {
-                            Id = 7,
-                            StartDate = new DateTime(2017, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            TariffId = 4,
-                            Value = 0.90m
+                            Id = 101,
+                            Commodity = Commodity.NaturalGas,
+                            Name = "Природний газ для населення"
                         });
                 });
 
@@ -1846,7 +1758,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                                 .HasForeignKey("AccountingPointId")
                                 .HasConstraintName("fk_accounting_point_tariff_accounting_points_accounting_point_id");
 
-                            b1.HasOne("Erc.Households.Domain.Tariffs.Tariff", "Tariff")
+                            b1.HasOne("Erc.Households.Domain.Shared.Tariffs.Tariff", "Tariff")
                                 .WithMany()
                                 .HasForeignKey("TariffId")
                                 .HasConstraintName("fk_accounting_point_tariff_tariffs_tariff_id")
@@ -1965,7 +1877,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Erc.Households.Domain.Tariffs.Tariff", "Tariff")
+                    b.HasOne("Erc.Households.Domain.Shared.Tariffs.Tariff", "Tariff")
                         .WithMany()
                         .HasForeignKey("TariffId")
                         .HasConstraintName("fk_invoices_tariffs_tariff_id")
@@ -2043,16 +1955,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         .WithMany()
                         .HasForeignKey("AddressId")
                         .HasConstraintName("fk_people_addresses_address_id");
-                });
-
-            modelBuilder.Entity("Erc.Households.Domain.Tariffs.TariffRate", b =>
-                {
-                    b.HasOne("Erc.Households.Domain.Tariffs.Tariff", null)
-                        .WithMany("Rates")
-                        .HasForeignKey("TariffId")
-                        .HasConstraintName("fk_tariff_rate_tariffs_tariff_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

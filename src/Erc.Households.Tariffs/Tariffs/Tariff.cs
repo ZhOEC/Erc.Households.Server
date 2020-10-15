@@ -7,22 +7,38 @@ namespace Erc.Households.Domain.Shared.Tariffs
 {
     public class Tariff
     {
-        ICollection<TariffRate> _rates = new HashSet<TariffRate>();
-        private readonly Action<object, string> LazyLoader;
+        List<TariffRate> _rates;
 
-        protected Tariff(Action<object, string> lazyLoader)
-        {
-            LazyLoader = lazyLoader;
-        }
         public int Id { get; set; }
         public string Name { get; set; }
         public Commodity Commodity { get; set; }
-        public IEnumerable<TariffRate> Rates
+        public IEnumerable<TariffRate> Rates => _rates?.OrderBy(tr => tr.StartDate);
+
+        public void AddRate(TariffRate tariffRate)
         {
-            get => LazyLoader.Load(this, ref _rates);
-            private set { _rates = value.ToList(); }
+            if (_rates is null)
+                _rates = new List<TariffRate>();
+            else
+                _rates = new List<TariffRate>(_rates);
+
+            tariffRate.Id = (_rates.Max(t => t?.Id) ?? 0) + 1;
+            _rates.Add(tariffRate);
         }
-        public void AddRate(TariffRate tariffRate) => _rates.Add(tariffRate);
-        public void RemoveRate(TariffRate tariffRate) => _rates.Remove(tariffRate);
+
+        public void UpdateRate(TariffRate tariffRate)
+        {
+            var rate = _rates.First(tr => tr.Id == tariffRate.Id);
+            _rates.Remove(rate);
+            _rates.Add(tariffRate);
+            _rates = new List<TariffRate>(_rates);
+        }
+
+        public void RemoveRate(int id) 
+        {
+            var rate = _rates.FirstOrDefault(tr => tr.Id == id);
+            if (rate != null)
+                _rates.Remove(rate);
+            _rates = new List<TariffRate>(_rates);
+        }
     }
 }

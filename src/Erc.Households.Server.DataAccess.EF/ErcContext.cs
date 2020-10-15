@@ -8,6 +8,7 @@ using Erc.Households.Domain.Shared;
 using Erc.Households.Domain.Shared.Tariffs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Npgsql;
 using System;
 
 namespace Erc.Households.EF.PostgreSQL
@@ -20,7 +21,10 @@ namespace Erc.Households.EF.PostgreSQL
         {
         }
 
-        static ErcContext() => Npgsql.NpgsqlConnection.GlobalTypeMapper.MapEnum<Commodity>();
+        static ErcContext()
+        {
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<Commodity>();
+        }
 
         public DbSet<AccountingPoint> AccountingPoints { get; set; }
         public DbSet<DistributionSystemOperator> DistributionSystemOperators { get; set; }
@@ -185,7 +189,7 @@ namespace Erc.Households.EF.PostgreSQL
                 entity.Property(b => b.UsageT2).HasColumnType("jsonb");
                 entity.Property(b => b.UsageT3).HasColumnType("jsonb");
 
-                entity.HasOne<Tariff>("Tariff").WithMany();
+                entity.HasOne(e => e.Tariff).WithMany();
                 entity.HasIndex(p => p.DsoConsumptionId).IsUnique();
             });
 
@@ -462,34 +466,62 @@ namespace Erc.Households.EF.PostgreSQL
                 entity.Property(p => p.Name)
                     .HasColumnType("citext")
                     .HasMaxLength(200);
-                
-                entity.HasMany(p => p.Rates).WithOne();
-                
+
+                entity.Property(e => e.Rates).HasColumnType("jsonb");
+
                 entity.HasData(
-                     new { Id = 1, Name = "Населення (загальний тариф)", Commodity = Commodity.ElectricPower },
-                     new { Id = 2, Name = "Будинки з електроопалювальними установками", Commodity = Commodity.ElectricPower },
-                     new { Id = 3, Name = "Багатоквартирні негазифіковані будинки", Commodity = Commodity.ElectricPower },
-                     new { Id = 4, Name = "Багатодітні, прийомні сім'ї та дитячі будинки сімейного типу", Commodity = Commodity.ElectricPower },
+                     new
+                     {
+                         Id = 1,
+                         Name = "Населення (загальний тариф)",
+                         Commodity = Commodity.ElectricPower,
+                     },
+
+                     new
+                     {
+                         Id = 2,
+                         Name = "Будинки з електроопалювальними установками",
+                         Commodity = Commodity.ElectricPower,
+                     },
+
+                     new
+                     {
+                         Id = 3,
+                         Name = "Багатоквартирні негазифіковані будинки",
+                         Commodity = Commodity.ElectricPower,
+                     },
+
+                     new
+                     {
+                         Id = 4,
+                         Name = "Багатодітні, прийомні сім'ї та дитячі будинки сімейного типу",
+                         Commodity = Commodity.ElectricPower,
+                     },
+
                      new { Id = 101, Name = "Природний газ для населення", Commodity = Commodity.NaturalGas }
                     );
-            });
-
-            modelBuilder.Entity<TariffRate>(e =>
-            {
-                e.ToTable("tariff_rates")
-                    .Property(p => p.Value).HasColumnType("decimal(8,5)");
-                
-                e.Property(e => e.StartDate).HasColumnType("date");
-
-                e.HasData(
-                    new TariffRate { Id = 1, StartDate = new DateTime(2017, 3, 1), Value = 0.9m, ConsumptionLimit = 100, TariffId = 1 },
-                    new TariffRate { Id = 2, StartDate = new DateTime(2017, 3, 1), Value = 1.68m, TariffId = 1 },
-                    new TariffRate { Id = 3, StartDate = new DateTime(2017, 3, 1), Value = 0.90m, ConsumptionLimit = 100, HeatingConsumptionLimit = 3000, HeatingStartDay = new DateTime(2019, 10, 01), HeatingEndDay = new DateTime(2020, 04, 30), TariffId = 2 },
-                    new TariffRate { Id = 4, StartDate = new DateTime(2017, 3, 1), Value = 1.68m, TariffId = 2 },
-                    new TariffRate { Id = 5, StartDate = new DateTime(2017, 3, 1), Value = 0.90m, ConsumptionLimit = 100, HeatingConsumptionLimit = 3000, HeatingStartDay = new DateTime(2019, 10, 01), HeatingEndDay = new DateTime(2020, 04, 30), TariffId = 3 },
-                    new TariffRate { Id = 6, StartDate = new DateTime(2017, 3, 1), Value = 1.68m, TariffId = 3 },
-                    new TariffRate { Id = 7, StartDate = new DateTime(2017, 3, 1), Value = 0.90m, TariffId = 4 }
-                    );
+                // init data
+                //{
+                //    {
+                //        3, Commodity.ElectricPower, "Багатоквартирні негазифіковані будинки",
+                //        JsonSerializer.Serialize(new[]
+                //         {
+                //            new TariffRate { Id = 1, StartDate = new DateTime(2019, 1, 1), Value = 0.90m, ConsumptionLimit = 100, HeatingConsumptionLimit = 3000, HeatingStartDay = new DateTime(2019, 10, 01), HeatingEndDay = new DateTime(2020, 04, 30)},
+                //            new TariffRate { Id = 2, StartDate = new DateTime(2019, 1, 1), Value = 1.68m, }
+                //         })
+                //    },
+                //    {
+                //        2, Commodity.ElectricPower, "Будинки з електроопалювальними установками",
+                //        JsonSerializer.Serialize(new[]
+                //         {
+                //            new TariffRate { Id = 1, StartDate = new DateTime(2019, 1, 1), Value = 0.90m, ConsumptionLimit = 100, HeatingConsumptionLimit = 3000, HeatingStartDay = new DateTime(2019, 10, 01), HeatingEndDay = new DateTime(2020, 04, 30) },
+                //            new TariffRate { Id = 2, StartDate = new DateTime(2019, 1, 1), Value = 1.68m}
+                //         })
+                //    },
+                //    { 1, Commodity.ElectricPower, "Населення (загальний тариф)",  JsonSerializer.Serialize(new[] { new TariffRate { Id = 1, StartDate = new DateTime(2019, 1, 1), Value = 0.9m, ConsumptionLimit = 100 }, new TariffRate { StartDate = new DateTime(2019, 1, 1), Value = 1.68m } })},
+                //    { 101, Commodity.NaturalGas, "Природний газ для населення", null },
+                //    { 4, Commodity.ElectricPower, "Багатодітні, прийомні сім'ї та дитячі будинки сімейного типу", JsonSerializer.Serialize(new[] { new TariffRate { Id = 1, StartDate = new DateTime(2019, 1, 1), Value = 1.68m } }) }
+                //}
             });
         }
     }

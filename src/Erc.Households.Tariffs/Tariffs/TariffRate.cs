@@ -11,6 +11,5 @@ namespace Erc.Households.Domain.Shared.Tariffs
         public int? HeatingConsumptionLimit { get; set; }
         public DateTime? HeatingStartDay { get; set; }
         public DateTime? HeatingEndDay { get; set; }
-        public int TariffId { get; set; }
     }
 }

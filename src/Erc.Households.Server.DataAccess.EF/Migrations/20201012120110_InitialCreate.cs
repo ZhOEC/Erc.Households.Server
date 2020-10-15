@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Erc.Households.CalculateStrategies.Core;
 using Erc.Households.Domain.Billing;
 using Erc.Households.Domain.Shared;
+using Erc.Households.Domain.Shared.Tariffs;
 using Erc.Households.ModelLogs;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -130,7 +131,8 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     name = table.Column<string>(type: "citext", maxLength: 200, nullable: true),
-                    commodity = table.Column<Commodity>(nullable: false)
+                    commodity = table.Column<Commodity>(nullable: false),
+                    rates = table.Column<List<TariffRate>>(type: "jsonb", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -208,31 +210,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         name: "fk_districts_regions_region_id",
                         column: x => x.region_id,
                         principalTable: "regions",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "tariff_rates",
-                columns: table => new
-                {
-                    id = table.Column<int>(nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    start_date = table.Column<DateTime>(type: "date", nullable: false),
-                    value = table.Column<decimal>(type: "decimal(8,5)", nullable: false),
-                    consumption_limit = table.Column<int>(nullable: true),
-                    heating_consumption_limit = table.Column<int>(nullable: true),
-                    heating_start_day = table.Column<DateTime>(nullable: true),
-                    heating_end_day = table.Column<DateTime>(nullable: true),
-                    tariff_id = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_tariff_rate", x => x.id);
-                    table.ForeignKey(
-                        name: "fk_tariff_rate_tariffs_tariff_id",
-                        column: x => x.tariff_id,
-                        principalTable: "tariffs",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -321,7 +298,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_addresses", x => x.id);
-                    table.CheckConstraint("ck_address_zip", "zip ~ '^(\\d){5}$'");
                     table.ForeignKey(
                         name: "fk_addresses_streets_street_id",
                         column: x => x.street_id,
@@ -532,7 +508,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     usage_t1 = table.Column<Usage>(type: "jsonb", nullable: true),
                     usage_t2 = table.Column<Usage>(type: "jsonb", nullable: true),
                     usage_t3 = table.Column<Usage>(type: "jsonb", nullable: true),
-                    total_units = table.Column<int>(nullable: false),
+                    total_units = table.Column<decimal>(nullable: false),
                     exemption_coeff = table.Column<decimal>(nullable: true),
                     total_discount = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
                     total_amount_due = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
@@ -650,6 +626,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 values: new object[,]
                 {
                     { 2, Commodity.ElectricPower, "АТ «Укрзалізниця»" },
+                    { 101, Commodity.NaturalGas, "АТ «ЖИТОМИРГАЗ»" },
                     { 1, Commodity.ElectricPower, "АТ «Житомиробленерго»" }
                 });
 
@@ -658,10 +635,10 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 columns: new[] { "id", "coeff", "effective_date", "end_date", "has_limit", "name" },
                 values: new object[,]
                 {
-                    { 4, 100.0m, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, true, "Учасник бойових дій та членів родин загиблих в АТО (ООС)" },
+                    { 1, 100.0m, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Почесні громадяни міста" },
                     { 3, 50.0m, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, true, "Iнвалiди 2 групи по зору або з ураженням ОРА" },
-                    { 2, 50.0m, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, true, "Iнвалiди 1 групи по зору або з ураженням ОРА" },
-                    { 1, 100.0m, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, "Почесні громадяни міста" }
+                    { 4, 100.0m, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, true, "Учасник бойових дій та членів родин загиблих в АТО (ООС)" },
+                    { 2, 50.0m, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, true, "Iнвалiди 1 групи по зору або з ураженням ОРА" }
                 });
 
             migrationBuilder.InsertData(
@@ -669,16 +646,16 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 columns: new[] { "id", "end_date", "name", "start_date" },
                 values: new object[,]
                 {
-                    { 202002, new DateTime(2020, 2, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), "Лютий 2020р.", new DateTime(2020, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 202004, new DateTime(2020, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), "Квітень 2020р.", new DateTime(2020, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 202005, new DateTime(2020, 5, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Травень 2020р.", new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 202009, new DateTime(2020, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), "Вересень 2020р.", new DateTime(2020, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 202007, new DateTime(2020, 7, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Липень 2020р.", new DateTime(2020, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 202008, new DateTime(2020, 8, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Серпень 2020р.", new DateTime(2020, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
                     { 202001, new DateTime(2020, 1, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Січень 2020р.", new DateTime(2020, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 202009, new DateTime(2020, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), "Вересень 2020р.", new DateTime(2020, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 202008, new DateTime(2020, 8, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Серпень 2020р.", new DateTime(2020, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 202007, new DateTime(2020, 7, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Липень 2020р.", new DateTime(2020, 7, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
                     { 202006, new DateTime(2020, 6, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), "Червень 2020р.", new DateTime(2020, 6, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 201912, new DateTime(2019, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Грудень 2019р.", new DateTime(2019, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 202005, new DateTime(2020, 5, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Травень 2020р.", new DateTime(2020, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
                     { 202003, new DateTime(2020, 3, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Березень 2020р.", new DateTime(2020, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 202002, new DateTime(2020, 2, 29, 0, 0, 0, 0, DateTimeKind.Unspecified), "Лютий 2020р.", new DateTime(2020, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 201912, new DateTime(2019, 12, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Грудень 2019р.", new DateTime(2019, 12, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 202004, new DateTime(2020, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), "Квітень 2020р.", new DateTime(2020, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
                     { 201910, new DateTime(2019, 10, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Жовтень 2019р.", new DateTime(2019, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
                     { 201909, new DateTime(2019, 9, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), "Вересень 2019р.", new DateTime(2019, 9, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
                     { 201908, new DateTime(2019, 8, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Серпень 2019р.", new DateTime(2019, 8, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
@@ -687,9 +664,9 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     { 201905, new DateTime(2019, 5, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Травень 2019р.", new DateTime(2019, 5, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
                     { 201904, new DateTime(2019, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), "Квітень 2019р.", new DateTime(2019, 4, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
                     { 201903, new DateTime(2019, 3, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Березень 2019р.", new DateTime(2019, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 201902, new DateTime(2019, 2, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Лютий 2019р.", new DateTime(2019, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
+                    { 201901, new DateTime(2019, 1, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Січень 2019р.", new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
                     { 201911, new DateTime(2019, 11, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), "Листопад 2019р.", new DateTime(2019, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) },
-                    { 201901, new DateTime(2019, 1, 31, 0, 0, 0, 0, DateTimeKind.Unspecified), "Січень 2019р.", new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
+                    { 201902, new DateTime(2019, 2, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), "Лютий 2019р.", new DateTime(2019, 2, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) }
                 });
 
             migrationBuilder.InsertData(
@@ -699,13 +676,14 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
 
             migrationBuilder.InsertData(
                 table: "tariffs",
-                columns: new[] { "id", "commodity", "name" },
+                columns: new[] { "id", "commodity", "name", "rates" },
                 values: new object[,]
                 {
-                    { 2, Commodity.ElectricPower, "Будинки з електроопалювальними установками" },
-                    { 1, Commodity.ElectricPower, "Населення (загальний тариф)" },
-                    { 4, Commodity.ElectricPower, "Багатодітні, прийомні сім'ї та дитячі будинки сімейного типу" },
-                    { 3, Commodity.ElectricPower, "Багатоквартирні негазифіковані будинки" }
+                    { 3, Commodity.ElectricPower, "Багатоквартирні негазифіковані будинки", null },
+                    { 2, Commodity.ElectricPower, "Будинки з електроопалювальними установками", null },
+                    { 1, Commodity.ElectricPower, "Населення (загальний тариф)", null },
+                    { 101, Commodity.NaturalGas, "Природний газ для населення", null },
+                    { 4, Commodity.ElectricPower, "Багатодітні, прийомні сім'ї та дитячі будинки сімейного типу", null }
                 });
 
             migrationBuilder.InsertData(
@@ -724,12 +702,12 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 columns: new[] { "id", "discount_weight", "start_date", "value", "zone_number", "zone_record" },
                 values: new object[,]
                 {
-                    { 6, 0.21m, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1.5m, 3, 3 },
                     { 4, 0.46m, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0.4m, 1, 3 },
+                    { 3, 0.33m, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1m, 2, 2 },
                     { 2, 0.67m, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 0.5m, 1, 2 },
                     { 1, 1m, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1m, 1, 1 },
-                    { 5, 0.33m, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1m, 2, 3 },
-                    { 3, 0.33m, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1m, 2, 2 }
+                    { 6, 0.21m, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1.5m, 3, 3 },
+                    { 5, 0.33m, new DateTime(2019, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1m, 2, 3 }
                 });
 
             migrationBuilder.InsertData(
@@ -737,18 +715,20 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 columns: new[] { "id", "address", "available_commodities", "current_period_id", "district_ids", "name", "string_id" },
                 values: new object[,]
                 {
-                    { 4, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 201901, new[] { 4 }, "Брусилівський ЦОК", "br" },
+                    { -1, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.NaturalGas }, 201901, new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23 }, "Центральний офіс", "co" },
+                    { 2, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 201901, new[] { 2 }, "Баранiвський ЦОК", "bn" },
                     { 3, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 201901, new[] { 3 }, "Бердичiвський ЦОК", "bd" },
+                    { 4, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 201901, new[] { 4 }, "Брусилівський ЦОК", "br" },
                     { 5, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 201901, new[] { 5 }, "Хорошівський ЦОК", "hr" },
                     { 6, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 201901, new[] { 6 }, "Ємільчинський ЦОК", "em" },
                     { 7, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 201901, new[] { 7 }, "Житомирський ЦОК", "zt" },
                     { 8, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 201901, new[] { 7 }, "Зарічанський ЦОК", "zr" },
                     { 9, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 201901, new[] { 8, 10 }, "Коростенський ЦОК", "kr" },
                     { 10, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 201901, new[] { 9 }, "Коростишiвський ЦОК", "kt" },
+                    { 1, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 201901, new[] { 1 }, "Андрушівський ЦОК", "an" },
                     { 11, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 201901, new[] { 11 }, "Любарський ЦОК", "lb" },
-                    { 12, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 201901, new[] { 12 }, "Малинський ЦОК", "ml" },
-                    { 2, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 201901, new[] { 2 }, "Баранiвський ЦОК", "bn" },
                     { 13, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 201901, new[] { 13 }, "Народицький ЦОК", "nr" },
+                    { 14, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 201901, new[] { 14 }, "Новоград-Волинський ЦОК", "nv" },
                     { 15, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 201901, new[] { 15 }, "Овруцький ЦОК", "ov" },
                     { 16, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 201901, new[] { 16 }, "Олевський ЦОК", "ol" },
                     { 17, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 201901, new[] { 17, 20 }, "Попільнянський ЦОК", "pp" },
@@ -756,10 +736,8 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     { 19, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 201901, new[] { 19 }, "Романівський ЦОК", "rm" },
                     { 20, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 201901, new[] { 21 }, "Пулинський ЦОК", "pl" },
                     { 21, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 201901, new[] { 22 }, "Черняхівський ЦОК", "ch" },
-                    { 22, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 201901, new[] { 23 }, "Чуднівський ЦОК", "cd" },
-                    { -1, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.NaturalGas }, 201901, new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23 }, "Центральний офіс", "co" },
-                    { 14, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 201901, new[] { 14 }, "Новоград-Волинський ЦОК", "nv" },
-                    { 1, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 201901, new[] { 1 }, "Андрушівський ЦОК", "an" }
+                    { 12, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 201901, new[] { 12 }, "Малинський ЦОК", "ml" },
+                    { 22, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 201901, new[] { 23 }, "Чуднівський ЦОК", "cd" }
                 });
 
             migrationBuilder.InsertData(
@@ -767,8 +745,8 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 columns: new[] { "id", "name", "region_id" },
                 values: new object[,]
                 {
-                    { 1, "Андрушівський район", 1 },
-                    { 22, "Черняхівський район", 1 },
+                    { 23, "Чуднівський район", 1 },
+                    { 21, "Пулинський район", 1 },
                     { 2, "Баранiвський район", 1 },
                     { 3, "Бердичiвський район", 1 },
                     { 4, "Брусилівський район", 1 },
@@ -776,10 +754,10 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     { 6, "Ємільчинський район", 1 },
                     { 7, "Житомирський район", 1 },
                     { 8, "Коростенський район", 1 },
-                    { 23, "Чуднівський район", 1 },
+                    { 9, "Коростишiвський район", 1 },
                     { 10, "Лугинський район", 1 },
                     { 11, "Любарський район", 1 },
-                    { 9, "Коростишiвський район", 1 },
+                    { 12, "Малинський район", 1 },
                     { 13, "Народицький район", 1 },
                     { 14, "Новоград-Волинський район", 1 },
                     { 15, "Овруцький район", 1 },
@@ -788,22 +766,8 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     { 18, "Радомишльський район", 1 },
                     { 19, "Романівський район", 1 },
                     { 20, "Ружинський район", 1 },
-                    { 12, "Малинський район", 1 },
-                    { 21, "Пулинський район", 1 }
-                });
-
-            migrationBuilder.InsertData(
-                table: "tariff_rates",
-                columns: new[] { "id", "consumption_limit", "heating_consumption_limit", "heating_end_day", "heating_start_day", "start_date", "tariff_id", "value" },
-                values: new object[,]
-                {
-                    { 5, 100, 3000, new DateTime(2020, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2019, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2017, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, 0.90m },
-                    { 4, null, null, null, null, new DateTime(2017, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, 1.68m },
-                    { 6, null, null, null, null, new DateTime(2017, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 3, 1.68m },
-                    { 2, null, null, null, null, new DateTime(2017, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, 1.68m },
-                    { 1, 100, null, null, null, new DateTime(2017, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 1, 0.9m },
-                    { 3, 100, 3000, new DateTime(2020, 4, 30, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2019, 10, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new DateTime(2017, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 2, 0.90m },
-                    { 7, null, null, null, null, new DateTime(2017, 3, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), 4, 0.90m }
+                    { 22, "Черняхівський район", 1 },
+                    { 1, "Андрушівський район", 1 }
                 });
 
             migrationBuilder.CreateIndex(
@@ -971,11 +935,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 name: "ix_streets_city_id",
                 table: "streets",
                 column: "city_id");
-
-            migrationBuilder.CreateIndex(
-                name: "ix_tariff_rate_tariff_id",
-                table: "tariff_rates",
-                column: "tariff_id");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -994,9 +953,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
 
             migrationBuilder.DropTable(
                 name: "invoice_payment_item");
-
-            migrationBuilder.DropTable(
-                name: "tariff_rates");
 
             migrationBuilder.DropTable(
                 name: "zone_coeffs");
