@@ -257,7 +257,7 @@ namespace Erc.Households.EF.PostgreSQL
                     new { Id = 20, CurrentPeriodId = 201901, Name = "Пулинський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "pl", DistrictIds = new[] { 21 }, AvailableCommodities = new[] { Commodity.ElectricPower } },
                     new { Id = 21, CurrentPeriodId = 201901, Name = "Черняхівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "ch", DistrictIds = new[] { 22 }, AvailableCommodities = new[] { Commodity.ElectricPower } },
                     new { Id = 22, CurrentPeriodId = 201901, Name = "Чуднівський ЦОК", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "cd", DistrictIds = new[] { 23 }, AvailableCommodities = new[] { Commodity.ElectricPower } },
-                    new { Id = -1, CurrentPeriodId = 201901, Name = "Центральний офіс", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "co", DistrictIds = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23 }, AvailableCommodities = new[] { Commodity.NaturalGas } }
+                    new { Id = 101, CurrentPeriodId = 201901, Name = "Центральний офіс", Address = "10003, м. Житомир, майдан Перемоги, 10", StringId = "co", DistrictIds = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23 }, AvailableCommodities = new[] { Commodity.NaturalGas } }
                     );
             });
 

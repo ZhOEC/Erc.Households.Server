@@ -715,7 +715,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 columns: new[] { "id", "address", "available_commodities", "current_period_id", "district_ids", "name", "string_id" },
                 values: new object[,]
                 {
-                    { -1, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.NaturalGas }, 201901, new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23 }, "Центральний офіс", "co" },
                     { 2, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 201901, new[] { 2 }, "Баранiвський ЦОК", "bn" },
                     { 3, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 201901, new[] { 3 }, "Бердичiвський ЦОК", "bd" },
                     { 4, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 201901, new[] { 4 }, "Брусилівський ЦОК", "br" },
@@ -737,7 +736,8 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     { 20, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 201901, new[] { 21 }, "Пулинський ЦОК", "pl" },
                     { 21, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 201901, new[] { 22 }, "Черняхівський ЦОК", "ch" },
                     { 12, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 201901, new[] { 12 }, "Малинський ЦОК", "ml" },
-                    { 22, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 201901, new[] { 23 }, "Чуднівський ЦОК", "cd" }
+                    { 22, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 201901, new[] { 23 }, "Чуднівський ЦОК", "cd" },
+                    { 101, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.NaturalGas }, 201901, new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23 }, "Центральний офіс", "co" }
                 });
 
             migrationBuilder.InsertData(

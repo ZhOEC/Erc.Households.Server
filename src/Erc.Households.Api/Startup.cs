@@ -4,6 +4,7 @@ using Erc.Households.BranchOfficeManagment.Core;
 using Erc.Households.DataAccess.Core;
 using Erc.Households.DataAccess.EF;
 using Erc.Households.EF.PostgreSQL;
+using Erc.Households.UsageParser.Xlsx.NaturalGas;
 using MassTransit;
 using MassTransit.MultiBus;
 using MediatR;
@@ -51,6 +52,8 @@ namespace Erc.Households.WebApi
                 .AllowAnyHeader()
                 .WithExposedHeaders("X-Total-Count").AllowCredentials())
             );
+
+            services.AddTransient<XlsxNaturalGasConsumptionParser>();
 
             services.AddAutoMapper(System.Reflection.Assembly.GetExecutingAssembly());
 

@@ -10,7 +10,7 @@ namespace Erc.Households.Events.AccountingPoints
         Guid GenerationId { get; }
         string Eic { get; }
         DateTime FromDate { get; }
-        int PeriodId { get; }
+        int PeriodId { get; } // will be 0
         DateTime ToDate { get; }
         int? PreviousMeterReadingT1 { get; }
         int? PreviousMeterReadingT2 { get; }
