@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  erc.households.calculations.gas:
+    image: ${DOCKER_REGISTRY-}erchouseholdscalculationsgas
+    build:
+      context: .\Erc.Households.Calculations.Gas
+      dockerfile: Dockerfile

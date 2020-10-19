@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
+using Erc.Households.Domain.Shared;
 using Erc.Households.EF.PostgreSQL;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +20,7 @@ namespace Erc.Households.Api.Controllers
         }
 
         [HttpGet("")]
-        public async Task<IActionResult> GetAll() => Ok(await _ercContext.DistributionSystemOperators.ToListAsync());
+        public async Task<IActionResult> GetAll(Commodity commodity = Commodity.ElectricPower) 
+            => Ok(await _ercContext.DistributionSystemOperators.Where(d=>d.Commodity==commodity).ToArrayAsync());
     }
 }

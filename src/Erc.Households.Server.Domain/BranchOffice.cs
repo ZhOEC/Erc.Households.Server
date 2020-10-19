@@ -1,4 +1,5 @@
 ﻿using Erc.Households.Domain.Billing;
+using Erc.Households.Domain.Shared;
 using System.Linq;
 
 namespace Erc.Households.Domain
@@ -9,7 +10,8 @@ namespace Erc.Households.Domain
         public string Name { get; set; }
         public string StringId { get; set; }
         public int[] DistrictIds { get; private set; }
-        public string Address { get; set; }
+        public string Address { get; private set; }
+        public Commodity[] AvailableCommodities { get; set; }
         public int CurrentPeriodId { get; private set; }
         public Period CurrentPeriod { get; private set; }
 

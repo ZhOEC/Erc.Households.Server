@@ -31,7 +31,7 @@ namespace Erc.Households.Api.Controllers
         [HttpGet("")]
         public IActionResult GetAll()
         {
-            return Ok(_mapper.Map<IEnumerable<Responses.BranchOffice>>(_branchOfficeService.GetList(UserGroups)).OrderBy(bo=>bo.Name));
+            return Ok(_mapper.Map<IEnumerable<Responses.BranchOffice>>(_branchOfficeService.GetList(UserGroups)).OrderBy(bo => bo.Id < 0 ? 0 : 1).ThenBy(bo => bo.Name));
         }
 
         [HttpPost("{id}/periods")]

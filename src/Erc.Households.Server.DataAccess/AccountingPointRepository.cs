@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Erc.Households.Domain.Exceptions;
 
 namespace Erc.Households.DataAccess.EF
 {
@@ -18,7 +19,7 @@ namespace Erc.Households.DataAccess.EF
         public async Task AddNewAsync(AccountingPoint accountingPoint)
         {
             _ercContext.Entry(accountingPoint.Owner).State = accountingPoint.Owner.Id == 0 ? EntityState.Added : EntityState.Modified;
-            
+
             accountingPoint.Address.Id = 
                 (await _ercContext.Addresses
                 .Where(a => a.StreetId == accountingPoint.Address.StreetId && a.Building == accountingPoint.Address.Building && ((a.Apt ?? string.Empty) == (accountingPoint.Address.Apt ?? string.Empty)))
@@ -29,6 +30,13 @@ namespace Erc.Households.DataAccess.EF
             _ercContext.Entry(accountingPoint.Address).Property(p => p.Zip).IsModified = true;
 
             await _ercContext.AccountingPoints.AddAsync(accountingPoint);
+            await _ercContext.Entry(accountingPoint).Reference(a => a.DistributionSystemOperator).LoadAsync();
+           await _ercContext.Entry(accountingPoint.TariffsHistory.First()).Reference(a => a.Tariff).LoadAsync();
+            await _ercContext.Entry(accountingPoint).Reference(a => a.BranchOffice).LoadAsync();
+
+            if (accountingPoint.DistributionSystemOperator.Commodity != accountingPoint.Commodity
+               || accountingPoint.CurrentTariff.Commodity != accountingPoint.Commodity || !accountingPoint.BranchOffice.AvailableCommodities.Contains(accountingPoint.Commodity))
+                throw new InvalidAccountingPointDataException($"Invalid initial data: Commodity, Tariff.Commodity, DistributionSystemOperator.Commodity and BranchOffice.AvailableCommodities");
 
             accountingPoint.Events.Add(new AccountingPointCreated
             {

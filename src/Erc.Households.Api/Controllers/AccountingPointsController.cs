@@ -64,7 +64,7 @@ namespace Erc.Households.Api.Controllers
         public async Task<IActionResult> AddNew(NewAccountingPoint newAccountingPoint)
         {
             var accountingPoint = new Domain.AccountingPoints.AccountingPoint(
-                newAccountingPoint.Eic, newAccountingPoint.Name, newAccountingPoint.ZoneRecord, newAccountingPoint.ContractStartDate,
+                newAccountingPoint.Eic, newAccountingPoint.Name, newAccountingPoint.Commodity, newAccountingPoint.ContractStartDate,
                 newAccountingPoint.TariffId, newAccountingPoint.Address, newAccountingPoint.Owner,
                 newAccountingPoint.BranchOfficeId, newAccountingPoint.DistributionSystemOperatorId, User.Identity.Name, newAccountingPoint.BuildingTypeId,
                 newAccountingPoint.UsageCategoryId, newAccountingPoint.SendPaperBill);

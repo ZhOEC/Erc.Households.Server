@@ -1,4 +1,4 @@
-﻿using Erc.Households.Domain.Tariffs;
+﻿using Erc.Households.Domain.Shared.Tariffs;
 using Erc.Households.ModelLogs;
 using System;
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Erc.Households.CalculateStrategies.NaturalGas;
 using Erc.Households.EF.PostgreSQL;
 using GreenPipes;
 using MassTransit;
@@ -42,7 +43,9 @@ namespace Erc.Households.Calculation
                     
                     services.AddDbContext<ErcContext>(options =>
                        options.UseNpgsql(hostContext.Configuration.GetConnectionString("ErcContext")));
-                    
+
+                    services.AddTransient<GasCalculateStrategy>();
+
                     services.AddHostedService<CalculationService>();
                 });
     }

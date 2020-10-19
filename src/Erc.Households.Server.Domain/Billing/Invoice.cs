@@ -1,7 +1,9 @@
-﻿using Erc.Households.Domain.AccountingPoints;
+﻿using Erc.Households.CalculateStrategies.Core;
+using Erc.Households.Domain.AccountingPoints;
 using Erc.Households.Domain.Extensions;
 using Erc.Households.Domain.Payments;
-using Erc.Households.Domain.Tariffs;
+using Erc.Households.Domain.Shared;
+using Erc.Households.Domain.Shared.Tariffs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,25 +18,27 @@ namespace Erc.Households.Domain.Billing
         //private Tariff _tariff;
         private AccountingPoint _accountingPoint;
         AccountingPointExemption _exemption;
-
+        
         protected Invoice(Action<object, string> lazyLoader)
         {
             LazyLoader = lazyLoader;
         }
 
-        public Invoice(int accountingPointId, int periodId, DateTime fromDate, DateTime toDate, int tariffId, Usage usageT1, InvoiceType type = InvoiceType.Common,  string note = null, decimal? exemptionCoeff = null)
-            : this(accountingPointId, periodId, fromDate, toDate, tariffId, usageT1, null, null, type, note, exemptionCoeff)
-        {
-        }
+        //public Invoice(int accountingPointId, int periodId, DateTime fromDate, DateTime toDate, int tariffId, Usage usageT1, InvoiceType type = InvoiceType.Common,  string note = null, decimal? exemptionCoeff = null)
+        //    : this(accountingPointId, periodId, fromDate, toDate, tariffId, usageT1, null, null, type, note, exemptionCoeff)
+        //{
+        //}
 
-        public Invoice(int accountingPointId, int periodId, DateTime fromDate, DateTime toDate, int tariffId, Usage usageT1, Usage usageT2, InvoiceType type = InvoiceType.Common,  string note = null, decimal? exemptionCoeff = null)
-            : this(accountingPointId, periodId, fromDate, toDate, tariffId, usageT1, usageT2, null, type, note, exemptionCoeff)
-        {
+        //public Invoice(int accountingPointId, int periodId, DateTime fromDate, DateTime toDate, int tariffId, Usage usageT1, Usage usageT2, InvoiceType type = InvoiceType.Common,  string note = null, decimal? exemptionCoeff = null)
+        //    : this(accountingPointId, periodId, fromDate, toDate, tariffId, usageT1, usageT2, null, type, note, exemptionCoeff)
+        //{
 
-        }
+        //}
 
-        public Invoice(int accountingPointId, int periodId, DateTime fromDate, DateTime toDate, int tariffId, Usage usageT1, Usage usageT2, Usage usageT3, InvoiceType type = InvoiceType.Common, string note = null, decimal? exemptionCoeff = null)
+
+        public Invoice(int accountingPointId, int periodId, DateTime fromDate, DateTime toDate, int tariffId, Usage usageT1, Usage usageT2 = null, Usage usageT3 = null, InvoiceType type = InvoiceType.Common, string note = null, decimal? exemptionCoeff = null)
         {
+            
             PeriodId = periodId;
             FromDate = fromDate;
             ToDate = toDate;
@@ -46,7 +50,6 @@ namespace Erc.Households.Domain.Billing
             Type = type;
             ExemptionCoeff = exemptionCoeff > 1 ? exemptionCoeff / 100 : exemptionCoeff;
             AccountingPointId = accountingPointId;
-            
         }
 
         public Invoice(Guid dsoId, int periodId, decimal incomingBalance, DateTime fromDate, DateTime toDate, string counterSerialNumber, Tariff tariff, 
@@ -66,7 +69,6 @@ namespace Erc.Households.Domain.Billing
             Type = type;
             ExemptionCoeff = (exemption?.Category.Coeff ?? 0) > 1 ? (exemption?.Category.Coeff ?? 0) / 100 : (exemption?.Category.Coeff ?? 0);
             CounterSerialNumber = counterSerialNumber;
-
             _exemption = exemption;
             ZoneRecord = zoneRecord;
         }
@@ -77,9 +79,9 @@ namespace Erc.Households.Domain.Billing
         public DateTime Date { get; private set; } = DateTime.Now;
         public DateTime FromDate { get; private set; }
         public DateTime ToDate { get; private set; }
-        public Usage UsageT1 { get; private set; }
-        public Usage UsageT2 { get; private set; }
-        public Usage UsageT3 { get; private set; }
+        public Usage UsageT1 { get; set; }
+        public Usage UsageT2 { get; set; }
+        public Usage UsageT3 { get; set; }
         public Usage GetUsage(int i) => i switch
         {
             1 => UsageT1,
@@ -96,7 +98,7 @@ namespace Erc.Households.Domain.Billing
             yield return () => UsageT3;
         }
 
-        public int TotalUnits { get; private set; }
+        public decimal TotalUnits { get; private set; }
         public decimal? ExemptionCoeff { get; private set; }
         public int TotalDiscountUnits => UsageT1.DiscountUnits + (UsageT2?.DiscountUnits ?? 0) + (UsageT3?.DiscountUnits ?? 0);
         public decimal TotalDiscount { get; private set; }
@@ -140,7 +142,16 @@ namespace Erc.Households.Domain.Billing
             return ipi;
         }
 
-        public void Calculate(IEnumerable<Invoice> invalidInvoices=default)
+        public void Calculate(ICalculateStrategy calculateStrategy)
+        {
+            calculateStrategy.Calculate(new CalculationRequest(FromDate, ToDate, UsageT1, UsageT2, UsageT3, Tariff));
+            TotalUnits = UsageT1.Units + (UsageT2?.Units ?? 0) + (UsageT3?.Units ?? 0);
+            TotalDiscount = UsageT1.Discount + (UsageT2?.Discount ?? 0) + (UsageT3?.Discount ?? 0);
+            TotalCharge = UsageT1.Charge + (UsageT2?.Charge ?? 0) + (UsageT3?.Charge ?? 0);
+            TotalAmountDue = TotalCharge - TotalDiscount;
+        }
+
+        public void Calculate_old(IEnumerable<Invoice> invalidInvoices=default)
         {
             var tariffRates = Tariff.Rates.Where(t => t.StartDate < ToDate).GroupBy(tr => tr.StartDate).OrderByDescending(tr => tr.Key).First();
 
@@ -259,7 +270,7 @@ namespace Erc.Households.Domain.Billing
             }
         }
 
-        public void Calculate()
+        public void Calculate_old()
         {
             if (Type == InvoiceType.Recalculation)
             {
@@ -314,5 +325,7 @@ namespace Erc.Households.Domain.Billing
                 });
             }
         }
+
+        
     }
 }
