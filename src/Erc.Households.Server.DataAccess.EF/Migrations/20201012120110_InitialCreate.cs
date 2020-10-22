@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using Erc.Households.CalculateStrategies.Core;
 using Erc.Households.Domain.Billing;
 using Erc.Households.Domain.Shared;
@@ -679,11 +680,25 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 columns: new[] { "id", "commodity", "name", "rates" },
                 values: new object[,]
                 {
-                    { 3, Commodity.ElectricPower, "Багатоквартирні негазифіковані будинки", null },
-                    { 2, Commodity.ElectricPower, "Будинки з електроопалювальними установками", null },
-                    { 1, Commodity.ElectricPower, "Населення (загальний тариф)", null },
+                    {
+                        3, Commodity.ElectricPower, "Багатоквартирні негазифіковані будинки",
+                        JsonSerializer.Serialize(new[]
+                         {
+                            new TariffRate { Id = 1, StartDate = new DateTime(2019, 1, 1), Value = 0.90m, ConsumptionLimit = 100, HeatingConsumptionLimit = 3000, HeatingStartDay = new DateTime(2019, 10, 01), HeatingEndDay = new DateTime(2020, 04, 30)},
+                            new TariffRate { Id = 2, StartDate = new DateTime(2019, 1, 1), Value = 1.68m, }
+                         })
+                    },
+                    {
+                        2, Commodity.ElectricPower, "Будинки з електроопалювальними установками",
+                        JsonSerializer.Serialize(new[]
+                         {
+                            new TariffRate { Id = 1, StartDate = new DateTime(2019, 1, 1), Value = 0.90m, ConsumptionLimit = 100, HeatingConsumptionLimit = 3000, HeatingStartDay = new DateTime(2019, 10, 01), HeatingEndDay = new DateTime(2020, 04, 30) },
+                            new TariffRate { Id = 2, StartDate = new DateTime(2019, 1, 1), Value = 1.68m}
+                         })
+                    },
+                    { 1, Commodity.ElectricPower, "Населення (загальний тариф)",  JsonSerializer.Serialize(new[] { new TariffRate { Id = 1, StartDate = new DateTime(2019, 1, 1), Value = 0.9m, ConsumptionLimit = 100 }, new TariffRate { StartDate = new DateTime(2019, 1, 1), Value = 1.68m } })},
                     { 101, Commodity.NaturalGas, "Природний газ для населення", null },
-                    { 4, Commodity.ElectricPower, "Багатодітні, прийомні сім'ї та дитячі будинки сімейного типу", null }
+                    { 4, Commodity.ElectricPower, "Багатодітні, прийомні сім'ї та дитячі будинки сімейного типу", JsonSerializer.Serialize(new[] { new TariffRate { Id = 1, StartDate = new DateTime(2019, 1, 1), Value = 1.68m } }) }
                 });
 
             migrationBuilder.InsertData(
