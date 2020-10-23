@@ -33,6 +33,17 @@ namespace Erc.Households.Api.MapperProfiles
 			
 			CreateMap<Domain.AccountingPoints.AccountingPointExemption, Responses.AccountingPointExemption>()
 				.ForMember(r=>r.CategoryName, mo=>mo.MapFrom(s=>$"{s.Category.Name} ({s.Category.Coeff:#.#}%)"));
+
+			CreateMap<Domain.Taxes.TaxInvoice, Responses.TaxInvoice>(); 
+			CreateMap<Domain.Taxes.TaxInvoice, Requests.DownloadTaxInvoice>()
+				.ForMember(x => x.BranchOfficeId, x => x.MapFrom(y => y.BranchOffice.Id))
+				.ForMember(x => x.BranchOfficeName, x => x.MapFrom(y => y.BranchOffice.Name))
+				.ForMember(x => x.CompanyAddress, x => x.MapFrom(y => y.BranchOffice.Company.Address))
+				.ForMember(x => x.CompanyStateRegistryCode, x => x.MapFrom(y => y.BranchOffice.Company.StateRegistryCode))
+				.ForMember(x => x.CompanyTaxpayerNumber, x => x.MapFrom(y => y.BranchOffice.Company.TaxpayerNumber))
+				.ForMember(x => x.CompanyTaxpayerPhone, x => x.MapFrom(y => y.BranchOffice.Company.TaxpayerPhone))
+				.ForMember(x => x.CompanyBookkeeperName, x => x.MapFrom(y => y.BranchOffice.Company.BookkeeperName))
+				.ForMember(x => x.CompanyBookkeeperTaxNumber, x => x.MapFrom(y => y.BranchOffice.Company.BookkeeperTaxNumber));
 		}
 	}
 }

@@ -13,7 +13,9 @@ namespace Erc.Households.Domain
         public string Address { get; private set; }
         public Commodity[] AvailableCommodities { get; set; }
         public int CurrentPeriodId { get; private set; }
+        public int? CompanyId { get; set; }
         public Period CurrentPeriod { get; private set; }
+        public Company Company { get; private set; }
 
         public void StartNewPeriod(Period period)
         {

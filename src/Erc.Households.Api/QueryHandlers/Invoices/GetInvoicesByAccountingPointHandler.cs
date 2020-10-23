@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Erc.Households.Api.Queries.Invoices;
-
 using Erc.Households.EF.PostgreSQL;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
