@@ -67,9 +67,12 @@ namespace Erc.Households.EF.PostgreSQL
                     .HasForeignKey(k => k.CompanyId);
 
                 entity.HasData(
-                    new {
-                        Id = 1, Address = "10003, майдан Перемоги, буд. 10 м. Житомир", TaxpayerPhone = "0412402109", StateRegistryCode = "42095943", TaxpayerNumber = "420959406258", BookkeeperName = "А. В. Івчук", BookkeeperTaxNumber = "2778207983" }
-                    );
+                    new Company
+                    {
+                        Id = 1, Name = "ТОВАРИСТВО З ОБМЕЖЕНОЮ ВІДПОВІДАЛЬНІСТЮ «ЖИТОМИРСЬКА ОБЛАСНА ЕНЕРГОПОСТАЧАЛЬНА КОМПАНІЯ»", ShortName = "ТОВ «ЖОЕК»", DirectorName = "Гуцало Андрій Анатолійович",
+                        Address = "10003, майдан Перемоги, буд. 10 м. Житомир", Email = "kanc@ztoek.com.ua", Www = "https://www.ztoek.com.ua/",
+                        TaxpayerPhone = "0412402109", StateRegistryCode = "42095943", TaxpayerNumber = "420959406258", BookkeeperName = "А. В. Івчук", BookkeeperTaxNumber = "2778207983"
+                    });
             });
 
             modelBuilder.Entity<UsageCategory>(entity =>

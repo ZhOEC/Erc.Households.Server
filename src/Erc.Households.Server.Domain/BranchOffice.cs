@@ -14,6 +14,9 @@ namespace Erc.Households.Domain
         public Commodity[] AvailableCommodities { get; set; }
         public int CurrentPeriodId { get; private set; }
         public int? CompanyId { get; set; }
+        public string AccountNumber { get; set; }
+        public string ChiefName { get; set; }
+        public string BookkeeperName { get; set; }
         public Period CurrentPeriod { get; private set; }
         public Company Company { get; private set; }
 
