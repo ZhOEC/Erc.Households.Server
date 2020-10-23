@@ -16,8 +16,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Erc.Households.EF.PostgreSQL.Migrations
 {
     [DbContext(typeof(ErcContext))]
-    [Migration("20201022131458_add_company")]
-    partial class add_company
+    [Migration("20201023102236_Initial_Create")]
+    partial class Initial_Create
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
