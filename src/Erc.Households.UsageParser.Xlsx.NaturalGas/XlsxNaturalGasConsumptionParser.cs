@@ -12,7 +12,7 @@ namespace Erc.Households.UsageParser.Xlsx.NaturalGas
     {
         public IReadOnlyCollection<ParsedConsumption> Parse(Stream stream)
         {
-            var consumptionList = new List<ParsedConsumption>();            
+            var consumptionList = new List<ParsedConsumption>();
             using var package = new ExcelPackage(stream);
             var rowCount = package.Workbook.Worksheets.First().Dimension.End.Row;
             var cells = package.Workbook.Worksheets.First().Cells;

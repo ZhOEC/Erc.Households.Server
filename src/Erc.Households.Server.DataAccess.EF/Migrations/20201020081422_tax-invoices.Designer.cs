@@ -9,15 +9,17 @@ using Erc.Households.EF.PostgreSQL;
 using Erc.Households.ModelLogs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Erc.Households.EF.PostgreSQL.Migrations
 {
     [DbContext(typeof(ErcContext))]
-    partial class ErcContextModelSnapshot : ModelSnapshot
+    [Migration("20201020081422_tax-invoices")]
+    partial class taxinvoices
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -947,10 +949,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         .HasColumnName("available_commodities")
                         .HasColumnType("commodity[]");
 
-                    b.Property<int?>("CompanyId")
-                        .HasColumnName("company_id")
-                        .HasColumnType("integer");
-
                     b.Property<int>("CurrentPeriodId")
                         .HasColumnName("current_period_id")
                         .HasColumnType("integer");
@@ -974,9 +972,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     b.HasKey("Id")
                         .HasName("pk_branch_offices");
 
-                    b.HasIndex("CompanyId")
-                        .HasName("ix_branch_offices_company_id");
-
                     b.HasIndex("CurrentPeriodId")
                         .HasName("ix_branch_offices_current_period_id");
 
@@ -988,7 +983,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 1,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 1 },
                             Name = "Андрушівський ЦОК",
@@ -999,7 +993,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 2,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 2 },
                             Name = "Баранiвський ЦОК",
@@ -1010,7 +1003,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 3,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 3 },
                             Name = "Бердичiвський ЦОК",
@@ -1021,7 +1013,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 4,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 4 },
                             Name = "Брусилівський ЦОК",
@@ -1032,7 +1023,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 5,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 5 },
                             Name = "Хорошівський ЦОК",
@@ -1043,7 +1033,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 6,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 6 },
                             Name = "Ємільчинський ЦОК",
@@ -1054,7 +1043,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 7,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 7 },
                             Name = "Житомирський ЦОК",
@@ -1065,7 +1053,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 8,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 7 },
                             Name = "Зарічанський ЦОК",
@@ -1076,7 +1063,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 9,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 8, 10 },
                             Name = "Коростенський ЦОК",
@@ -1087,7 +1073,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 10,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 9 },
                             Name = "Коростишiвський ЦОК",
@@ -1098,7 +1083,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 11,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 11 },
                             Name = "Любарський ЦОК",
@@ -1109,7 +1093,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 12,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 12 },
                             Name = "Малинський ЦОК",
@@ -1120,7 +1103,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 13,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 13 },
                             Name = "Народицький ЦОК",
@@ -1131,7 +1113,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 14,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 14 },
                             Name = "Новоград-Волинський ЦОК",
@@ -1142,7 +1123,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 15,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 15 },
                             Name = "Овруцький ЦОК",
@@ -1153,7 +1133,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 16,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 16 },
                             Name = "Олевський ЦОК",
@@ -1164,7 +1143,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 17,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 17, 20 },
                             Name = "Попільнянський ЦОК",
@@ -1175,7 +1153,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 18,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 18 },
                             Name = "Радомишльський ЦОК",
@@ -1186,7 +1163,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 19,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 19 },
                             Name = "Романівський ЦОК",
@@ -1197,7 +1173,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 20,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 21 },
                             Name = "Пулинський ЦОК",
@@ -1208,7 +1183,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 21,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 22 },
                             Name = "Черняхівський ЦОК",
@@ -1219,7 +1193,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 22,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 23 },
                             Name = "Чуднівський ЦОК",
@@ -1234,56 +1207,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             DistrictIds = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23 },
                             Name = "Центральний офіс",
                             StringId = "co"
-                        });
-                });
-
-            modelBuilder.Entity("Erc.Households.Domain.Company", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("id")
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<string>("Address")
-                        .HasColumnName("address")
-                        .HasColumnType("text");
-
-                    b.Property<string>("BookkeeperName")
-                        .HasColumnName("bookkeeper_name")
-                        .HasColumnType("text");
-
-                    b.Property<string>("BookkeeperTaxNumber")
-                        .HasColumnName("bookkeeper_tax_number")
-                        .HasColumnType("text");
-
-                    b.Property<string>("StateRegistryCode")
-                        .HasColumnName("state_registry_code")
-                        .HasColumnType("text");
-
-                    b.Property<string>("TaxpayerNumber")
-                        .HasColumnName("taxpayer_number")
-                        .HasColumnType("text");
-
-                    b.Property<string>("TaxpayerPhone")
-                        .HasColumnName("taxpayer_phone")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id")
-                        .HasName("pk_company");
-
-                    b.ToTable("company");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Address = "10003, майдан Перемоги, буд. 10 м. Житомир",
-                            BookkeeperName = "А. В. Івчук",
-                            BookkeeperTaxNumber = "2778207983",
-                            StateRegistryCode = "42095943",
-                            TaxpayerNumber = "420959406258",
-                            TaxpayerPhone = "0412402109"
                         });
                 });
 
@@ -1395,39 +1318,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             HasLimit = true,
                             Name = "Учасник бойових дій та членів родин загиблих в АТО (ООС)"
                         });
-                });
-
-            modelBuilder.Entity("Erc.Households.Domain.Payments.KFKPayment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnName("id")
-                        .HasColumnType("integer")
-                        .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
-
-                    b.Property<DateTime>("EnterDate")
-                        .HasColumnName("enter_date")
-                        .HasColumnType("timestamp without time zone");
-
-                    b.Property<string>("OperatorName")
-                        .HasColumnName("operator_name")
-                        .HasColumnType("text");
-
-                    b.Property<int>("PeriodId")
-                        .HasColumnName("period_id")
-                        .HasColumnType("integer");
-
-                    b.Property<decimal>("Sum")
-                        .HasColumnName("sum")
-                        .HasColumnType("numeric");
-
-                    b.HasKey("Id")
-                        .HasName("pk_kfk_payments");
-
-                    b.HasIndex("PeriodId")
-                        .HasName("ix_kfk_payments_period_id");
-
-                    b.ToTable("kfk_payments");
                 });
 
             modelBuilder.Entity("Erc.Households.Domain.Payments.Payment", b =>
@@ -1729,29 +1619,33 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         .HasColumnName("creation_date")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<decimal>("EnergyAmount")
+                    b.Property<int>("EnergyAmount")
                         .HasColumnName("energy_amount")
-                        .HasColumnType("numeric");
+                        .HasColumnType("integer");
 
                     b.Property<decimal>("FullSum")
                         .HasColumnName("full_sum")
-                        .HasColumnType("decimal(24,6)");
+                        .HasColumnType("numeric");
 
-                    b.Property<DateTime>("LiabilityDate")
-                        .HasColumnName("liability_date")
+                    b.Property<DateTime>("LliabilityDate")
+                        .HasColumnName("lliability_date")
                         .HasColumnType("timestamp without time zone");
 
-                    b.Property<decimal>("LiabilitySum")
-                        .HasColumnName("liability_sum")
-                        .HasColumnType("decimal(19,2)");
+                    b.Property<decimal>("LliabilitySum")
+                        .HasColumnName("lliability_sum")
+                        .HasColumnType("numeric");
+
+                    b.Property<string>("OperatorName")
+                        .HasColumnName("operator_name")
+                        .HasColumnType("text");
 
                     b.Property<decimal>("TariffValue")
                         .HasColumnName("tariff_value")
-                        .HasColumnType("decimal(9,8)");
+                        .HasColumnType("numeric");
 
                     b.Property<decimal>("TaxSum")
                         .HasColumnName("tax_sum")
-                        .HasColumnType("decimal(19,6)");
+                        .HasColumnType("numeric");
 
                     b.Property<int>("Type")
                         .HasColumnName("type")
@@ -2068,25 +1962,10 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
 
             modelBuilder.Entity("Erc.Households.Domain.BranchOffice", b =>
                 {
-                    b.HasOne("Erc.Households.Domain.Company", "Company")
-                        .WithMany("BranchOffice")
-                        .HasForeignKey("CompanyId")
-                        .HasConstraintName("fk_branch_offices_company_company_id");
-
                     b.HasOne("Erc.Households.Domain.Billing.Period", "CurrentPeriod")
                         .WithMany()
                         .HasForeignKey("CurrentPeriodId")
                         .HasConstraintName("fk_branch_offices_periods_current_period_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Erc.Households.Domain.Payments.KFKPayment", b =>
-                {
-                    b.HasOne("Erc.Households.Domain.Billing.Period", "Period")
-                        .WithMany()
-                        .HasForeignKey("PeriodId")
-                        .HasConstraintName("fk_kfk_payments_periods_period_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
