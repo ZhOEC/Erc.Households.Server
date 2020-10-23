@@ -16,8 +16,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Erc.Households.EF.PostgreSQL.Migrations
 {
     [DbContext(typeof(ErcContext))]
-    [Migration("20201023102236_Initial_Create")]
-    partial class Initial_Create
+    [Migration("20201023113051_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -939,6 +939,10 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
+                    b.Property<string>("AccountNumber")
+                        .HasColumnName("account_number")
+                        .HasColumnType("text");
+
                     b.Property<string>("Address")
                         .IsRequired()
                         .HasColumnName("address")
@@ -948,6 +952,14 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     b.Property<Commodity[]>("AvailableCommodities")
                         .HasColumnName("available_commodities")
                         .HasColumnType("commodity[]");
+
+                    b.Property<string>("BookkeeperName")
+                        .HasColumnName("bookkeeper_name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ChiefName")
+                        .HasColumnName("chief_name")
+                        .HasColumnType("text");
 
                     b.Property<int?>("CompanyId")
                         .HasColumnName("company_id")
@@ -1259,6 +1271,22 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         .HasColumnName("bookkeeper_tax_number")
                         .HasColumnType("text");
 
+                    b.Property<string>("DirectorName")
+                        .HasColumnName("director_name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .HasColumnName("email")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .HasColumnName("name")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ShortName")
+                        .HasColumnName("short_name")
+                        .HasColumnType("text");
+
                     b.Property<string>("StateRegistryCode")
                         .HasColumnName("state_registry_code")
                         .HasColumnType("text");
@@ -1269,6 +1297,10 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
 
                     b.Property<string>("TaxpayerPhone")
                         .HasColumnName("taxpayer_phone")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Www")
+                        .HasColumnName("www")
                         .HasColumnType("text");
 
                     b.HasKey("Id")
@@ -1283,9 +1315,14 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Address = "10003, майдан Перемоги, буд. 10 м. Житомир",
                             BookkeeperName = "А. В. Івчук",
                             BookkeeperTaxNumber = "2778207983",
+                            DirectorName = "Гуцало Андрій Анатолійович",
+                            Email = "kanc@ztoek.com.ua",
+                            Name = "ТОВАРИСТВО З ОБМЕЖЕНОЮ ВІДПОВІДАЛЬНІСТЮ «ЖИТОМИРСЬКА ОБЛАСНА ЕНЕРГОПОСТАЧАЛЬНА КОМПАНІЯ»",
+                            ShortName = "ТОВ «ЖОЕК»",
                             StateRegistryCode = "42095943",
                             TaxpayerNumber = "420959406258",
-                            TaxpayerPhone = "0412402109"
+                            TaxpayerPhone = "0412402109",
+                            Www = "https://www.ztoek.com.ua/"
                         });
                 });
 

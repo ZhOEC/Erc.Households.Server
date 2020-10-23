@@ -11,7 +11,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Erc.Households.EF.PostgreSQL.Migrations
 {
-    public partial class Initial_Create : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -52,7 +52,12 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 {
                     id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    name = table.Column<string>(nullable: true),
+                    short_name = table.Column<string>(nullable: true),
+                    director_name = table.Column<string>(nullable: true),
                     address = table.Column<string>(nullable: true),
+                    email = table.Column<string>(nullable: true),
+                    www = table.Column<string>(nullable: true),
                     taxpayer_phone = table.Column<string>(nullable: true),
                     state_registry_code = table.Column<string>(nullable: true),
                     taxpayer_number = table.Column<string>(nullable: true),
@@ -201,7 +206,10 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     address = table.Column<string>(type: "citext", maxLength: 500, nullable: false),
                     available_commodities = table.Column<Commodity[]>(nullable: true),
                     current_period_id = table.Column<int>(nullable: false),
-                    company_id = table.Column<int>(nullable: true)
+                    company_id = table.Column<int>(nullable: true),
+                    account_number = table.Column<string>(nullable: true),
+                    chief_name = table.Column<string>(nullable: true),
+                    bookkeeper_name = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -698,8 +706,8 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
 
             migrationBuilder.InsertData(
                 table: "company",
-                columns: new[] { "id", "address", "bookkeeper_name", "bookkeeper_tax_number", "state_registry_code", "taxpayer_number", "taxpayer_phone" },
-                values: new object[] { 1, "10003, майдан Перемоги, буд. 10 м. Житомир", "А. В. Івчук", "2778207983", "42095943", "420959406258", "0412402109" });
+                columns: new[] { "id", "address", "bookkeeper_name", "bookkeeper_tax_number", "director_name", "email", "name", "short_name", "state_registry_code", "taxpayer_number", "taxpayer_phone", "www" },
+                values: new object[] { 1, "10003, майдан Перемоги, буд. 10 м. Житомир", "А. В. Івчук", "2778207983", "Гуцало Андрій Анатолійович", "kanc@ztoek.com.ua", "ТОВАРИСТВО З ОБМЕЖЕНОЮ ВІДПОВІДАЛЬНІСТЮ «ЖИТОМИРСЬКА ОБЛАСНА ЕНЕРГОПОСТАЧАЛЬНА КОМПАНІЯ»", "ТОВ «ЖОЕК»", "42095943", "420959406258", "0412402109", "https://www.ztoek.com.ua/" });
 
             migrationBuilder.InsertData(
                 table: "distribution_system_operators",
@@ -761,12 +769,12 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 values: new object[,]
                 {
                     {
-                    3, Commodity.ElectricPower, "Багатоквартирні негазифіковані будинки",
-                    JsonSerializer.Serialize(new[]
-                        {
-                        new TariffRate { Id = 1, StartDate = new DateTime(2019, 1, 1), Value = 0.90m, ConsumptionLimit = 100, HeatingConsumptionLimit = 3000, HeatingStartDay = new DateTime(2019, 10, 01), HeatingEndDay = new DateTime(2020, 04, 30)},
-                        new TariffRate { Id = 2, StartDate = new DateTime(2019, 1, 1), Value = 1.68m, }
-                        })
+                        3, Commodity.ElectricPower, "Багатоквартирні негазифіковані будинки",
+                        JsonSerializer.Serialize(new[]
+                         {
+                            new TariffRate { Id = 1, StartDate = new DateTime(2019, 1, 1), Value = 0.90m, ConsumptionLimit = 100, HeatingConsumptionLimit = 3000, HeatingStartDay = new DateTime(2019, 10, 01), HeatingEndDay = new DateTime(2020, 04, 30)},
+                            new TariffRate { Id = 2, StartDate = new DateTime(2019, 1, 1), Value = 1.68m, }
+                         })
                     },
                     {
                         2, Commodity.ElectricPower, "Будинки з електроопалювальними установками",
@@ -779,6 +787,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     { 1, Commodity.ElectricPower, "Населення (загальний тариф)",  JsonSerializer.Serialize(new[] { new TariffRate { Id = 1, StartDate = new DateTime(2019, 1, 1), Value = 0.9m, ConsumptionLimit = 100 }, new TariffRate { StartDate = new DateTime(2019, 1, 1), Value = 1.68m } })},
                     { 101, Commodity.NaturalGas, "Природний газ для населення", null },
                     { 4, Commodity.ElectricPower, "Багатодітні, прийомні сім'ї та дитячі будинки сімейного типу", JsonSerializer.Serialize(new[] { new TariffRate { Id = 1, StartDate = new DateTime(2019, 1, 1), Value = 1.68m } }) }
+
                 });
 
             migrationBuilder.InsertData(
@@ -807,32 +816,32 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
 
             migrationBuilder.InsertData(
                 table: "branch_offices",
-                columns: new[] { "id", "address", "available_commodities", "company_id", "current_period_id", "district_ids", "name", "string_id" },
+                columns: new[] { "id", "account_number", "address", "available_commodities", "bookkeeper_name", "chief_name", "company_id", "current_period_id", "district_ids", "name", "string_id" },
                 values: new object[,]
                 {
-                    { 22, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 1, 201901, new[] { 23 }, "Чуднівський ЦОК", "cd" },
-                    { 1, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 1, 201901, new[] { 1 }, "Андрушівський ЦОК", "an" },
-                    { 2, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 1, 201901, new[] { 2 }, "Баранiвський ЦОК", "bn" },
-                    { 3, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 1, 201901, new[] { 3 }, "Бердичiвський ЦОК", "bd" },
-                    { 4, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 1, 201901, new[] { 4 }, "Брусилівський ЦОК", "br" },
-                    { 5, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 1, 201901, new[] { 5 }, "Хорошівський ЦОК", "hr" },
-                    { 6, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 1, 201901, new[] { 6 }, "Ємільчинський ЦОК", "em" },
-                    { 7, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 1, 201901, new[] { 7 }, "Житомирський ЦОК", "zt" },
-                    { 8, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 1, 201901, new[] { 7 }, "Зарічанський ЦОК", "zr" },
-                    { 9, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 1, 201901, new[] { 8, 10 }, "Коростенський ЦОК", "kr" },
-                    { 101, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.NaturalGas }, null, 201901, new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23 }, "Центральний офіс", "co" },
-                    { 10, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 1, 201901, new[] { 9 }, "Коростишiвський ЦОК", "kt" },
-                    { 12, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 1, 201901, new[] { 12 }, "Малинський ЦОК", "ml" },
-                    { 13, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 1, 201901, new[] { 13 }, "Народицький ЦОК", "nr" },
-                    { 14, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 1, 201901, new[] { 14 }, "Новоград-Волинський ЦОК", "nv" },
-                    { 15, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 1, 201901, new[] { 15 }, "Овруцький ЦОК", "ov" },
-                    { 16, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 1, 201901, new[] { 16 }, "Олевський ЦОК", "ol" },
-                    { 17, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 1, 201901, new[] { 17, 20 }, "Попільнянський ЦОК", "pp" },
-                    { 18, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 1, 201901, new[] { 18 }, "Радомишльський ЦОК", "rd" },
-                    { 19, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 1, 201901, new[] { 19 }, "Романівський ЦОК", "rm" },
-                    { 20, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 1, 201901, new[] { 21 }, "Пулинський ЦОК", "pl" },
-                    { 11, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 1, 201901, new[] { 11 }, "Любарський ЦОК", "lb" },
-                    { 21, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, 1, 201901, new[] { 22 }, "Черняхівський ЦОК", "ch" }
+                    { 22, null, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, null, null, 1, 201901, new[] { 23 }, "Чуднівський ЦОК", "cd" },
+                    { 1, null, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, null, null, 1, 201901, new[] { 1 }, "Андрушівський ЦОК", "an" },
+                    { 2, null, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, null, null, 1, 201901, new[] { 2 }, "Баранiвський ЦОК", "bn" },
+                    { 3, null, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, null, null, 1, 201901, new[] { 3 }, "Бердичiвський ЦОК", "bd" },
+                    { 4, null, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, null, null, 1, 201901, new[] { 4 }, "Брусилівський ЦОК", "br" },
+                    { 5, null, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, null, null, 1, 201901, new[] { 5 }, "Хорошівський ЦОК", "hr" },
+                    { 6, null, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, null, null, 1, 201901, new[] { 6 }, "Ємільчинський ЦОК", "em" },
+                    { 7, null, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, null, null, 1, 201901, new[] { 7 }, "Житомирський ЦОК", "zt" },
+                    { 8, null, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, null, null, 1, 201901, new[] { 7 }, "Зарічанський ЦОК", "zr" },
+                    { 9, null, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, null, null, 1, 201901, new[] { 8, 10 }, "Коростенський ЦОК", "kr" },
+                    { 101, null, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.NaturalGas }, null, null, null, 201901, new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23 }, "Центральний офіс", "co" },
+                    { 10, null, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, null, null, 1, 201901, new[] { 9 }, "Коростишiвський ЦОК", "kt" },
+                    { 12, null, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, null, null, 1, 201901, new[] { 12 }, "Малинський ЦОК", "ml" },
+                    { 13, null, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, null, null, 1, 201901, new[] { 13 }, "Народицький ЦОК", "nr" },
+                    { 14, null, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, null, null, 1, 201901, new[] { 14 }, "Новоград-Волинський ЦОК", "nv" },
+                    { 15, null, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, null, null, 1, 201901, new[] { 15 }, "Овруцький ЦОК", "ov" },
+                    { 16, null, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, null, null, 1, 201901, new[] { 16 }, "Олевський ЦОК", "ol" },
+                    { 17, null, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, null, null, 1, 201901, new[] { 17, 20 }, "Попільнянський ЦОК", "pp" },
+                    { 18, null, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, null, null, 1, 201901, new[] { 18 }, "Радомишльський ЦОК", "rd" },
+                    { 19, null, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, null, null, 1, 201901, new[] { 19 }, "Романівський ЦОК", "rm" },
+                    { 20, null, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, null, null, 1, 201901, new[] { 21 }, "Пулинський ЦОК", "pl" },
+                    { 11, null, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, null, null, 1, 201901, new[] { 11 }, "Любарський ЦОК", "lb" },
+                    { 21, null, "10003, м. Житомир, майдан Перемоги, 10", new[] { Commodity.ElectricPower }, null, null, 1, 201901, new[] { 22 }, "Черняхівський ЦОК", "ch" }
                 });
 
             migrationBuilder.InsertData(
