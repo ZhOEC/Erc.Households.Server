@@ -11,29 +11,7 @@ namespace Erc.Households.WebApi
     {
         public static void Main(string[] args)
         {
-            var host = CreateHostBuilder(args).Build();
-            using (var serviceScope = host.Services.CreateScope())
-            {
-                var services = serviceScope.ServiceProvider;
-
-                try
-                {
-                    var busControl = services.GetRequiredService<IBusControl>();
-                    var hostApplicationLifetime = services.GetRequiredService<IHostApplicationLifetime>();
-                    
-                    hostApplicationLifetime.ApplicationStarted.Register(() =>
-                    {
-                        busControl.Start();
-                        busControl.CreateClientFactory();
-                    });
-                }
-                catch (Exception ex)
-                {
-                    var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred.");
-                }
-            }
-            host.Run();
+            CreateHostBuilder(args).Build().Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
