@@ -8,11 +8,12 @@ ARG HTTP_PROXY=http://10.67.2.49:50514
 ARG HTTPS_PROXY=http://10.67.2.49:50514
 
 COPY . .
-RUN dotnet restore "Erc.Households.Api/Erc.Households.Api.csproj"
+WORKDIR "Erc.Households.Api"
+RUN dotnet restore 
 
 FROM build AS publish
-WORKDIR "Erc.Households.Api"
-RUN dotnet publish "Erc.Households.Api.csproj" -c Release -o /app/publish
+
+RUN dotnet publish -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
