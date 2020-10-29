@@ -34,7 +34,7 @@ namespace Erc.Households.DsoBridge
                     services.AddMassTransit(s =>
                     {
                         var rabbitMq = hostContext.Configuration.GetSection("ZtoeRabbitMQ");
-                        s.AddConsumer<EventHandlers.ConsumptionCalculatedHandler>(typeof(EventHandlers.ConsumptionCalculatedHandlerDefinition)).Endpoint(cfg => cfg.Name = "consumption-calculated-ztoec");
+                        //s.AddConsumer<EventHandlers.ConsumptionCalculatedHandler>(typeof(EventHandlers.ConsumptionCalculatedHandlerDefinition)).Endpoint(cfg => cfg.Name = "consumption-calculated-ztoec");
                         s.UsingRabbitMq((ctx, cfg) =>
                         {
                             
@@ -43,7 +43,19 @@ namespace Erc.Households.DsoBridge
                                 c.Username(rabbitMq["Username"]);
                                 c.Password(rabbitMq["Password"]);
                             });
-                            //cfg.ConfigureEndpoints(ctx);
+                            cfg.ReceiveEndpoint("consumption-calculated-ztoec", e =>
+                            {
+                                e.PrefetchCount = 1000;
+
+                                e.Batch<Ztoe.Shared.DsoEvents.Households.ConsumptionCalculated>(b =>
+                                {
+                                    b.MessageLimit = 100;
+                                    b.ConcurrencyLimit = 10;
+                                    
+                                    var ercBus = services.BuildServiceProvider().GetRequiredService<IErcBus>();
+                                    b.Consumer(()=>new EventHandlers.ConsumptionCalculatedHandler(ercBus));
+                                });
+                            });
                         });
                     });
 

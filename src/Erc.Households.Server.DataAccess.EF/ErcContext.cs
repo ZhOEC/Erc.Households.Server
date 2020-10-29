@@ -465,7 +465,7 @@ namespace Erc.Households.EF.PostgreSQL
 
                 entity.Property(p => p.Id).HasIdentityOptions(10000000);
 
-                entity.HasIndex(p => p.Name).IsUnique();
+                entity.HasIndex(p => new { p.Name, p.BranchOfficeId }).IsUnique();
                 entity.HasIndex(p => p.Eic).IsUnique();
                 entity.HasCheckConstraint("CK_accounting_point_eic", "length(eic) = 16");
             });
