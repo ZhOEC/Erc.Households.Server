@@ -6,11 +6,13 @@ using Microsoft.EntityFrameworkCore;
 using Erc.Households.EF.PostgreSQL;
 using Erc.Households.Domain.Shared;
 using Erc.Households.Domain.Shared.Tariffs;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Erc.Households.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Policy = "User")]
     public class TariffsController : ControllerBase
     {
         private readonly ErcContext _ercContext;
@@ -51,10 +53,6 @@ namespace Erc.Households.Api.Controllers
             }
             return NotFound();
         }
-
-        [HttpGet("{id}/rates")]
-        public async Task<IActionResult> GetRates(int id)
-            => Ok(await _ercContext.Tariffs.Where(t => t.Id == id).Select(t => t.Rates).FirstOrDefaultAsync());
 
         [HttpPost("{id}/rates")]
         public async Task<IActionResult> AddRate(int id, TariffRate tariffRate)

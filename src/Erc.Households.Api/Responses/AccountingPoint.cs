@@ -1,4 +1,5 @@
 ﻿using Erc.Households.Domain.Addresses;
+using Erc.Households.Domain.Shared;
 using System;
 
 namespace Erc.Households.Api.Responses
@@ -29,6 +30,7 @@ namespace Erc.Households.Api.Responses
         public bool CurrentContractSendPaperBill { get; set; }
         public decimal Debt { get; set; }
         public AccountingPointExemption Exemption { get; set; }
+        public Commodity Commodity { get; private set; }
     }
 
     public class AccountingPointExemption

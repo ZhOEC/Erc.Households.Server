@@ -1,4 +1,5 @@
 using AutoMapper;
+using Erc.Households.Api.Authorization;
 using Erc.Households.Api.UserNotifications;
 using Erc.Households.BranchOfficeManagment.Core;
 using Erc.Households.DataAccess.Core;
@@ -67,7 +68,7 @@ namespace Erc.Households.WebApi
             services.AddControllers(op => op.InputFormatters.Insert(0, GetJsonPatchInputFormatter()));
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+                .AddJwtBearer(options =>
                 {
                     Configuration.Bind("JwtSettings", options);
                     options.TokenValidationParameters.NameClaimType = "username";

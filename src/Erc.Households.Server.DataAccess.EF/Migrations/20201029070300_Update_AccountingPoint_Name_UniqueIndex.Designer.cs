@@ -9,15 +9,17 @@ using Erc.Households.EF.PostgreSQL;
 using Erc.Households.ModelLogs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Erc.Households.EF.PostgreSQL.Migrations
 {
     [DbContext(typeof(ErcContext))]
-    partial class ErcContextModelSnapshot : ModelSnapshot
+    [Migration("20201029070300_Update_AccountingPoint_Name_UniqueIndex")]
+    partial class Update_AccountingPoint_Name_UniqueIndex
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -937,6 +939,10 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
+                    b.Property<string>("AccountNumber")
+                        .HasColumnName("account_number")
+                        .HasColumnType("text");
+
                     b.Property<string>("Address")
                         .IsRequired()
                         .HasColumnName("address")
@@ -947,10 +953,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         .HasColumnName("available_commodities")
                         .HasColumnType("commodity[]");
 
-                    b.Property<string>("BankFullName")
-                        .HasColumnName("bank_full_name")
-                        .HasColumnType("text");
-
                     b.Property<string>("BookkeeperName")
                         .HasColumnName("bookkeeper_name")
                         .HasColumnType("text");
@@ -959,7 +961,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         .HasColumnName("chief_name")
                         .HasColumnType("text");
 
-                    b.Property<int>("CompanyId")
+                    b.Property<int?>("CompanyId")
                         .HasColumnName("company_id")
                         .HasColumnType("integer");
 
@@ -970,10 +972,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     b.Property<int[]>("DistrictIds")
                         .HasColumnName("district_ids")
                         .HasColumnType("integer[]");
-
-                    b.Property<string>("Iban")
-                        .HasColumnName("iban")
-                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -1004,11 +1002,9 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 1,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            BankFullName = "філія Житомирського ОУ АТ «Ощадбанк»",
                             CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 1 },
-                            Iban = "UA703116470000026001301392990",
                             Name = "Андрушівський ЦОК",
                             StringId = "an"
                         },
@@ -1017,11 +1013,9 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 2,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            BankFullName = "філія Житомирського ОУ АТ «Ощадбанк»",
                             CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 2 },
-                            Iban = "UA703116470000026001301392990",
                             Name = "Баранiвський ЦОК",
                             StringId = "bn"
                         },
@@ -1030,11 +1024,9 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 3,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            BankFullName = "філія Житомирського ОУ АТ «Ощадбанк»",
                             CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 3 },
-                            Iban = "UA703116470000026001301392990",
                             Name = "Бердичiвський ЦОК",
                             StringId = "bd"
                         },
@@ -1043,11 +1035,9 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 4,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            BankFullName = "філія Житомирського ОУ АТ «Ощадбанк»",
                             CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 4 },
-                            Iban = "UA703116470000026001301392990",
                             Name = "Брусилівський ЦОК",
                             StringId = "br"
                         },
@@ -1056,11 +1046,9 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 5,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            BankFullName = "філія Житомирського ОУ АТ «Ощадбанк»",
                             CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 5 },
-                            Iban = "UA703116470000026001301392990",
                             Name = "Хорошівський ЦОК",
                             StringId = "hr"
                         },
@@ -1069,11 +1057,9 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 6,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            BankFullName = "філія Житомирського ОУ АТ «Ощадбанк»",
                             CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 6 },
-                            Iban = "UA703116470000026001301392990",
                             Name = "Ємільчинський ЦОК",
                             StringId = "em"
                         },
@@ -1082,11 +1068,9 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 7,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            BankFullName = "філія Житомирського ОУ АТ «Ощадбанк»",
                             CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 7 },
-                            Iban = "UA703116470000026001301392990",
                             Name = "Житомирський ЦОК",
                             StringId = "zt"
                         },
@@ -1095,11 +1079,9 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 8,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            BankFullName = "філія Житомирського ОУ АТ «Ощадбанк»",
                             CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 7 },
-                            Iban = "UA703116470000026001301392990",
                             Name = "Зарічанський ЦОК",
                             StringId = "zr"
                         },
@@ -1108,11 +1090,9 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 9,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            BankFullName = "філія Житомирського ОУ АТ «Ощадбанк»",
                             CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 8, 10 },
-                            Iban = "UA703116470000026001301392990",
                             Name = "Коростенський ЦОК",
                             StringId = "kr"
                         },
@@ -1121,11 +1101,9 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 10,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            BankFullName = "філія Житомирського ОУ АТ «Ощадбанк»",
                             CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 9 },
-                            Iban = "UA703116470000026001301392990",
                             Name = "Коростишiвський ЦОК",
                             StringId = "kt"
                         },
@@ -1134,11 +1112,9 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 11,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            BankFullName = "філія Житомирського ОУ АТ «Ощадбанк»",
                             CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 11 },
-                            Iban = "UA703116470000026001301392990",
                             Name = "Любарський ЦОК",
                             StringId = "lb"
                         },
@@ -1147,11 +1123,9 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 12,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            BankFullName = "філія Житомирського ОУ АТ «Ощадбанк»",
                             CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 12 },
-                            Iban = "UA703116470000026001301392990",
                             Name = "Малинський ЦОК",
                             StringId = "ml"
                         },
@@ -1160,11 +1134,9 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 13,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            BankFullName = "філія Житомирського ОУ АТ «Ощадбанк»",
                             CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 13 },
-                            Iban = "UA703116470000026001301392990",
                             Name = "Народицький ЦОК",
                             StringId = "nr"
                         },
@@ -1173,11 +1145,9 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 14,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            BankFullName = "філія Житомирського ОУ АТ «Ощадбанк»",
                             CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 14 },
-                            Iban = "UA703116470000026001301392990",
                             Name = "Новоград-Волинський ЦОК",
                             StringId = "nv"
                         },
@@ -1186,11 +1156,9 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 15,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            BankFullName = "філія Житомирського ОУ АТ «Ощадбанк»",
                             CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 15 },
-                            Iban = "UA703116470000026001301392990",
                             Name = "Овруцький ЦОК",
                             StringId = "ov"
                         },
@@ -1199,11 +1167,9 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 16,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            BankFullName = "філія Житомирського ОУ АТ «Ощадбанк»",
                             CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 16 },
-                            Iban = "UA703116470000026001301392990",
                             Name = "Олевський ЦОК",
                             StringId = "ol"
                         },
@@ -1212,11 +1178,9 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 17,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            BankFullName = "філія Житомирського ОУ АТ «Ощадбанк»",
                             CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 17, 20 },
-                            Iban = "UA703116470000026001301392990",
                             Name = "Попільнянський ЦОК",
                             StringId = "pp"
                         },
@@ -1225,11 +1189,9 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 18,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            BankFullName = "філія Житомирського ОУ АТ «Ощадбанк»",
                             CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 18 },
-                            Iban = "UA703116470000026001301392990",
                             Name = "Радомишльський ЦОК",
                             StringId = "rd"
                         },
@@ -1238,11 +1200,9 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 19,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            BankFullName = "філія Житомирського ОУ АТ «Ощадбанк»",
                             CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 19 },
-                            Iban = "UA703116470000026001301392990",
                             Name = "Романівський ЦОК",
                             StringId = "rm"
                         },
@@ -1251,11 +1211,9 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 20,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            BankFullName = "філія Житомирського ОУ АТ «Ощадбанк»",
                             CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 21 },
-                            Iban = "UA703116470000026001301392990",
                             Name = "Пулинський ЦОК",
                             StringId = "pl"
                         },
@@ -1264,11 +1222,9 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 21,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            BankFullName = "філія Житомирського ОУ АТ «Ощадбанк»",
                             CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 22 },
-                            Iban = "UA703116470000026001301392990",
                             Name = "Черняхівський ЦОК",
                             StringId = "ch"
                         },
@@ -1277,11 +1233,9 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 22,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.ElectricPower },
-                            BankFullName = "філія Житомирського ОУ АТ «Ощадбанк»",
                             CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 23 },
-                            Iban = "UA703116470000026001301392990",
                             Name = "Чуднівський ЦОК",
                             StringId = "cd"
                         },
@@ -1290,11 +1244,9 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                             Id = 101,
                             Address = "10003, м. Житомир, майдан Перемоги, 10",
                             AvailableCommodities = new[] { Commodity.NaturalGas },
-                            BankFullName = "філія Житомирського ОУ АТ «Ощадбанк»",
                             CompanyId = 1,
                             CurrentPeriodId = 201901,
                             DistrictIds = new[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23 },
-                            Iban = "UA703116470000026001301392990",
                             Name = "Центральний офіс",
                             StringId = "co"
                         });
@@ -2159,9 +2111,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     b.HasOne("Erc.Households.Domain.Company", "Company")
                         .WithMany("BranchOffice")
                         .HasForeignKey("CompanyId")
-                        .HasConstraintName("fk_branch_offices_company_company_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasConstraintName("fk_branch_offices_company_company_id");
 
                     b.HasOne("Erc.Households.Domain.Billing.Period", "CurrentPeriod")
                         .WithMany()

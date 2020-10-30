@@ -76,12 +76,8 @@ namespace Erc.Households.Api.Controllers
         }
 
         [HttpGet("{id}", Name = "GetAccountingPoint")]
-        public async Task<IActionResult> Get(int id)
-        {
-            var ap = await _mediator.Send(new GetAccountingPointById(id));
-
-            return Ok(ap);
-        }
+        public async Task<IActionResult> Get(int id) =>
+            Ok(await _mediator.Send(new GetAccountingPointById(id)));
         
         [HttpPost("{id}/open-exemption")]
         public async Task<IActionResult> OpenExemption(int id, ExemptionOpening exemptionOpening)
