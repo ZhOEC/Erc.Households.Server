@@ -1,9 +1,9 @@
 using Erc.Households.DsoBridge.Bus;
-using GreenPipes;
 using MassTransit;
 using MassTransit.MultiBus;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
 
 namespace Erc.Households.DsoBridge
 {
@@ -34,10 +34,10 @@ namespace Erc.Households.DsoBridge
                     services.AddMassTransit(s =>
                     {
                         var rabbitMq = hostContext.Configuration.GetSection("ZtoeRabbitMQ");
-                        //s.AddConsumer<EventHandlers.ConsumptionCalculatedHandler>(typeof(EventHandlers.ConsumptionCalculatedHandlerDefinition)).Endpoint(cfg => cfg.Name = "consumption-calculated-ztoec");
+
                         s.UsingRabbitMq((ctx, cfg) =>
                         {
-                            
+
                             cfg.Host(rabbitMq["ConnectionString"], c =>
                             {
                                 c.Username(rabbitMq["Username"]);
@@ -47,13 +47,13 @@ namespace Erc.Households.DsoBridge
                             {
                                 e.PrefetchCount = 1000;
 
-                                e.Batch<Ztoe.Shared.DsoEvents.Households.ConsumptionCalculated>(b =>
+                                e.Batch<Ztoe.Shared.DsoEvents.Households.ConsumptionCalculated>(async b =>
                                 {
                                     b.MessageLimit = 100;
                                     b.ConcurrencyLimit = 10;
-                                    
-                                    var ercBus = services.BuildServiceProvider().GetRequiredService<IErcBus>();
-                                    b.Consumer(()=>new EventHandlers.ConsumptionCalculatedHandler(ercBus));
+
+                                    var sendEndpoint = await services.BuildServiceProvider().GetRequiredService<IErcBus>().GetSendEndpoint(new Uri("exchange:Erc.Households.Commands:CalculateAccountingPoint"));
+                                    b.Consumer(() => new EventHandlers.ConsumptionCalculatedHandler(sendEndpoint));
                                 });
                             });
                         });
