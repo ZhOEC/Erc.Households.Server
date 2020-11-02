@@ -39,12 +39,12 @@ namespace Erc.Households.Calculation
                 .FirstOrDefaultAsync(a => a.Eic == context.Message.Eic);
             
             if (ac is null)
-                throw new ArgumentOutOfRangeException("Accountingpoint not found in the database!");
+                throw new ArgumentOutOfRangeException("Accounting point not found in the database!");
 
             ICalculateStrategy calculateStrategy = ac.Commodity == Commodity.NaturalGas ? _serviceProvider.GetRequiredService<GasCalculateStrategy>() : throw new NotImplementedException();
 
-            var fromDate = context.Message.FromDate == DateTime.MinValue ? ac.BranchOffice.CurrentPeriod.StartDate : context.Message.FromDate;
-            var toDate = context.Message.ToDate == DateTime.MinValue ? ac.BranchOffice.CurrentPeriod.EndDate.AddDays(1) : context.Message.ToDate;
+            var fromDate = context.Message.FromDate ?? ac.BranchOffice.CurrentPeriod.StartDate;
+            var toDate = context.Message.ToDate ?? ac.BranchOffice.CurrentPeriod.EndDate.AddDays(1);
             var tariff = ac.TariffsHistory.OrderByDescending(t => t.StartDate).FirstOrDefault(t => t.StartDate <= fromDate).Tariff;
 
             var usageT1 = new Usage
