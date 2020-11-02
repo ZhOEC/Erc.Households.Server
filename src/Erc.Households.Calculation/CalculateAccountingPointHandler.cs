@@ -31,11 +31,11 @@ namespace Erc.Households.Calculation
                 return;
 
             var ac = await _ercContext.AccountingPoints
-                .Include(ac => ac.BranchOffice)
+                .Include(ac => ac.BranchOffice.CurrentPeriod)
                 .Include(a => a.Exemptions)
                     .ThenInclude(e => e.Category)
                 .Include(a => a.TariffsHistory)
-                    .ThenInclude(t => t.Tariff.Rates)
+                    .ThenInclude(t => t.Tariff)
                 .FirstOrDefaultAsync(a => a.Eic == context.Message.Eic);
             
             if (ac is null)
@@ -43,7 +43,9 @@ namespace Erc.Households.Calculation
 
             ICalculateStrategy calculateStrategy = ac.Commodity == Commodity.NaturalGas ? _serviceProvider.GetRequiredService<GasCalculateStrategy>() : throw new NotImplementedException();
 
-            var tariff = ac.TariffsHistory.OrderByDescending(t => t.StartDate).FirstOrDefault(t => t.StartDate <= context.Message.FromDate).Tariff;
+            var fromDate = context.Message.FromDate == DateTime.MinValue ? ac.BranchOffice.CurrentPeriod.StartDate : context.Message.FromDate;
+            var toDate = context.Message.ToDate == DateTime.MinValue ? ac.BranchOffice.CurrentPeriod.EndDate.AddDays(1) : context.Message.ToDate;
+            var tariff = ac.TariffsHistory.OrderByDescending(t => t.StartDate).FirstOrDefault(t => t.StartDate <= fromDate).Tariff;
 
             var usageT1 = new Usage
             {
@@ -66,8 +68,7 @@ namespace Erc.Households.Calculation
                 Units = context.Message.UsageT3.Value,
             } : null;
 
-            var newInvoice = new Invoice(context.Message.Id, ac.BranchOffice.CurrentPeriodId, ac.Debt,
-                                        context.Message.FromDate, context.Message.ToDate,
+            var newInvoice = new Invoice(context.Message.Id, ac.BranchOffice.CurrentPeriodId, ac.Debt, fromDate, toDate, 
                                         context.Message.MeterNumber, tariff, (ZoneRecord)context.Message.ZoneRecord, usageT1, usageT2, usageT3);
             
             newInvoice.Calculate(calculateStrategy);

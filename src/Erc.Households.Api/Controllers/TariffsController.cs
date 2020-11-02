@@ -7,12 +7,13 @@ using Erc.Households.EF.PostgreSQL;
 using Erc.Households.Domain.Shared;
 using Erc.Households.Domain.Shared.Tariffs;
 using Microsoft.AspNetCore.Authorization;
+using Erc.Households.Api.Authorization;
 
 namespace Erc.Households.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(Policy = "User")]
+    [Authorize(Roles = ApplicationRoles.Operator)]
     public class TariffsController : ControllerBase
     {
         private readonly ErcContext _ercContext;

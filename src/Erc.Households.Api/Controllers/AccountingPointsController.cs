@@ -34,7 +34,7 @@ namespace Erc.Households.Api.Controllers
         public async Task<IActionResult> Search(string q)
         {
           var indices = string.Join(',', UserGroups.Select(c => c + "_accounting_points"));
-            indices = "_all"; 
+            //indices = "_all"; 
             var searchResponse = await _elasticClient.SearchAsync<SearchResult>(s => s
                 .Index(indices).Query(query => query
                     .MultiMatch(m => m
@@ -56,7 +56,7 @@ namespace Erc.Households.Api.Controllers
                     h.Source.Name,
                     Owner = $"{h.Source.PersonLastName} {h.Source.PersonFirstName} {h.Source.PersonPatronymic}"
                 });
-
+           
             return Ok(searchResults);
         }
 
@@ -76,7 +76,7 @@ namespace Erc.Households.Api.Controllers
         }
 
         [HttpGet("{id}", Name = "GetAccountingPoint")]
-        public async Task<IActionResult> Get(int id) =>
+        public async Task<IActionResult> Get(string id) =>
             Ok(await _mediator.Send(new GetAccountingPointById(id)));
         
         [HttpPost("{id}/open-exemption")]

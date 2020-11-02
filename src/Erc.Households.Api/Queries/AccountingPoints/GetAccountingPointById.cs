@@ -5,10 +5,12 @@ namespace Erc.Households.Api.Queries.AccountingPoints
     public class GetAccountingPointById : IRequest<Responses.AccountingPoint>
     {
         public int Id { get; private set; }
-        
-        public GetAccountingPointById(int id)
+        public string Eic { get; private set; }
+
+        public GetAccountingPointById(string id)
         {
-            Id = id;
+            if (int.TryParse(id, out int intId)) Id = intId;
+            else Eic = id;
         }
     }
 }
