@@ -26,6 +26,11 @@ namespace Erc.Households.PrintBills.Api.Services
             return await GetNaturalGasBillsInternalAsync(new SqlParams { PeriodId = periodId });
         }
 
+        public async Task<Stream> GetNaturalGasBill(int id)
+        {
+            return await GetNaturalGasBillsInternalAsync(new SqlParams { Id = id });
+        }
+
         private async Task<Stream> GetNaturalGasBillsInternalAsync(SqlParams @params)
         {
             var bills =  await _dbConnection.QueryAsync<Bill>(@$"select

@@ -55,9 +55,12 @@ namespace Erc.Households.PrintBills.Api
 
                 endpoints.MapGet("/api/bills/{id:int}", async context =>
                 {
-                    var id = context.Request.RouteValues["id"] as int?;
-
-                    await context.Response.WriteAsync("Hello World!");
+                    var id = int.Parse(context.Request.RouteValues["id"].ToString());
+                    var svc = app.ApplicationServices.GetRequiredService<BillService>();
+                    var bills = await svc.GetNaturalGasBill(id);
+                    context.Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                    context.Response.Headers.Add("Content-Disposition", $"attachment;FileName={id}.xlsx");
+                    await bills.CopyToAsync(context.Response.Body);
                 });
             });
         }
