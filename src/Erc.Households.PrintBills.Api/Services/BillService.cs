@@ -45,7 +45,7 @@ namespace Erc.Households.PrintBills.Api.Services
        branch_offices.bank_full_name as BranchOfficeBankFullName,
        ap.name as AccountingPointName,
        concat(address.cityName, ' ', address.streetName, ' ', address.building, ' ', address.apt) as AccountingPointAddress,
-       concat(people.first_name, ' ', people.last_name, ' ', people.patronymic) as OwnerFullName,
+       concat(people.last_name, ' ', people.first_name, ' ', people.patronymic) as OwnerFullName,
        periods.name as PeriodShortDate,
        apdh.debt_value::decimal as AccountingPointDebtHistory,
        payments.sumAmount::decimal as PaymentSumByPeriod,

@@ -6,6 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="Templates\bill_gas.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.35" />
     <PackageReference Include="Npgsql" Version="4.1.5" />
     <PackageReference Include="OpenXml.ReportBuilderXLS" Version="1.0.2" />

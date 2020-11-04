@@ -4,6 +4,9 @@ FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
 WORKDIR /app
 EXPOSE 80
 
+ARG HTTP_PROXY
+ARG HTTPS_PROXY
+
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
 COPY ["Erc.Households.PrintBills.Api/Erc.Households.PrintBills.Api.csproj", "Erc.Households.PrintBills.Api/"]
