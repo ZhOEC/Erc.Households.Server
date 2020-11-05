@@ -22,8 +22,10 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Nest;
+using System;
 using System.Globalization;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 
 namespace Erc.Households.WebApi
@@ -97,7 +99,7 @@ namespace Erc.Households.WebApi
 
             services.AddMediatR(typeof(Startup), typeof(CommandHandlers.CloseAccountingPointExemptionHandler), typeof(NotificationHandlers.AccountingPointExemptionClosedHandler)); 
 
-            services.AddSingleton<IElasticClient>(new ElasticClient(new System.Uri(Configuration.GetConnectionString("Elasticsearch"))));
+            services.AddSingleton<IElasticClient>(new ElasticClient(new Uri(Configuration.GetConnectionString("Elasticsearch"))));
 
             services.AddMassTransit(x =>
             {
@@ -120,6 +122,13 @@ namespace Erc.Households.WebApi
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Erc.Households.Api", Version = "v1" });
             });
+
+            services.AddHttpClient("print-bills", client => client.BaseAddress = new Uri(Configuration["PrintBillsApi"]))
+                .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+                {
+                    UseDefaultCredentials = true,
+                    UseProxy = false
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
