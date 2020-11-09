@@ -1,7 +1,5 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
-using Erc.Households.Api.Queries.Invoices;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Erc.Households.Api.Controllers
