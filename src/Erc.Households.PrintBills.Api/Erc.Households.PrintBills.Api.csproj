@@ -27,4 +27,10 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Templates\n_gas.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

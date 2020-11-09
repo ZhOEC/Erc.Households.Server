@@ -22,5 +22,13 @@ namespace Erc.Households.Api.Controllers
             
             return File( await client.GetStreamAsync(id.ToString()), contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"{id}.xlsx");
         }
+
+        [HttpGet("")]
+        public async Task<IActionResult> Get(int branchOfficeId, int periodId)
+        {
+            var client = _clientFactory.CreateClient("print-bills");
+
+            return File(await client.GetStreamAsync($"?period_id={periodId}&branch_office_id={branchOfficeId}"), contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"{branchOfficeId}_{periodId}.xlsx");
+        }
     }
 }
