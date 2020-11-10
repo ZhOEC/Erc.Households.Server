@@ -55,6 +55,22 @@ namespace Erc.Households.BranchOfficeManagment
             }
         }
 
+        public IEnumerable<Period> GetPeriods(int id)
+        {
+            lock (_sync)
+            {
+                var branchOffice = _dbContext.BranchOffices
+                    .Include(b => b.CurrentPeriod)
+                    .First(b => b.Id == id);
+
+                return _dbContext.Periods
+                    .Where(p => p.Id <= branchOffice.CurrentPeriod.Id)
+                    .OrderBy(x => x.Id)
+                    .Take(2)
+                    .ToArray();
+            }
+        }
+
         public void StartNewPeriod(int branchOfficeId)
         {
             lock (_sync)
