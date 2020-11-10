@@ -24,7 +24,7 @@ namespace Erc.Households.Api.Controllers
         }
 
         [HttpGet("")]
-        public async Task<IActionResult> Get(int branchOfficeId, int periodId)
+        public async Task<IActionResult> Get([FromQuery(Name = "branch_office_id")]int branchOfficeId, [FromQuery(Name = "period_id")] int periodId)
         {
             var client = _clientFactory.CreateClient("print-bills");
 
