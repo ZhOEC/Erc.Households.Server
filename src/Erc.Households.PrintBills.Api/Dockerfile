@@ -1,8 +1,8 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
-ARG HTTP_PROXY
-ARG HTTPS_PROXY
+ARG http_proxy
+ARG https_proxy
 RUN apt-get update && apt-get install -y libgdiplus
 
 WORKDIR /app
