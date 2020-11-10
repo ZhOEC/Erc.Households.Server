@@ -64,8 +64,8 @@ namespace Erc.Households.BranchOfficeManagment
                     .First(b => b.Id == id);
 
                 return _dbContext.Periods
+                    .OrderByDescending(x => x.Id)
                     .Where(p => p.Id <= branchOffice.CurrentPeriod.Id)
-                    .OrderBy(x => x.Id)
                     .Take(2)
                     .ToArray();
             }
