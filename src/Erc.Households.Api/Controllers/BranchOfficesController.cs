@@ -49,13 +49,19 @@ namespace Erc.Households.Api.Controllers
         }
 
         [HttpPost("{id}/periods")]
-        public async System.Threading.Tasks.Task<IActionResult> StartNewPeriodAsync(int id)
+        public async Task<IActionResult> StartNewPeriodAsync(int id)
         {
             _branchOfficeService.StartNewPeriod(id);
             var bo = _branchOfficeService.GetOne(id);
             return await _hubContext.Clients.GroupExcept(bo.StringId, _connectedClientsRepository.GetConnectionId(UserId))
                 .SendAsync("ShowUserNotification", new InfoUserNotification { Text = $"Користувач {User.Identity.Name} перевів {bo.Name} на новий період: {bo.CurrentPeriod.Name}", Title = "Новий період", UiModule="branch-office"})
                 .ContinueWith(r => Ok());
+        }
+
+        [HttpGet("{id}/periods")]
+        public IActionResult GetPeriodByBranchOffice(int id)
+        {
+            return Ok(_branchOfficeService.GetPeriods(id));
         }
     }
 }
