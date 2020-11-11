@@ -168,7 +168,7 @@ namespace Erc.Households.WebApi
             var builder = new ServiceCollection()
                 .AddLogging()
                 .AddMvc()
-                .AddNewtonsoftJson(opt=>opt.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Unspecified)
+                .AddNewtonsoftJson()
                 .Services.BuildServiceProvider();
 
             return builder

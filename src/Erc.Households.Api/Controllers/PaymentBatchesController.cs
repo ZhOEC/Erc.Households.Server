@@ -15,6 +15,7 @@ using Erc.Households.Api.Queries.Payments;
 using Erc.Households.BranchOfficeManagment.Core;
 using Microsoft.AspNetCore.Authorization;
 using Erc.Households.Api.Controllers;
+using Erc.Households.Commands.PaymentBatches;
 
 namespace Erc.Households.Server.Api.Controllers
 {
@@ -25,21 +26,30 @@ namespace Erc.Households.Server.Api.Controllers
     {
         private readonly ErcContext _ercContext;
         private readonly IWebHostEnvironment _hostingEnvironment;
-        private readonly IMediator _mediatR;
+        private readonly IMediator _mediator;
         private readonly IBranchOfficeService _branchOfficeService;
 
         public PaymentBatchesController(ErcContext ercContext, IWebHostEnvironment hostingEnvironment, IMediator mediator, IBranchOfficeService branchOfficeService)
         {
             _ercContext = ercContext ?? throw new ArgumentNullException(nameof(ercContext));
             _hostingEnvironment = hostingEnvironment;
-            _mediatR = mediator;
+            _mediator = mediator;
             _branchOfficeService = branchOfficeService;
+        }
+
+        [HttpGet("{id:int}/payments")]
+        public async Task<IActionResult> GetPayments(int id, int pageNumber, int pageSize, bool showProcessed)
+        {
+            var pagedList = await _mediator.Send(new GetPaymentsByPart(id, pageNumber, pageSize, showProcessed));
+
+            Response.Headers.Add("X-Total-Count", pagedList.TotalItemCount.ToString());
+            return Ok(pagedList);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetPart(int pageNumber, int pageSize, bool showClosed)
         {
-            var pagedList = await _mediatR.Send(new GetPaymentBatchesByPart(UserGroups, pageNumber, pageSize, showClosed));
+            var pagedList = await _mediator.Send(new GetPaymentBatchesByPart(UserGroups, pageNumber, pageSize, showClosed));
 
             Response.Headers.Add("X-Total-Count", pagedList.TotalItemCount.ToString());
             return Ok(pagedList);
@@ -48,13 +58,13 @@ namespace Erc.Households.Server.Api.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetOne(int id)
         {
-            return Ok(await _mediatR.Send(new GetPaymentsBatchById(id)));
+            return Ok(await _mediator.Send(new GetPaymentsBatchById(id)));
         }
 
         [HttpPost]
         public async Task<IActionResult> Add([FromForm] NewPaymentsBatch paymentBatch)
         {
-            var paymentChannel = await _mediatR.Send(new GetPaymentChannelById(paymentBatch.PaymentChannelId));
+            var paymentChannel = await _mediator.Send(new GetPaymentChannelById(paymentBatch.PaymentChannelId));
 
             if (paymentChannel is null)
                 return BadRequest("Payment channel not found!");
@@ -105,6 +115,16 @@ namespace Erc.Households.Server.Api.Controllers
                 return BadRequest("Пачка містить рознесені платежі");
 
             _ercContext.Remove(paymentBatch);
+            await _ercContext.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpPost("{id}/processing")]
+        public async Task<IActionResult> Process(int id)
+        {
+            await _mediator.Send(new ProcessPaymentBatch(id));
+            
             await _ercContext.SaveChangesAsync();
 
             return Ok();
