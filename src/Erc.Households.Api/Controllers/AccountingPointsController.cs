@@ -43,6 +43,7 @@ namespace Erc.Households.Api.Controllers
                         .Type(TextQueryType.CrossFields)
                         )
                     )
+                .IgnoreUnavailable()
                 );
 
             var searchResults = searchResponse.Hits.Select(h =>
