@@ -2,7 +2,7 @@
 
 namespace Erc.Households.Api.Queries.Payments
 {
-    public class DeletePaymentCommand : IRequest<Unit>
+    public class DeletePaymentCommand : IRequest
     {
         public DeletePaymentCommand(int id)
         {

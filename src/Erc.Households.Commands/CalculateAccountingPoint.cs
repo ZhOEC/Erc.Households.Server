@@ -9,8 +9,8 @@ namespace Erc.Households.Commands
         public Guid Id { get; private set; }
         public Guid GenerationId { get; private set;}
         public string Eic { get; private set;}
-        public DateTime FromDate { get; private set;}
-        public DateTime ToDate { get; private set;}
+        public DateTime? FromDate { get; private set;}
+        public DateTime? ToDate { get; private set;}
         public int? PreviousMeterReadingT1 { get; private set;}
         public int? PreviousMeterReadingT2 { get; private set;}
         public int? PreviousMeterReadingT3 { get; private set;}

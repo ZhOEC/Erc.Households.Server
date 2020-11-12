@@ -140,7 +140,7 @@ namespace Erc.Households.Domain.AccountingPoints
         {
             if (payment.Amount > 0)
             {
-                foreach (var invoice in _invoices.Where(i => !i.IsPaid).OrderBy(i => i.PeriodId).ThenBy(i => i.Id).ToList())
+                foreach (var invoice in Invoices.Where(i => !i.IsPaid).OrderBy(i => i.PeriodId).ThenBy(i => i.Id).ToList())
                 {
                     var ipi = invoice.Pay(payment);
                     payment.AddInvoicePaymentItem(ipi);

@@ -4,6 +4,7 @@ using Erc.Households.Api.Responses;
 using Erc.Households.EF.PostgreSQL;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Nest;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -34,7 +35,7 @@ namespace Erc.Households.Api.QueryHandlers.AccountingPoints
                     .ThenInclude(e => e.Category)
                 .Include(a => a.Exemptions)
                     .ThenInclude(e => e.Person)
-                .FirstAsync(a => a.Id == request.Id);
+                .FirstAsync(a => a.Id == request.Id || a.Eic == request.Eic);
             
                 return _mapper.Map<AccountingPoint>(ap);
         }

@@ -1,15 +1,18 @@
 ﻿using System.Threading.Tasks;
+using Erc.Households.Api.Authorization;
 using Erc.Households.Api.Queries.Payments;
 using Erc.Households.Api.Requests;
 using Erc.Households.Commands.Payments;
 using Erc.Households.DataAccess.Core;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Erc.Households.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(Roles = ApplicationRoles.Operator)]
     public class PaymentsController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -19,15 +22,6 @@ namespace Erc.Households.Api.Controllers
         {
             _mediator = mediator;
             _unitOfWork = unitOfWork;
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> GetPart(int paymentsBatchId, int pageNumber, int pageSize, bool showProcessed)
-        {
-            var pagedList = await _mediator.Send(new GetPaymentsByPart(paymentsBatchId, pageNumber, pageSize, showProcessed));
- 
-            Response.Headers.Add("X-Total-Count", pagedList.TotalItemCount.ToString());
-            return Ok(pagedList);
         }
 
         [HttpGet("{id}")]
@@ -57,12 +51,21 @@ namespace Erc.Households.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Unit>> Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             await _mediator.Send(new DeletePaymentCommand(id));
             await _unitOfWork.SaveWorkAsync();
 
             return Ok();
+        }
+
+        [HttpGet("")]
+        public async Task<IActionResult> Get(int accountingPointId, int pageNumber, int pageSize)
+        {
+            var pagedList = await _mediator.Send(new GetPaymentsByAccountingPoint(accountingPointId, pageNumber, pageSize));
+            Response.Headers.Add("X-Total-Count", pagedList.TotalItemCount.ToString());
+
+            return Ok(pagedList);
         }
     }
 }

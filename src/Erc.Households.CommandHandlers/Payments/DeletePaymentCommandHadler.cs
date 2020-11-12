@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Erc.Households.Api.QueryHandlers.Payments
 {
-    public class DeletePaymentHandler : IRequestHandler<DeletePaymentCommand, Unit>
+    public class DeletePaymentHandler : AsyncRequestHandler<DeletePaymentCommand>
     {
         private readonly ErcContext _ercContext;
 
@@ -17,17 +17,16 @@ namespace Erc.Households.Api.QueryHandlers.Payments
             _ercContext = ercContext;
         }
 
-        public async Task<Unit> Handle(DeletePaymentCommand request, CancellationToken cancellationToken)
+        protected override async Task Handle(DeletePaymentCommand request, CancellationToken cancellationToken)
         {
             var payment = await _ercContext.Payments.FindAsync(request.Id);
 
-            if (payment is null)
-                throw new Exception("Payment not exist");
-            else if (payment.Status == PaymentStatus.Processed)
-                throw new Exception("The payment has been made and cannot be removed");
+            if (payment is null)  return;
+
+            if (payment.Status == PaymentStatus.Processed)
+                throw new Exception("The payment has been processed and cannot be removed");
 
             _ercContext.Remove(payment);
-            return Unit.Value;
         }
     }
 }

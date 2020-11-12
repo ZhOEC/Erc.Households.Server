@@ -7,12 +7,16 @@ namespace Erc.Households.Domain.Shared.Tariffs
 {
     public class Tariff
     {
-        List<TariffRate> _rates;
+        List<TariffRate> _rates = new List<TariffRate>();
 
         public int Id { get; set; }
         public string Name { get; set; }
         public Commodity Commodity { get; set; }
-        public IEnumerable<TariffRate> Rates => _rates?.OrderBy(tr => tr.StartDate);
+        public IEnumerable<TariffRate> Rates
+        {
+            get => _rates?.OrderBy(tr => tr.StartDate);
+            set => _rates = value.ToList();
+        }
 
         public void AddRate(TariffRate tariffRate)
         {
@@ -22,6 +26,7 @@ namespace Erc.Households.Domain.Shared.Tariffs
                 _rates = new List<TariffRate>(_rates);
 
             tariffRate.Id = (_rates.Max(t => t?.Id) ?? 0) + 1;
+            tariffRate.StartDate = tariffRate.StartDate.Date;
             _rates.Add(tariffRate);
         }
 

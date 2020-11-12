@@ -8,7 +8,7 @@ namespace Erc.Households.CalculateStrategies.NaturalGas
     {
         public void Calculate(CalculationRequest calculation)
         {
-            var tariffRate = calculation.Tariff.Rates.First(tr => tr.StartDate == calculation.FromDate);
+            var tariffRate = calculation.Tariff.Rates.First(tr => tr.StartDate.Date == calculation.FromDate.Date);
             calculation.UsageT1.AddCalculation(new UsageCalculation
             {
                 Charge = Math.Round(calculation.UsageT1.Units * tariffRate.Value, 2,  MidpointRounding.AwayFromZero), 
