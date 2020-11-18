@@ -35,7 +35,7 @@ namespace Erc.Households.Reports
             var data = await _dbConnection.QueryFirstAsync(@"
     select
        per.name as ""PeriodName"",
-       end_debit.name as ""BranchOfficeName"",
+       (select name from branch_offices where id=@branchOfficeId) as ""BranchOfficeName"",
        coalesce(accounting_point_debt_history.StartDebitSum, 0) as ""StartDebitSum"",
        coalesce(accounting_point_debt_history.TaxStartDebitSum, 0) as ""TaxStartDebitSum"",
        coalesce(accounting_point_debt_history.StartCreditSum, 0) as ""StartCreditSum"",
@@ -71,12 +71,12 @@ left join
     (
         select
                apdh.period_id,
-               sum(apdh.debt_value) StartDebitSum,
-               sum(apdh.debt_value) / 6 TaxStartDebitSum,
-               sum(case when apdh.debt_value > 0 then apdh.debt_value else 0 end) StartCreditSum,
-               sum(case when apdh.debt_value > 0 then apdh.debt_value else 0 end) / 6 TaxStartCreditSum,
-               sum(case when apdh.debt_value < 0 then apdh.debt_value else 0 end) StartBalanceSum,
-               sum(case when apdh.debt_value < 0 then apdh.debt_value else 0 end) / 6 TaxStartBalanceSum
+               sum(apdh.debt_value) StartBalanceSum,
+               sum(apdh.debt_value) / 6 TaxStartBalanceSum,
+               sum(case when apdh.debt_value > 0 then apdh.debt_value else 0 end) StartDebitSum,
+               sum(case when apdh.debt_value > 0 then apdh.debt_value else 0 end) / 6 TaxStartDebitSum,
+               sum(case when apdh.debt_value < 0 then apdh.debt_value else 0 end)  StartCreditSum, 
+               sum(case when apdh.debt_value < 0 then apdh.debt_value else 0 end) / 6 TaxStartCreditSum
         from accounting_point_debt_history apdh
             join accounting_points ap on apdh.accounting_point_id = ap.id
         where ap.branch_office_id = @branchOfficeId
@@ -119,24 +119,15 @@ left join
 left join lateral
     (
         select
-               bo.name,
-               sum(case when bo.current_period_id > @periodId
-                   then case when apdh.period_id = @periodId then apdh.debt_value end
-                   else ap.debt
-               end) EndDebitSum,
-               sum(case when bo.current_period_id > @periodId
-                   then case when apdh.debt_value > 0 and apdh.period_id = @periodId then apdh.debt_value end
-                   else case when ap.debt > 0 then ap.debt end
-               end) EndBalanceSum,
-               sum(case when bo.current_period_id > @periodId
-                   then case when apdh.debt_value < 0 and apdh.period_id = @periodId then apdh.debt_value end
-                   else case when ap.debt < 0 then ap.debt end
-               end) EndCreditSum
+               
+               sum(case when bo.current_period_id > @periodId then apdh.debt_value else ap.debt end) EndDebitSum,
+               sum(case when bo.current_period_id > @periodId then case when apdh.debt_value > 0 then apdh.debt_value end else case when ap.debt > 0 then ap.debt end end) EndBalanceSum,
+               sum(case when bo.current_period_id > @periodId then case when apdh.debt_value < 0 then apdh.debt_value end else case when ap.debt < 0 then ap.debt end end) EndCreditSum
         from accounting_points ap
             left join accounting_point_debt_history apdh on ap.id = apdh.accounting_point_id and apdh.period_id=@periodId+1
             join branch_offices bo on ap.branch_office_id = bo.id
         where bo.id = @branchOfficeId
-        group by bo.name
+       
     ) end_debit on true
  where per.id = @periodId", new { branchOfficeId, periodId });
 
