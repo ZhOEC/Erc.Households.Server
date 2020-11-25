@@ -1,10 +1,10 @@
-﻿using ClosedXML.Report;
+﻿using ClosedXML.Excel;
+using ClosedXML.Report;
 using Dapper;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Erc.Households.Reports
@@ -136,7 +136,7 @@ left join lateral
                 report.AddVariable(obj.Key, obj.Value);
             report.Generate();
             var ms = new MemoryStream();
-            report.SaveAs(ms);
+            report.SaveAs(ms, new SaveOptions { EvaluateFormulasBeforeSaving = true });
             ms.Position = 0;
             return ms;
         }

@@ -46,7 +46,8 @@ namespace Erc.Households.Api.MapperProfiles
 				.ForMember(x => x.CompanyBookkeeperTaxNumber, x => x.MapFrom(y => y.BranchOffice.Company.BookkeeperTaxNumber));
 
 			CreateMap<Domain.Payments.Payment, Responses.AccountingPointPaymentListItem>()
-				.ForMember(li=>li.Source, s=>s.MapFrom(p=>p.Batch.PaymentChannel.Name));
+				.ForMember(li => li.Source, s => s.MapFrom(p => p.Batch.PaymentChannel.Name))
+				.ForMember(li => li.EnterDate, cfg => cfg.MapFrom(s => s.Batch.IncomingDate));
 		}
 	}
 }
