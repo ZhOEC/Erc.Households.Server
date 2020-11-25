@@ -124,11 +124,16 @@ namespace Erc.Households.WebApi
             });
 
             services.AddHttpClient("print-bills", client => client.BaseAddress = new Uri(Configuration["PrintBillsApi"]))
-                .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
-                {
-                    UseDefaultCredentials = true,
-                    UseProxy = false
-                });
+                .ConfigurePrimaryHttpMessageHandler(ConfigureHttpHandler());
+
+            services.AddHttpClient("reports", client => client.BaseAddress = new Uri(Configuration["ReportsApi"]))
+                .ConfigurePrimaryHttpMessageHandler(ConfigureHttpHandler());
+
+            static Func<HttpMessageHandler> ConfigureHttpHandler() => () => new HttpClientHandler
+            {
+                UseDefaultCredentials = true,
+                UseProxy = false,
+            };
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

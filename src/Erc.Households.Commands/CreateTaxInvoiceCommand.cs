@@ -5,11 +5,13 @@ namespace Erc.Households.Commands
 {
     public class CreateTaxInvoiceCommand : IRequest
     {
-        public CreateTaxInvoiceCommand(Period currentPeriod)
+        public CreateTaxInvoiceCommand(int branchOfficeId, int periodId)
         {
-            CurrentPeriod = currentPeriod;
+            PeriodId = periodId;
+            BranchOfficeId = branchOfficeId;
         }
 
-        public Period CurrentPeriod { get; set; }
+        public int PeriodId { get; private set; }
+        public int BranchOfficeId { get; private set; }
     }
 }

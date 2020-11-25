@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Net.Http;
@@ -53,7 +54,7 @@ namespace Erc.Households.PrintBills.Api
                     var svc = app.ApplicationServices.GetRequiredService<BillService>();
                     var bills = await svc.GetNaturalGasBillsByPeriodAsync(periodId);
                     context.Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-                    context.Response.Headers.Add("Content-Disposition", $"attachment;FileName={periodId}.xlsx");
+                    context.Response.Headers.Add("Content-Disposition", $"attachment;FileName={periodId}_{(DateTime.Now-new DateTime(2020,10,1)).Ticks}.xlsx");
                     await bills.CopyToAsync(context.Response.Body);
                 });
 

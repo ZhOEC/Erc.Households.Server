@@ -85,12 +85,14 @@ namespace Erc.Households.BranchOfficeManagment
 
                 if (period is null)
                 {
-                    period = new Period(branchOffice.CurrentPeriod.EndDate.AddDays(1), branchOffice.CurrentPeriod.EndDate.AddMonths(1));
+                    var start = branchOffice.CurrentPeriod.EndDate.AddDays(1);
+                    var end = start.AddMonths(1).AddDays(-1);
+                    period = new Period(start, end);
                     _dbContext.Entry(period).State = EntityState.Added;
                 }
-
+                _mediator.Send(new CreateTaxInvoiceCommand(branchOfficeId: branchOfficeId, branchOffice.CurrentPeriod.Id));
                 branchOffice.StartNewPeriod(period);
-                _mediator.Send(new CreateTaxInvoiceCommand(branchOffice.CurrentPeriod)); // The current period before switching to a new one
+                 // The current period before switching to a new one
 
                 _dbContext.SaveChanges();
                 _dbContext.Database.ExecuteSqlInterpolated($"insert into accounting_point_debt_history(accounting_point_id, period_id, debt_value) select id, {period.Id}, debt from accounting_points where branch_office_Id={branchOfficeId}");
