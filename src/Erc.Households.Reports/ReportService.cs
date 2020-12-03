@@ -120,9 +120,9 @@ left join lateral
     (
         select
                
-               sum(case when bo.current_period_id > @periodId then apdh.debt_value else ap.debt end) EndDebitSum,
-               sum(case when bo.current_period_id > @periodId then case when apdh.debt_value > 0 then apdh.debt_value end else case when ap.debt > 0 then ap.debt end end) EndBalanceSum,
-               sum(case when bo.current_period_id > @periodId then case when apdh.debt_value < 0 then apdh.debt_value end else case when ap.debt < 0 then ap.debt end end) EndCreditSum
+               sum(case when bo.current_period_id > @periodId then apdh.debt_value else ap.debt end) EndBalanceSum,
+               sum(case when bo.current_period_id > @periodId then case when apdh.debt_value > 0 then apdh.debt_value end else case when ap.debt > 0 then ap.debt end end) EndDebitSum,
+               sum(case when bo.current_period_id > @periodId then case when apdh.debt_value < 0 then 0-apdh.debt_value end else case when ap.debt < 0 then 0-ap.debt end end) EndCreditSum
         from accounting_points ap
             left join accounting_point_debt_history apdh on ap.id = apdh.accounting_point_id and apdh.period_id=@periodId+1
             join branch_offices bo on ap.branch_office_id = bo.id
