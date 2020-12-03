@@ -13,4 +13,10 @@
     <PackageReference Include="Npgsql" Version="4.1.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Templates\turnover_balance_sheet.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
