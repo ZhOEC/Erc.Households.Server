@@ -131,7 +131,7 @@ left join lateral
     ) end_debit on true
  where per.id = @periodId", new { branchOfficeId, periodId });
 
-            var report = new XLTemplate(@"Templates\turnover_balance_sheet.xlsx");
+            var report = new XLTemplate(@"Templates/turnover_balance_sheet.xlsx");
             foreach (var obj in data as IDictionary<string, object>)
                 report.AddVariable(obj.Key, obj.Value);
             report.Generate();
