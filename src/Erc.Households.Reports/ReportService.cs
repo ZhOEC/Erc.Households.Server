@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Erc.Households.Reports
@@ -24,6 +25,10 @@ namespace Erc.Households.Reports
                 {
                 case "tobs":
                     return await CreateTurnoverBalanceSheetAsync((int)@params["branchOfficeId"], (int)@params["periodId"]);
+                
+                case "tobspl":
+                    return await CreateTurnoverBalanceSheetPersonListAsync((int)@params["branchOfficeId"], (int)@params["periodId"]);
+
 
                 default:
                     throw new ArgumentException(nameof(slug));
@@ -139,6 +144,52 @@ left join lateral
             report.SaveAs(ms, new SaveOptions { EvaluateFormulasBeforeSaving = true });
             ms.Position = 0;
             return ms;
+        }
+
+        private async Task<Stream> CreateTurnoverBalanceSheetPersonListAsync(int branchOfficeId, int periodId)
+        {
+            var data = await _dbConnection.QueryAsync<Person>(@"select bo.name bo_name, (select name from periods where id=@periodId) period_name
+                , ap.eic, ap.name, last_name||' '||first_name||' '||patronymic person, to_char(c.start_date,'DD.MM.YYYY') start_date
+                , start_debt.debt_value start_debt, i.total_units, i.total_charge, payments.payed
+                , case when end_debt.period_id is null then ap.debt else end_debt.debt_value end end_debt
+                from accounting_points ap
+                join people p on ap.owner_id=p.id
+                join contracts c on ap.id=c.accounting_point_id and c.end_date is null
+                left join invoices i on ap.id=i.accounting_point_id and i.period_id=@periodId
+                left join (select sum(amount) payed, accounting_point_id from payments where period_id=202010 group by accounting_point_id) payments on payments.accounting_point_id=ap.id
+                left join accounting_point_debt_history start_debt on ap.id=start_debt.accounting_point_id and start_debt.period_id=@periodId
+                left join accounting_point_debt_history end_debt on ap.id=end_debt.accounting_point_id and end_debt.period_id=@periodId+1
+                join branch_offices bo on ap.branch_office_id=bo.id
+                where ap.branch_office_id=@branchOfficeId", new { branchOfficeId, periodId });
+
+            var report = new XLTemplate(@"Templates/turnover_balance_sheet_people.xlsx");
+            report.AddVariable(new
+            {
+                data.First().period_name,
+                data.First().bo_name,
+                People = data
+            });
+            report.Generate();
+            var ms = new MemoryStream();
+            report.SaveAs(ms, new SaveOptions { EvaluateFormulasBeforeSaving = true });
+            ms.Position = 0;
+            return ms;
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE1006:Naming Styles", Justification = "<Pending>")]
+        class Person
+        {
+            public string bo_name { get; set; }
+            public string period_name { get; set; }
+            public string eic { get; set; }
+            public string name { get; set; }
+            public string person { get; set; }
+            public string start_date { get; set; }
+            public decimal start_debt { get; set; }
+            public decimal total_units { get; set; }
+            public decimal total_charge { get; set; }
+            public decimal payed { get; set; }
+            public decimal end_debt { get; set; }
         }
     }
 }
