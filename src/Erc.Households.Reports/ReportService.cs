@@ -156,7 +156,7 @@ left join lateral
                 join people p on ap.owner_id=p.id
                 join contracts c on ap.id=c.accounting_point_id and c.end_date is null
                 left join invoices i on ap.id=i.accounting_point_id and i.period_id=@periodId
-                left join (select sum(amount) payed, accounting_point_id from payments where period_id=202010 group by accounting_point_id) payments on payments.accounting_point_id=ap.id
+                left join (select sum(amount) payed, accounting_point_id from payments where period_id=@periodId group by accounting_point_id) payments on payments.accounting_point_id=ap.id
                 left join accounting_point_debt_history start_debt on ap.id=start_debt.accounting_point_id and start_debt.period_id=@periodId
                 left join accounting_point_debt_history end_debt on ap.id=end_debt.accounting_point_id and end_debt.period_id=@periodId+1
                 join branch_offices bo on ap.branch_office_id=bo.id
