@@ -71,7 +71,7 @@ from invoices inv
             join cities on streets.city_id = cities.id
         ) as address on ap.address_id = address.id
     join people on ap.owner_id = people.id
-    join accounting_point_debt_history as apdh on ap.id = apdh.accounting_point_id and apdh.period_id=inv.period_id
+    left join accounting_point_debt_history as apdh on ap.id = apdh.accounting_point_id and apdh.period_id=inv.period_id
     left join LATERAL
         (
             select p.accounting_point_id, sum(p.amount) as sumAmount
