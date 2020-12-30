@@ -151,8 +151,6 @@ namespace Erc.Households.Api.Helpers
                             }
                         }
 
-                        
-
                         listRecord.Add(record);
                     }
                     catch (Exception ex)
