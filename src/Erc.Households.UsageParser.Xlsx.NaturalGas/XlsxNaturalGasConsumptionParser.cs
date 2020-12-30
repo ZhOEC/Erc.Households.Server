@@ -26,6 +26,7 @@ namespace Erc.Households.UsageParser.Xlsx.NaturalGas
                         GenerationId = generationId,
                         Eic = cells[i, 1].Value.ToString(),
                         UsageT1 = cells[i, 2].GetValue<decimal>(),
+                        PeriodDate = cells[i, 3].GetValue<DateTime>(),
                         IsParsesd = true,
                         RowNumber = i
                     };

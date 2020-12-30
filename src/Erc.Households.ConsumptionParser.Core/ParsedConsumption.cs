@@ -13,6 +13,7 @@ namespace Erc.Households.UsageParser.Core
         public int? PresentMeterReadingT1 { get; set; }
         public int? PresentMeterReadingT2 { get; set; }
         public int? PresentMeterReadingT3 { get; set; }
+        public DateTime PeriodDate { get; set; }
         public decimal UsageT1 { get; set; }
         public int? UsageT2 { get; set; }
         public int? UsageT3 { get; set; }
