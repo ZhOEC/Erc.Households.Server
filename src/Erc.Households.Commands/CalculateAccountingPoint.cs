@@ -23,6 +23,7 @@ namespace Erc.Households.Commands
         public string MeterNumber { get; private set;}
         public int ZoneRecord { get; private set;}
         public DateTime GenerationDate { get; private set;}
+        public DateTime PeriodDate { get; private set; }
 
         /// <summary>
         /// Conversion factor to standard conditions.

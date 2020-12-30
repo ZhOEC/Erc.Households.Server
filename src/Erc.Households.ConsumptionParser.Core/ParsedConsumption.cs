@@ -20,5 +20,6 @@ namespace Erc.Households.UsageParser.Core
         public DateTime GenerationDate { get; private set; } = DateTime.Now;
         public bool IsParsesd { get; set; }
         public int RowNumber { get; set; }
+        public string ErrorMessage { get; set; }
     }
 }
