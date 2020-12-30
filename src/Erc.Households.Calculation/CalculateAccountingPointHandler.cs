@@ -1,5 +1,4 @@
-﻿
-using Erc.Households.CalculateStrategies.Core;
+﻿using Erc.Households.CalculateStrategies.Core;
 using Erc.Households.CalculateStrategies.NaturalGas;
 using Erc.Households.Commands;
 using Erc.Households.Domain.Billing;
