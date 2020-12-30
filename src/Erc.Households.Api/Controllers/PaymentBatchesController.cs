@@ -9,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 using Erc.Households.EF.PostgreSQL;
 using Erc.Households.Api.Requests;
 using Erc.Households.Api.Helpers;
-using Microsoft.AspNetCore.Hosting;
 using MediatR;
 using Erc.Households.Api.Queries.Payments;
 using Erc.Households.BranchOfficeManagment.Core;
@@ -25,14 +24,12 @@ namespace Erc.Households.Server.Api.Controllers
     public class PaymentBatchesController : ErcControllerBase
     {
         private readonly ErcContext _ercContext;
-        private readonly IWebHostEnvironment _hostingEnvironment;
         private readonly IMediator _mediator;
         private readonly IBranchOfficeService _branchOfficeService;
 
-        public PaymentBatchesController(ErcContext ercContext, IWebHostEnvironment hostingEnvironment, IMediator mediator, IBranchOfficeService branchOfficeService)
+        public PaymentBatchesController(ErcContext ercContext, IMediator mediator, IBranchOfficeService branchOfficeService)
         {
             _ercContext = ercContext ?? throw new ArgumentNullException(nameof(ercContext));
-            _hostingEnvironment = hostingEnvironment;
             _mediator = mediator;
             _branchOfficeService = branchOfficeService;
         }
@@ -73,7 +70,7 @@ namespace Erc.Households.Server.Api.Controllers
             if (paymentBatch.UploadFile != null)
             {
                 var extFile = Path.GetExtension(paymentBatch.UploadFile.FileName);
-                if (extFile == ".dbf") paymentList = new PaymentsDbfParser(_hostingEnvironment, _ercContext, _branchOfficeService).Parser(paymentBatch.BranchOfficeId, paymentChannel, paymentBatch.UploadFile);
+                if (extFile == ".dbf") paymentList = new PaymentsDbfParser(_ercContext, _branchOfficeService).Parser(paymentBatch.BranchOfficeId, paymentChannel, paymentBatch.UploadFile);
                 else if (extFile == ".xls" || extFile == ".xlsx") return BadRequest("Excel files not yet supported");
             }
 
