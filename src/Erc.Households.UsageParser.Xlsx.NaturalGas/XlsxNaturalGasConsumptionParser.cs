@@ -26,11 +26,11 @@ namespace Erc.Households.UsageParser.Xlsx.NaturalGas
                     {
                         GenerationId = generationId,
                         Eic = (cells[i, 1].Value.ToString().Length != 16 || Regex.Matches(cells[i, 1].Value.ToString(), @"\p{IsCyrillic}").Count > 0) 
-                            ? throw new Exception("Помилка парсингу EIC. Перевірте EIC на наявність кирилічних символів або на довжину (макс. 16 символів).") 
+                            ? throw new Exception("Помилка обробки EIC. Перевірте EIC на наявність кирилічних символів або на довжину (макс. 16 символів).") 
                             : cells[i, 1].Value.ToString(),
                         UsageT1 = cells[i, 2].GetValue<decimal>(),
-                        PeriodDate = cells[i, 3].GetValue<DateTime>(),
-                        IsParsesd = true,
+                        PeriodDate = cells[i, 3].GetValue<DateTime?>(),
+                        IsParsed = true,
                         RowNumber = i
                     };
 
