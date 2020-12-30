@@ -28,8 +28,8 @@ namespace Erc.Households.UsageParser.Xlsx.NaturalGas
                             ? throw new Exception("Помилка парсингу EIC. Перевірте EIC на наявність кирилічних символів або на довжину (макс. 16 символів).")
                             : row.Cell(1).Value.ToString(),
                         UsageT1 = row.Cell(2).GetValue<decimal>(),
-                        PeriodDate = row.Cell(3).GetValue<DateTime>(),
-                        IsParsesd = true,
+                        PeriodDate = row.Cell(3).GetValue<DateTime?>(),
+                        IsParsed = true,
                         RowNumber = row.RowNumber()
                     };
 
