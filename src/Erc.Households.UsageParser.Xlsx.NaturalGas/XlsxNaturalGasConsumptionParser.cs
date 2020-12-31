@@ -1,10 +1,11 @@
-﻿using Erc.Households.ConsumptionParser.Core;
+﻿using ClosedXML.Excel;
+using Erc.Households.ConsumptionParser.Core;
 using Erc.Households.UsageParser.Core;
-using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Erc.Households.UsageParser.Xlsx.NaturalGas
 {
@@ -13,35 +14,41 @@ namespace Erc.Households.UsageParser.Xlsx.NaturalGas
         public IReadOnlyCollection<ParsedConsumption> Parse(Stream stream)
         {
             var consumptionList = new List<ParsedConsumption>();
-            using var package = new ExcelPackage(stream);
-            var rowCount = package.Workbook.Worksheets.First().Dimension.End.Row;
-            var cells = package.Workbook.Worksheets.First().Cells;
+            using var workbook = new XLWorkbook(stream);
+            var usedRows = workbook.Worksheets.First().RowsUsed(XLCellsUsedOptions.AllContents);
             var generationId = Guid.NewGuid();
-            for (int i = 1; i <= rowCount; i++)
+            foreach(var row in usedRows)
             {
                 try
                 {
                     var consumption = new ParsedConsumption
                     {
                         GenerationId = generationId,
-                        Eic = cells[i, 1].Value.ToString(),
-                        UsageT1 = cells[i, 2].GetValue<decimal>(),
-                        IsParsesd = true,
-                        RowNumber = i
+                        Eic = (row.Cell(1).Value.ToString().Length != 16 || Regex.Matches(row.Cell(1).Value.ToString(), @"\p{IsCyrillic}").Count > 0)
+                            ? throw new Exception("Помилка EIC. Перевірте EIC на наявність кирилічних символів або на довжину (16 символів).")
+                            : row.Cell(1).Value.ToString(),
+                        UsageT1 = row.Cell(2).GetValue<decimal>(),
+                        PeriodDate = row.Cell(3).GetValue<DateTime?>(),
+                        IsParsed = true,
+                        RowNumber = row.RowNumber()
                     };
 
                     consumptionList.Add(consumption);
                 }
-                catch
+                catch (Exception ex)
                 {
                     var consumption = new ParsedConsumption
                     {
                         GenerationId = generationId,
-                        Eic = cells[i, 1].Value.ToString(),
-                        RowNumber = i
+                        Eic = row.Cell(1).Value.ToString(),
+                        RowNumber = row.RowNumber(),
+                        ErrorMessage = ex.Message
                     };
+
+                    consumptionList.Add(consumption);
                 }
             }
+
             return consumptionList;
         }
     }
