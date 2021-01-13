@@ -1,14 +1,12 @@
-﻿using Erc.Households.BranchOfficeManagment.Core;
-using Erc.Households.EF.PostgreSQL;
-using Erc.Households.Events.AccountingPoints;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using OfficeOpenXml;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
+using ClosedXML.Excel;
+using Erc.Households.BranchOfficeManagment.Core;
+using Erc.Households.EF.PostgreSQL;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace Erc.Households.Api.Helpers
 {
@@ -26,60 +24,60 @@ namespace Erc.Households.Api.Helpers
         public List<DataFile> ParserSecondAsync(Stream stream)
         {
             const int startRow = 2; // Start row parse data
-            using var package = new ExcelPackage(stream);
-            var rowNumber = package.Workbook.Worksheets.First().Dimension.End.Row;
-            var cells = package.Workbook.Worksheets.First().Cells;
+            using var workbook = new XLWorkbook(stream);
+            var usedRows = workbook.Worksheets.First().RowsUsed(XLCellsUsedOptions.AllContents);
 
             var listRecord = new List<DataFile>();
             //var probRow = new List<DataFile>();
             //var dict = new Dictionary<string, List<DataFile>>();
-            
+
             //var ac = await _ercContext.AccountingPoints.FindAsync(cells[2, 26].Value.ToString());
             //var branchOffice = _branchOfficeService.GetOne(ac.BranchOfficeId);
             //var branchOfficePeriod = await _ercContext.Periods.FindAsync(branchOffice.CurrentPeriodId);
 
-            for (int row = startRow; row < rowNumber; row++)
+            foreach (var row in usedRows)
             {
-                if (!(cells[row, 17].Value is null))
+                if (!(row.Cell(17).Value is null))
                 {
-                    //System.Diagnostics.Debug.WriteLine($"{row} - {cells[row, 15].Value}");
                     try
                     {
                         var record = new DataFile()
                         {
-                            Row = row,
-                            Eic = cells[row, 14].GetValue<string>(),
+                            Row = row.RowNumber(),
+                            Eic = row.Cell(14).GetValue<string>(),
                             //PeriodId = branchOffice.CurrentPeriodId,
                             //FromDate = branchOfficePeriod.StartDate,
                             //ToDate = branchOfficePeriod.EndDate,
 
-                            PreviousMeterReadingT1 = cells[row, 15].GetValue<int>(),
-                            PresentMeterReadingT1 = cells[row, 16].GetValue<int>(),
-                            UsageT1 = cells[row, 17].GetValue<int>(),
-                            MeterNumber = cells[row, 26].GetValue<string>()
+                            PreviousMeterReadingT1 = row.Cell(15).GetValue<int>(),
+                            PresentMeterReadingT1 = row.Cell(16).GetValue<int>(),
+                            UsageT1 = row.Cell(17).GetValue<int>(),
+                            MeterNumber = row.Cell(26).GetValue<string>()
                         };
 
-                        if (cells[row, 18].Text.ToLower().Equals("день") || cells[row, 18].Text.ToLower().Equals("пік"))
+                        if (row.Cell(18).GetValue<string>().ToLower().Equals("день") || row.Cell(18).GetValue<string>().ToLower().Equals("пік"))
                         {
-                            for (int residualRow = startRow; residualRow < rowNumber; residualRow++)
+
+                            foreach (var residualRow in usedRows)
                             {
-                                if (cells[residualRow, 14].Text.Equals(cells[row, 14].Text) && (cells[residualRow, 18].Text.Equals("напівпік") || cells[residualRow, 18].Text.ToLower().Equals("ніч")))
+                                if (residualRow.Cell(14).GetValue<string>().Equals(residualRow.Cell(14).GetValue<string>()) 
+                                    && (residualRow.Cell(18).GetValue<string>().ToLower().Equals("напівпік") || residualRow.Cell(18).GetValue<string>().ToLower().Equals("ніч")))
                                 {
-                                    if (cells[residualRow, 18].Text.Equals("напівпік"))
+                                    if (residualRow.Cell(18).GetValue<string>().ToLower().Equals("напівпік"))
                                     {
-                                        record.PreviousMeterReadingT2 = cells[row, 15].GetValue<int>();
-                                        record.PresentMeterReadingT2 = cells[row, 16].GetValue<int>();
-                                        record.UsageT2 = cells[row, 17].GetValue<int>();
+                                        record.PreviousMeterReadingT2 = residualRow.Cell(15).GetValue<int>();
+                                        record.PresentMeterReadingT2 = residualRow.Cell(16).GetValue<int>();
+                                        record.UsageT2 = residualRow.Cell(17).GetValue<int>();
 
-                                        cells[residualRow, 17].Clear();
+                                        residualRow.Cell(17).Clear();
                                     }
-                                    else if (cells[residualRow, 18].Text.ToLower().Equals("ніч"))
+                                    else if (residualRow.Cell(18).GetValue<string>().ToLower().Equals("ніч"))
                                     {
-                                        record.PreviousMeterReadingT3 = cells[row, 15].GetValue<int>();
-                                        record.PresentMeterReadingT3 = cells[row, 16].GetValue<int>();
-                                        record.UsageT3 = cells[row, 17].GetValue<int>();
+                                        record.PreviousMeterReadingT3 = residualRow.Cell(15).GetValue<int>();
+                                        record.PresentMeterReadingT3 = residualRow.Cell(16).GetValue<int>();
+                                        record.UsageT3 = residualRow.Cell(17).GetValue<int>();
 
-                                        cells[residualRow, 17].Clear();
+                                        residualRow.Cell(17).Clear();
                                     }
                                 } 
                                 else
@@ -103,9 +101,8 @@ namespace Erc.Households.Api.Helpers
         public List<DataFile> ParserThirdAsync(Stream stream)
         {
             const int startRow = 2; // Start row parse data
-            using var package = new ExcelPackage(stream);
-            var rowNumber = package.Workbook.Worksheets.First().Dimension.End.Row;
-            var cells = package.Workbook.Worksheets.First().Cells;
+            using var workbook = new XLWorkbook(stream);
+            var usedRows = workbook.Worksheets.First().RowsUsed(XLCellsUsedOptions.AllContents);
 
             var listRecord = new List<DataFile>();
             var probRow = new List<DataFile>();
@@ -115,47 +112,45 @@ namespace Erc.Households.Api.Helpers
             //var branchOffice = _branchOfficeService.GetOne(ac.BranchOfficeId);
             //var branchOfficePeriod = await _ercContext.Periods.FindAsync(branchOffice.CurrentPeriodId);
 
-            for (int row = startRow; row < rowNumber; row++)
+            foreach (var row in usedRows)
             {
-                if (!(cells[row, 17].Value is null))
+                if (!(row.Cell(17).Value is null))
                 {
                     try
                     {
                         var record = new DataFile()
                         {
-                            Row = row,
-                            Eic = cells[row, 14].GetValue<string>(),
+                            Row = row.RowNumber(),
+                            Eic = row.Cell(14).GetValue<string>(),
 
-                            PreviousMeterReadingT1 = cells[row, 15].GetValue<int>(),
-                            PresentMeterReadingT1 = cells[row, 16].GetValue<int>(),
-                            UsageT1 = cells[row, 17].GetValue<int>(),
-                            MeterNumber = cells[row, 26].GetValue<string>()
+                            PreviousMeterReadingT1 = row.Cell(15).GetValue<int>(),
+                            PresentMeterReadingT1 = row.Cell(16).GetValue<int>(),
+                            UsageT1 = row.Cell(17).GetValue<int>(),
+                            MeterNumber = row.Cell(26).GetValue<string>()
                         };
 
                         foreach (var r in listRecord)
                         {
                             if (r.Eic.Equals(record.Eic))
                             {
-                                if (cells[row, 18].Text.Equals("напівпік"))
+                                if (row.Cell(18).GetValue<string>().ToLower().Equals("напівпік"))
                                 {
-                                    r.PreviousMeterReadingT2 = cells[row, 15].GetValue<int>();
-                                    r.PresentMeterReadingT2 = cells[row, 16].GetValue<int>();
-                                    r.UsageT2 = cells[row, 17].GetValue<int>();
+                                    r.PreviousMeterReadingT2 = row.Cell(15).GetValue<int>();
+                                    r.PresentMeterReadingT2 = row.Cell(16).GetValue<int>();
+                                    r.UsageT2 = row.Cell(17).GetValue<int>();
                                 }
-                                else if (cells[row, 18].Text.ToLower().Equals("ніч"))
+                                else if (row.Cell(18).GetValue<string>().ToLower().Equals("ніч"))
                                 {
-                                    r.PreviousMeterReadingT3 = cells[row, 15].GetValue<int>();
-                                    r.PresentMeterReadingT3 = cells[row, 16].GetValue<int>();
-                                    r.UsageT3 = cells[row, 17].GetValue<int>();
+                                    r.PreviousMeterReadingT3 = row.Cell(15).GetValue<int>();
+                                    r.PresentMeterReadingT3 = row.Cell(16).GetValue<int>();
+                                    r.UsageT3 = row.Cell(17).GetValue<int>();
                                 }
                             }
                         }
 
-                        
-
                         listRecord.Add(record);
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                     }
                 }

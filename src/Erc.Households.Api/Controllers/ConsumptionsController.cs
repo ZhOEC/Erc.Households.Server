@@ -49,11 +49,11 @@ namespace Erc.Households.Api.Controllers
                 foreach (var file in files)
                 {
                     var consumptions = parser.Parse(file.OpenReadStream());
-                    if (consumptions.Any(c => !c.IsParsesd))
+                    if (consumptions.Any(c => !c.IsParsed))
                         errors.Add(new
                         {
                             file.FileName,
-                            Errors = consumptions.Where(c => !c.IsParsesd)
+                            Errors = consumptions.Where(c => !c.IsParsed)
                         });
                     else
                         await Task.WhenAll(consumptions.Select(c => _bus.Publish<CalculateAccountingPoint>(c)).ToList());

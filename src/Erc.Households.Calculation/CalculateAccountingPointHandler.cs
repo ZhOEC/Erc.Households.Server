@@ -1,5 +1,4 @@
-﻿
-using Erc.Households.CalculateStrategies.Core;
+﻿using Erc.Households.CalculateStrategies.Core;
 using Erc.Households.CalculateStrategies.NaturalGas;
 using Erc.Households.Commands;
 using Erc.Households.Domain.Billing;
@@ -69,7 +68,8 @@ namespace Erc.Households.Calculation
             } : null;
 
             var newInvoice = new Invoice(context.Message.Id, ac.BranchOffice.CurrentPeriodId, ac.Debt, fromDate, toDate, 
-                                        context.Message.MeterNumber, tariff, (ZoneRecord)context.Message.ZoneRecord, usageT1, usageT2, usageT3);
+                                        context.Message.MeterNumber, tariff, (ZoneRecord)context.Message.ZoneRecord, usageT1, usageT2, usageT3, 
+                                        type: ac.BranchOffice.CurrentPeriod.StartDate == fromDate ? InvoiceType.Common : InvoiceType.Recalculation);
             
             newInvoice.Calculate(calculateStrategy);
             ac.AddInvoice(newInvoice);
