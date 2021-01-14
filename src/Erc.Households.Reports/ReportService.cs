@@ -152,7 +152,7 @@ left join lateral
                 , ap.eic, ap.name, last_name||' '||first_name||' '||patronymic person, to_char(c.start_date,'DD.MM.YYYY') start_date
                 , start_debt.debt_value::decimal(10,2) start_debt, i.total_units::decimal(10,2), i.total_charge::decimal(10,2), payments.payed::decimal(10,2)
                 , case when end_debt.period_id is null then ap.debt::decimal(10,2) else end_debt.debt_value::decimal(10,2) end end_debt
-                from accounting_points ap
+                from accounting_points ap 
                 join people p on ap.owner_id=p.id
                 join contracts c on ap.id=c.accounting_point_id and c.end_date is null
                 left join (select sum(total_units) total_units, sum(total_charge) total_charge, accounting_point_id from invoices where period_id=@periodId group by accounting_point_id) i on ap.id=i.accounting_point_id
@@ -163,15 +163,16 @@ left join lateral
                 where ap.branch_office_id=@branchOfficeId", new { branchOfficeId, periodId });
 
             var report = new XLTemplate(@"Templates/turnover_balance_sheet_people.xlsx");
+            //data.First().start_debt = 234.11f;
             report.AddVariable(new
             {
                 data.First().period_name,
                 data.First().bo_name,
                 People = data
-            });
+            }); 
             report.Generate();
             var ms = new MemoryStream();
-            report.SaveAs(ms, new SaveOptions { EvaluateFormulasBeforeSaving = true });
+            report.SaveAs(ms);
             ms.Position = 0;
             return ms;
         }
@@ -185,11 +186,11 @@ left join lateral
             public string name { get; set; }
             public string person { get; set; }
             public string start_date { get; set; }
-            public decimal? start_debt { get; set; }
-            public decimal? total_units { get; set; }
-            public decimal? total_charge { get; set; }
-            public decimal? payed { get; set; }
-            public decimal? end_debt { get; set; }
+            public decimal start_debt { get; set; }
+            public decimal total_units { get; set; }
+            public decimal total_charge { get; set; }
+            public decimal payed { get; set; }
+            public decimal end_debt { get; set; }
         }
     }
 }
