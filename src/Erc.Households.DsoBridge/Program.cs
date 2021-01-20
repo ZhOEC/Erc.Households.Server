@@ -34,10 +34,8 @@ namespace Erc.Households.DsoBridge
                     services.AddMassTransit(s =>
                     {
                         var rabbitMq = hostContext.Configuration.GetSection("ZtoeRabbitMQ");
-
                         s.UsingRabbitMq((ctx, cfg) =>
                         {
-
                             cfg.Host(rabbitMq["ConnectionString"], c =>
                             {
                                 c.Username(rabbitMq["Username"]);
@@ -45,14 +43,13 @@ namespace Erc.Households.DsoBridge
                             });
                             cfg.ReceiveEndpoint("consumption-calculated-ztoec", e =>
                             {
-                                e.PrefetchCount = 1000;
-
-                                e.Batch<Ztoe.Shared.DsoEvents.Households.ConsumptionCalculated>(async b =>
+                                e.PrefetchCount = 500;
+                                e.Batch<Ztoe.Shared.DsoEvents.Households.ConsumptionCalculated>( b =>
                                 {
                                     b.MessageLimit = 100;
                                     b.ConcurrencyLimit = 10;
 
-                                    var sendEndpoint = await services.BuildServiceProvider().GetRequiredService<IErcBus>().GetSendEndpoint(new Uri("exchange:Erc.Households.Commands:CalculateAccountingPoint"));
+                                    var sendEndpoint =  services.BuildServiceProvider().GetRequiredService<IErcBus>().GetSendEndpoint(new Uri("exchange:Erc.Households.Commands:CalculateAccountingPoint")).Result;
                                     b.Consumer(() => new EventHandlers.ConsumptionCalculatedHandler(sendEndpoint));
                                 });
                             });

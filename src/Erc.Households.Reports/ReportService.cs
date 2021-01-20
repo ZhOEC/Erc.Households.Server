@@ -163,7 +163,7 @@ left join lateral
                 where ap.branch_office_id=@branchOfficeId", new { branchOfficeId, periodId });
 
             var report = new XLTemplate(@"Templates/turnover_balance_sheet_people.xlsx");
-            //data.First().start_debt = 234.11f;
+            
             report.AddVariable(new
             {
                 data.First().period_name,
