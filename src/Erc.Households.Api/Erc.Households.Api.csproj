@@ -45,6 +45,7 @@
     <ProjectReference Include="..\Erc.Households.Server.DataAccess.EF\Erc.Households.EF.PostgreSQL.csproj" />
     <ProjectReference Include="..\Erc.Households.Server.DataAccess\Erc.Households.DataAccess.EF.csproj" />
     <ProjectReference Include="..\Erc.Households.Server.Domain\Erc.Households.Domain.csproj" />
+    <ProjectReference Include="..\Erc.Households.Domain.Shared\Erc.Households.Domain.Shared.csproj" />
     <ProjectReference Include="..\Erc.Households.UsageParser.Xlsx.NaturalGas\Erc.Households.ConsumptionParser.Xlsx.NaturalGas.csproj" />
   </ItemGroup>
 

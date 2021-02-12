@@ -1,7 +1,9 @@
-﻿namespace Erc.Households.CalculateStrategies.Core
+﻿using System.Threading.Tasks;
+
+namespace Erc.Households.CalculateStrategies.Core
 {
     public interface ICalculateStrategy
     {
-        void Calculate(CalculationRequest calculation);
+        Task Calculate(CalculationRequest calculation);
     }
 }

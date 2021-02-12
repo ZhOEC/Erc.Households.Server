@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net5.0</TargetFramework>
     <UserSecretsId>dotnet-Erc.Households.Calculation-A665547A-3A6B-46E9-B6D4-DD79EE72E95F</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Erc.Households.CalculateStrategies.Gas\Erc.Households.CalculateStrategies.NaturalGas.csproj" />
+    <ProjectReference Include="..\Erc.Households.CalculateStrategies.ElectricPower\Erc.Households.CalculateStrategies.ElectricPower.csproj" />
     <ProjectReference Include="..\Erc.Households.Commands\Erc.Households.Commands.csproj" />
     <ProjectReference Include="..\Erc.Households.Server.DataAccess.EF\Erc.Households.EF.PostgreSQL.csproj" />
   </ItemGroup>

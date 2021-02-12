@@ -160,7 +160,7 @@ namespace Erc.Households.Domain.AccountingPoints
             _payments.Add(payment);
         }
 
-        public void AddInvoice(Invoice invoice)
+        public void ApplyInvoice(Invoice invoice)
         {
             _invoices.Add(invoice);
             Debt += invoice.TotalAmountDue;

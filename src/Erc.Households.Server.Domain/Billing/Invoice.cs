@@ -3,11 +3,13 @@ using Erc.Households.Domain.AccountingPoints;
 using Erc.Households.Domain.Extensions;
 using Erc.Households.Domain.Payments;
 using Erc.Households.Domain.Shared;
+using Erc.Households.Domain.Shared.Billing;
 using Erc.Households.Domain.Shared.Tariffs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace Erc.Households.Domain.Billing
 {
@@ -35,6 +37,29 @@ namespace Erc.Households.Domain.Billing
 
         //}
 
+        //public Invoice() { }
+
+        public Invoice(Guid dsoCalculationId, AccountingPoint accountingPoint, DateTime fromDate, DateTime toDate, Usage usageT1, Usage usageT2 = null, Usage usageT3 = null)
+        {
+            DsoConsumptionId = dsoCalculationId;
+            AccountingPoint = accountingPoint;
+            AccountingPointId = accountingPoint.Id;
+            Period = accountingPoint.BranchOffice.CurrentPeriod;
+            FromDate = fromDate;
+            ToDate = toDate;
+            UsageT1 = usageT1;
+            UsageT2 = usageT2;
+            UsageT3 = usageT3;
+            Tariff = accountingPoint.TariffsHistory.OrderByDescending(t => t.StartDate).FirstOrDefault(t => t.StartDate < toDate).Tariff;
+            IncomingBalance = accountingPoint.Debt;
+            Type = accountingPoint.BranchOffice.CurrentPeriod.StartDate == fromDate ? InvoiceType.Common : InvoiceType.Recalculation;
+            ZoneRecord = usageT2 switch
+            {
+                not null when usageT3 is null => ZoneRecord.Two,
+                not null when usageT3 is not null => ZoneRecord.Three,
+                _ => ZoneRecord.None
+            };
+        }
 
         public Invoice(int accountingPointId, int periodId, DateTime fromDate, DateTime toDate, int tariffId, Usage usageT1, Usage usageT2 = null, Usage usageT3 = null, InvoiceType type = InvoiceType.Common, string note = null, decimal? exemptionCoeff = null)
         {
@@ -74,11 +99,11 @@ namespace Erc.Households.Domain.Billing
         }
 
         public int Id { get; private set; }
-        public int PeriodId { get; private set; }
-        public int AccountingPointId { get; private set; }
+        public int PeriodId { get; init; }
+        public int AccountingPointId { get; init; }
         public DateTime Date { get; private set; } = DateTime.Now;
-        public DateTime FromDate { get; private set; }
-        public DateTime ToDate { get; private set; }
+        public DateTime FromDate { get; init; }
+        public DateTime ToDate { get; init; }
         public Usage UsageT1 { get; set; }
         public Usage UsageT2 { get; set; }
         public Usage UsageT3 { get; set; }
@@ -104,23 +129,23 @@ namespace Erc.Households.Domain.Billing
         public decimal TotalDiscount { get; private set; }
         public decimal TotalAmountDue { get; private set; }
         public decimal TotalCharge { get; private set; }
-        public decimal IncomingBalance { get; private set; }
+        public decimal IncomingBalance { get; init; }
         public string CounterSerialNumber { get; private set; }
         public decimal TotalPaid => InvoicePaymentItems.Sum(i => i.Amount);
         public bool IsPaid => TotalAmountDue == TotalPaid;
         public int TariffId { get; private set; }
-        public string Note { get; private set; }
-        public InvoiceType Type { get; private set; }
+        public string Note { get; init; }
+        public InvoiceType Type { get; init; } = InvoiceType.Common;
         public int ZoneCount => UsageT2 is null ? 1 : (UsageT3 is null ? 2 : 3);
-        public Tariff Tariff { get; private set; }
+        public Tariff Tariff { get; init; }
         public AccountingPoint AccountingPoint
         {
             get => LazyLoader.Load(this, ref _accountingPoint);
-            private set { _accountingPoint = value; }
+            init => _accountingPoint = value; 
         }
         public IEnumerable<InvoicePaymentItem> InvoicePaymentItems => _invoicePaymentItems.AsReadOnly();
-        public Period Period { get; private set; }
-        public ZoneRecord ZoneRecord { get; private set; }
+        public Period Period { get; init; }
+        public ZoneRecord ZoneRecord { get; init; }
         public Guid DsoConsumptionId { get; set; }
 
         public InvoicePaymentItem Pay(Payment payment)
@@ -142,9 +167,20 @@ namespace Erc.Households.Domain.Billing
             return ipi;
         }
 
-        public void Calculate(ICalculateStrategy calculateStrategy)
+        public async Task CalculateAsync(ICalculateStrategy calculateStrategy)
         {
-            calculateStrategy.Calculate(new CalculationRequest(FromDate, ToDate, UsageT1, UsageT2, UsageT3, Tariff));
+            await calculateStrategy.Calculate(new CalculationRequest 
+            { 
+                FromDate = FromDate, 
+                ToDate = ToDate, 
+                UsageT1 = UsageT1, 
+                UsageT2 = UsageT2, 
+                UsageT3 = UsageT3, 
+                Tariff = Tariff,
+                AccountingPointId = AccountingPointId,
+                ZoneRecord = ZoneRecord,
+                InvoiceType = Type
+            });
             TotalUnits = UsageT1.Units + (UsageT2?.Units ?? 0) + (UsageT3?.Units ?? 0);
             TotalDiscount = UsageT1.Discount + (UsageT2?.Discount ?? 0) + (UsageT3?.Discount ?? 0);
             TotalCharge = UsageT1.Charge + (UsageT2?.Charge ?? 0) + (UsageT3?.Charge ?? 0);
@@ -159,9 +195,9 @@ namespace Erc.Households.Domain.Billing
             {
                 if (invalidInvoices.Any())
                 {
-                    UsageT1.Units += invalidInvoices.Sum(i => i.UsageT1.Units);
-                    if (UsageT2 != null) UsageT2.Units += invalidInvoices.Sum(i => i.UsageT2?.Units ?? 0);
-                    if (UsageT3 != null) UsageT3.Units += invalidInvoices.Sum(i => i.UsageT3?.Units ?? 0);
+                    //UsageT1.Units += invalidInvoices.Sum(i => i.UsageT1.Units);
+                    //if (UsageT2 != null) UsageT2.Units += invalidInvoices.Sum(i => i.UsageT2?.Units ?? 0);
+                    //if (UsageT3 != null) UsageT3.Units += invalidInvoices.Sum(i => i.UsageT3?.Units ?? 0);
                 }
 
                 foreach (var tr in tariffRates.OrderBy(tr => tr.ConsumptionLimit ?? int.MaxValue))
@@ -225,7 +261,7 @@ namespace Erc.Households.Domain.Billing
                     //    });
                 
 
-                usage.Units = usage.Calculations.Sum(c => c.Units);
+                //usage.Units = usage.Calculations.Sum(c => c.Units);
                 usage.Charge = usage.Calculations.Sum(c => c.Charge);
                 usage.Discount = usage.Calculations.Sum(c => c.Discount);
                 usage.DiscountUnits = usage.Calculations.Sum(c => c.DiscountUnits);
@@ -289,7 +325,7 @@ namespace Erc.Households.Domain.Billing
                 TotalDiscount = UsageT1.Discount + (UsageT2?.Discount ?? 0) + (UsageT3?.Discount ?? 0);
                 TotalCharge = UsageT1.Charge + (UsageT2?.Charge ?? 0) + (UsageT3?.Charge ?? 0);
                 TotalAmountDue = TotalCharge - TotalDiscount;
-                IncomingBalance = AccountingPoint.Debt;
+                //IncomingBalance = AccountingPoint.Debt;
             }
             else
             {
