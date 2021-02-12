@@ -91,8 +91,8 @@ left join
     (
         select
                inv.period_id,
-               sum(case when inv.type = 1 then inv.total_units else 0 end) UsedUnitsSum,
-               sum(case when inv.type = 1 then inv.total_amount_due else 0 end) UsedAmountDueSum,
+               sum(inv.total_units) UsedUnitsSum,
+               sum(inv.total_amount_due) UsedAmountDueSum,
                sum(case when inv.total_amount_due > 0 and inv.type = 2 then inv.total_amount_due else 0 end) RecalculationAmountDuePlus,
                sum(case when inv.total_amount_due > 0 and inv.type = 2 then inv.total_amount_due else 0 end) / 6 TaxRecalculationAmountDuePlus,
                sum(case when inv.total_amount_due < 0 and inv.type = 2 then 0-inv.total_amount_due else 0 end) RecalculationAmountDueMinus,
