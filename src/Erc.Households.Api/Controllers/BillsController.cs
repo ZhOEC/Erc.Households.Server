@@ -1,5 +1,6 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
+using Erc.Households.Domain.Shared;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Erc.Households.Api.Controllers
@@ -15,12 +16,11 @@ namespace Erc.Households.Api.Controllers
             _clientFactory = clientFactory;
         }
 
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> Get(int id)
+        [HttpGet("{type}/{id:int}")]
+        public async Task<IActionResult> GetById(Commodity type, int id)
         {
             var client = _clientFactory.CreateClient("print-bills");
-            
-            return File( await client.GetStreamAsync(id.ToString()), contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"{id}.xlsx");
+            return File(await client.GetStreamAsync($"{type}/{id}"), contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"{id}.xlsx");
         }
 
         [HttpGet("")]

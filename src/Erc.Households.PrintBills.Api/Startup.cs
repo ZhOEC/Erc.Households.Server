@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Net.Http;
+using Dapper;
+using Erc.Households.Domain.Shared;
+using Erc.Households.PrintBills.Api.Models;
 using Erc.Households.PrintBills.Api.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -34,6 +37,9 @@ namespace Erc.Households.PrintBills.Api
                     UseDefaultCredentials = true,
                     UseProxy = false
                 });
+
+            SqlMapper.AddTypeHandler(typeof(Usage), new JsonObjectTypeHandler());
+            SqlMapper.AddTypeHandler(typeof(IList<Calculation>), new JsonObjectTypeHandler());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -58,14 +64,15 @@ namespace Erc.Households.PrintBills.Api
                     await bills.CopyToAsync(context.Response.Body);
                 });
 
-                endpoints.MapGet("/api/bills/{id:int}", async context =>
+                endpoints.MapGet("/api/bills/{type}/{id:int}", async context =>
                 {
-                    var id = int.Parse(context.Request.RouteValues["id"].ToString());
+                    var type = Enum.Parse<Commodity>(context.Request.RouteValues["type"].ToString());
+                    var billId = int.Parse(context.Request.RouteValues["id"].ToString());
                     var svc = app.ApplicationServices.GetRequiredService<BillService>();
-                    var bills = await svc.GetNaturalGasBill(id);
+                    var bill = await svc.GetBill(type, billId);
                     context.Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-                    context.Response.Headers.Add("Content-Disposition", $"attachment;FileName={id}.xlsx");
-                    await bills.CopyToAsync(context.Response.Body);
+                    context.Response.Headers.Add("Content-Disposition", $"attachment;FileName={billId}.xlsx");
+                    await bill.CopyToAsync(context.Response.Body);
                 });
             });
         }

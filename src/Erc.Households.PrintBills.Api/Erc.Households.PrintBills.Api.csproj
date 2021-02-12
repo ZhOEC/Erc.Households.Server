@@ -12,10 +12,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ClosedXML" Version="0.95.3" />
+    <PackageReference Include="ClosedXML" Version="0.95.4" />
+    <PackageReference Include="ClosedXML.Report" Version="0.2.1" />
     <PackageReference Include="Dapper" Version="2.0.35" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="Npgsql" Version="4.1.5" />
     <PackageReference Include="OpenXml.ReportBuilderXLS" Version="1.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Erc.Households.Api\Erc.Households.Api.csproj" />
+    <ProjectReference Include="..\Erc.Households.Tariffs\Erc.Households.Domain.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>
