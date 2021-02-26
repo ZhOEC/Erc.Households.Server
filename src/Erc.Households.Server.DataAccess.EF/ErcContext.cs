@@ -196,6 +196,8 @@ namespace Erc.Households.EF.PostgreSQL
                     );
             });
 
+            modelBuilder.Entity<Domain.Shared.Billing.Usage>(e => e.HasNoKey());
+
             modelBuilder.Entity<Invoice>(entity =>
             {
                 entity.Property(p => p.TotalAmountDue).HasColumnType("decimal(10,2)");

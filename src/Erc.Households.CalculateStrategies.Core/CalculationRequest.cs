@@ -2,18 +2,14 @@
 using Erc.Households.Domain.Shared.Billing;
 using Erc.Households.Domain.Shared.Tariffs;
 using System;
-
-namespace System.Runtime.CompilerServices
-{
-    public class IsExternalInit { }
-}
+using System.Collections.Generic;
 
 namespace Erc.Households.CalculateStrategies.Core
 {
     public record CalculationRequest
     {
         public int AccountingPointId { get; init; }
-        public (Usage invalidUsageT1, Usage invalidUsageT2, Usage invalidUsageT3)? InvalidUsages { get; init; }
+        public IEnumerable<(Usage invalidUsageT1, Usage invalidUsageT2, Usage invalidUsageT3)> InvalidUsages { get; init; }
         public DateTime FromDate { get; init; }
         public DateTime ToDate { get; init; }
         public Usage UsageT1 { get; init; }

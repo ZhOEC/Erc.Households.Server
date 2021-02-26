@@ -54,20 +54,20 @@ namespace Erc.Households.Calculation
                     2 => 0.5m,
                     3 => 0.4m,
                     _ => 1
-                }, ZoneNumber.T1)
+                })
 
             {
                 PresentMeterReading = context.Message.PresentMeterReadingT1,
                 PreviousMeterReading = context.Message.PreviousMeterReadingT1,
             };
 
-            var usageT2 = context.Message.ZoneRecord > 1 ? new Usage(context.Message.UsageT2 ?? 0, 1, ZoneNumber.T2)
+            var usageT2 = context.Message.ZoneRecord > 1 ? new Usage(context.Message.UsageT2 ?? 0, 1)
             {
                 PresentMeterReading = context.Message.PresentMeterReadingT2,
                 PreviousMeterReading = context.Message.PreviousMeterReadingT2,
             } : null;
 
-            var usageT3 = context.Message.ZoneRecord == 3 ? new Usage(context.Message.UsageT3 ?? 0, 1.5m, ZoneNumber.T3)
+            var usageT3 = context.Message.ZoneRecord == 3 ? new Usage(context.Message.UsageT3 ?? 0, 1.5m)
             {
                 PresentMeterReading = context.Message.PresentMeterReadingT3,
                 PreviousMeterReading = context.Message.PreviousMeterReadingT3,
@@ -79,7 +79,6 @@ namespace Erc.Households.Calculation
             ac.ApplyInvoice(newInvoice);
 
             await _ercContext.SaveChangesAsync();
-
         }
     }
 }

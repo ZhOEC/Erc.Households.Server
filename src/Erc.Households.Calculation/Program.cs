@@ -46,7 +46,14 @@ namespace Erc.Households.Calculation
                        options.UseNpgsql(hostContext.Configuration.GetConnectionString("ErcContext")));
 
                     services.AddTransient<GasCalculateStrategy>();
-                    services.AddTransient<ElectricPowerCalculateStrategy>();
+                    services.AddTransient(sp => new ElectricPowerCalculateStrategy(async (accountingPointId, fromDate) =>
+                    {
+                        var ctx = sp.GetRequiredService<ErcContext>();
+                        return (await ctx.Invoices.Where(i => i.AccountingPointId == accountingPointId && i.FromDate == fromDate)
+                        .Select(i => new { i.UsageT1, i.UsageT2, i.UsageT3 })
+                        .ToArrayAsync())
+                        .Select(u => (u.UsageT1, u.UsageT2, u.UsageT3));
+                    }));
 
                     services.AddHostedService<CalculationService>();
                 });

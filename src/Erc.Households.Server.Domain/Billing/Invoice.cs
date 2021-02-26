@@ -99,28 +99,25 @@ namespace Erc.Households.Domain.Billing
         }
 
         public int Id { get; private set; }
-        public int PeriodId { get; init; }
-        public int AccountingPointId { get; init; }
+        public int PeriodId { get; set; }
+        public int AccountingPointId { get; set; }
         public DateTime Date { get; private set; } = DateTime.Now;
-        public DateTime FromDate { get; init; }
-        public DateTime ToDate { get; init; }
+        public DateTime FromDate { get; set; }
+        public DateTime ToDate { get; set; }
         public Usage UsageT1 { get; set; }
         public Usage UsageT2 { get; set; }
         public Usage UsageT3 { get; set; }
-        public Usage GetUsage(int i) => i switch
-        {
-            1 => UsageT1,
-            2 => UsageT2,
-            3 => UsageT3,
-            _ => throw new ArgumentOutOfRangeException()
-        };
+        
         public Usage GetUsage(Expression<Func<Usage>> expression) => expression.Compile().Invoke();
         
-        public IEnumerable<Expression<Func<Usage>>> GetUsagesExpressions()
+        public IEnumerable<Usage> Usages
         {
-            yield return () => UsageT1;
-            yield return () => UsageT2;
-            yield return () => UsageT3;
+            get
+            {
+                yield return UsageT1;
+                yield return UsageT2;
+                yield return UsageT3;
+            }
         }
 
         public decimal TotalUnits { get; private set; }
@@ -207,9 +204,9 @@ namespace Erc.Households.Domain.Billing
                     if (UsageT3?.Units > UsageT3?.Calculations.Sum(c => c.Units) || UsageT3?.Units < 0) CalculateInternal(() => UsageT3, tr);
                 }
 
-                if (invalidInvoices.Any())
-                    foreach (var usageExpression in GetUsagesExpressions())
-                        AddInvalidCalculationInternal(usageExpression);
+                //if (invalidInvoices.Any())
+                //    foreach (var usageExpression in GetUsagesExpressions())
+                //        AddInvalidCalculationInternal(usageExpression);
             }
 
             TotalUnits = UsageT1.Units + (UsageT2?.Units ?? 0) + (UsageT3?.Units ?? 0);
@@ -262,9 +259,9 @@ namespace Erc.Households.Domain.Billing
                 
 
                 //usage.Units = usage.Calculations.Sum(c => c.Units);
-                usage.Charge = usage.Calculations.Sum(c => c.Charge);
-                usage.Discount = usage.Calculations.Sum(c => c.Discount);
-                usage.DiscountUnits = usage.Calculations.Sum(c => c.DiscountUnits);
+                //usage.Charge = usage.Calculations.Sum(c => c.Charge);
+                //usage.Discount = usage.Calculations.Sum(c => c.Discount);
+                //usage.DiscountUnits = usage.Calculations.Sum(c => c.DiscountUnits);
             }
 
             void CalculateInternal(Expression<Func<Usage>> usageExpr, TariffRate tr)
