@@ -57,7 +57,7 @@ namespace Erc.Households.CalculateStrategies.ElectricPower
                         Charge = -calculation.Charge,
                         Discount = -calculation.Discount,
                         DiscountUnits = -calculation.DiscountUnits,
-                        PriceValue = -calculation.PriceValue,
+                        PriceValue = calculation.PriceValue,
                         Units = -calculation.Units
                     }, true);
                 }
@@ -70,7 +70,7 @@ namespace Erc.Households.CalculateStrategies.ElectricPower
                             Charge = -calculation.Charge,
                             Discount = -calculation.Discount,
                             DiscountUnits = -calculation.DiscountUnits,
-                            PriceValue = -calculation.PriceValue,
+                            PriceValue = calculation.PriceValue,
                             Units = -calculation.Units
                         }, true);
                     }
@@ -83,7 +83,7 @@ namespace Erc.Households.CalculateStrategies.ElectricPower
                             Charge = -calculation.Charge,
                             Discount = -calculation.Discount,
                             DiscountUnits = -calculation.DiscountUnits,
-                            PriceValue = -calculation.PriceValue,
+                            PriceValue = calculation.PriceValue,
                             Units = -calculation.Units
                         }, true);
                     }

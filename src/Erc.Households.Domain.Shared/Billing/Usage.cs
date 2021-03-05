@@ -24,7 +24,7 @@ namespace Erc.Households.Domain.Shared.Billing
         public IEnumerable<UsageCalculation> Calculations 
         { 
             get => _calculations; 
-            set => _calculations = value.ToList(); 
+            private set => _calculations = value.ToList(); 
         }
 
         public void AddCalculation(UsageCalculation usageCalculation, bool isCorrerctive = false)
@@ -32,6 +32,7 @@ namespace Erc.Households.Domain.Shared.Billing
             _calculations.Add(usageCalculation);
             Charge += usageCalculation.Charge;
             Discount += usageCalculation.Discount;
+            DiscountUnits += usageCalculation.DiscountUnits;
             if (isCorrerctive)
                 Units += usageCalculation.Units;
         }

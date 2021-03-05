@@ -116,7 +116,7 @@ namespace Erc.Households.Calculation.Tests
                 UsageT1 = new Usage(1001, 0.4m),
                 UsageT2 = new Usage(1000, 1),
                 UsageT3 = new Usage(1000, 1.5m),
-                ZoneRecord = Domain.Shared.ZoneRecord.None
+                ZoneRecord = Domain.Shared.ZoneRecord.Three
             };
 
             calculateStrategy.Calculate(calculationRequest).Wait();

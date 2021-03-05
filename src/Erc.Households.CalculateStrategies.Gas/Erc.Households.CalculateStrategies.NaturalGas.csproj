@@ -3,7 +3,9 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
   </PropertyGroup>
-
+  <PropertyGroup>
+    <LangVersion>9.0</LangVersion>
+  </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Erc.Households.CalculateStrategies.Core\Erc.Households.CalculateStrategies.Core.csproj" />
     
