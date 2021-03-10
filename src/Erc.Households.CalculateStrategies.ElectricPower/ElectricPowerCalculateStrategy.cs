@@ -130,7 +130,7 @@ namespace Erc.Households.CalculateStrategies.ElectricPower
             {
                 var heatingStart = new DateTime(fromDate.Year, rate.HeatingStartDay.Value.Month, rate.HeatingStartDay.Value.Day);
                 var heatingEnd = new DateTime(toDate.Year, rate.HeatingEndDay.Value.Month, rate.HeatingEndDay.Value.Day);
-                if (fromDate > heatingStart || toDate < heatingEnd)
+                if (fromDate >= heatingStart || toDate <= heatingEnd)
                     return rate.HeatingConsumptionLimit.Value;
             }
 

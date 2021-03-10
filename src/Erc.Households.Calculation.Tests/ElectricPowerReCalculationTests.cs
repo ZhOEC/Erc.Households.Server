@@ -148,7 +148,7 @@ namespace Erc.Households.Calculation.Tests
         }
 
         [Fact]
-        public void Calculate_Regular_Invoice_With_Regular_Tariff_Three_Zone()
+        public void Calculate_Corrective_Invoice_With_Regular_Tariff_Three_Zone()
         {
             var usageT1 = new Usage(0, 0.4m);
             var invalidCalculationsT1 = new[] { new UsageCalculation
