@@ -196,8 +196,6 @@ namespace Erc.Households.EF.PostgreSQL
                     );
             });
 
-            modelBuilder.Entity<Domain.Shared.Billing.Usage>(e => e.HasNoKey());
-
             modelBuilder.Entity<Invoice>(entity =>
             {
                 entity.Property(p => p.TotalAmountDue).HasColumnType("decimal(10,2)");
@@ -213,28 +211,6 @@ namespace Erc.Households.EF.PostgreSQL
                 entity.HasOne(e => e.Tariff).WithMany();
                 entity.HasIndex(p => p.DsoConsumptionId).IsUnique();
             });
-
-            //modelBuilder.Entity<Contract>(e =>
-            //{
-            //    e.ToTable("contracts")
-            //        .Property(p => p.Logs).HasColumnType("jsonb");
-
-            //    e.Property(e => e.StartDate).HasColumnType("date");
-            //    e.Property(e => e.EndDate).HasColumnType("date");
-            //});
-
-            //modelBuilder.Entity<AccountingPointTariff>(e =>
-            //{
-            //    e.ToTable("accounting_point_tariffs");
-
-            //    e.Property(e => e.StartDate).HasColumnType("date");
-
-            //    e.Property(p => p.Logs).HasColumnType("jsonb");
-
-            //    e.HasOne(p => p.Tariff)
-            //        .WithMany()
-            //        .HasForeignKey(p => p.TariffId);
-            //});
 
             modelBuilder.Entity<AccountingPointDebtHistory>(entity =>
             {

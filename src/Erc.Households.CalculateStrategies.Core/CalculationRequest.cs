@@ -2,14 +2,12 @@
 using Erc.Households.Domain.Shared.Billing;
 using Erc.Households.Domain.Shared.Tariffs;
 using System;
-using System.Collections.Generic;
 
 namespace Erc.Households.CalculateStrategies.Core
 {
     public record CalculationRequest
     {
         public int AccountingPointId { get; init; }
-        public IEnumerable<(Usage invalidUsageT1, Usage invalidUsageT2, Usage invalidUsageT3)> InvalidUsages { get; init; }
         public DateTime FromDate { get; init; }
         public DateTime ToDate { get; init; }
         public Usage UsageT1 { get; init; }
@@ -18,5 +16,7 @@ namespace Erc.Households.CalculateStrategies.Core
         public Tariff Tariff { get; init; }
         public InvoiceType InvoiceType { get; init; }
         public ZoneRecord ZoneRecord { get; init; }
+        public ExemptionDiscountNorms ExemptionDiscountNorms { get; init; }
+        public decimal? ExcemptionDiscountPercent { get; init; }
     }
 }

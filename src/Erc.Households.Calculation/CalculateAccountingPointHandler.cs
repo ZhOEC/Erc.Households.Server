@@ -9,6 +9,7 @@ using Erc.Households.EF.PostgreSQL;
 using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -33,6 +34,7 @@ namespace Erc.Households.Calculation
 
             var ac = await _ercContext.AccountingPoints
                 .Include(ac => ac.BranchOffice.CurrentPeriod)
+                .Include(ac=> ac.UsageCategory)
                 .Include(a => a.Exemptions)
                     .ThenInclude(e => e.Category)
                 .Include(a => a.TariffsHistory)
@@ -40,19 +42,28 @@ namespace Erc.Households.Calculation
                 .FirstOrDefaultAsync(a => a.Eic == context.Message.Eic);
 
             if (ac is null)
-                throw new ArgumentOutOfRangeException("Accounting point not found in the database!");
+            {
+                Log.Error($"Accounting point '{context.Message.Eic}' not found in the database!");
+                throw new ArgumentOutOfRangeException($"Accounting '{context.Message.Eic}' point not found in the database!");
+            }
 
             ICalculateStrategy calculateStrategy = ac.Commodity == Commodity.NaturalGas ? _serviceProvider.GetRequiredService<GasCalculateStrategy>() : _serviceProvider.GetRequiredService<ElectricPowerCalculateStrategy>();
 
             var fromDate = context.Message.FromDate ?? ac.BranchOffice.CurrentPeriod.StartDate;
             var toDate = context.Message.ToDate ?? ac.BranchOffice.CurrentPeriod.EndDate.AddDays(1);
             var tariff = ac.TariffsHistory.OrderByDescending(t => t.StartDate).FirstOrDefault(t => t.StartDate < toDate).Tariff;
+            var zoneRecord = context.Message.ZoneRecord switch
+            {
+                2 => ZoneRecord.Two,
+                3 => ZoneRecord.Three,
+                _ => ZoneRecord.None
+            };
 
             var usageT1 = new Usage(context.Message.UsageT1,
-                context.Message.ZoneRecord switch
+                zoneRecord switch
                 {
-                    2 => 0.5m,
-                    3 => 0.4m,
+                    ZoneRecord.Two => 0.5m,
+                    ZoneRecord.Three => 0.4m,
                     _ => 1
                 })
 
@@ -61,22 +72,30 @@ namespace Erc.Households.Calculation
                 PreviousMeterReading = context.Message.PreviousMeterReadingT1,
             };
 
-            var usageT2 = context.Message.ZoneRecord > 1 ? new Usage(context.Message.UsageT2 ?? 0, 1)
+            var usageT2 = zoneRecord != ZoneRecord.None ? new Usage(context.Message.UsageT2 ?? 0, 1)
             {
                 PresentMeterReading = context.Message.PresentMeterReadingT2,
                 PreviousMeterReading = context.Message.PreviousMeterReadingT2,
             } : null;
 
-            var usageT3 = context.Message.ZoneRecord == 3 ? new Usage(context.Message.UsageT3 ?? 0, 1.5m)
+            var usageT3 = zoneRecord == ZoneRecord.Three ? new Usage(context.Message.UsageT3 ?? 0, 1.5m)
             {
                 PresentMeterReading = context.Message.PresentMeterReadingT3,
                 PreviousMeterReading = context.Message.PreviousMeterReadingT3,
             } : null;
 
-            var newInvoice = new Invoice(context.Message.Id, ac, fromDate, toDate, usageT1, usageT2, usageT3);
-
-            await newInvoice.CalculateAsync(calculateStrategy);
-            ac.ApplyInvoice(newInvoice);
+            var newInvoice = new Invoice(context.Message.Id, ac, fromDate, toDate, zoneRecord, usageT1, usageT2, usageT3);
+            
+            try
+            {
+                await newInvoice.CalculateAsync(calculateStrategy);
+                ac.ApplyInvoice(newInvoice);
+            }
+            catch (Exception e)
+            {
+                Log.Error(e, $"Error calculating AccountingPoint {context.Message}");
+                throw;
+            }
 
             await _ercContext.SaveChangesAsync();
         }

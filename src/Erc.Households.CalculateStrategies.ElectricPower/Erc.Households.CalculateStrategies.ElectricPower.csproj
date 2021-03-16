@@ -7,6 +7,9 @@
     <LangVersion>9.0</LangVersion>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Serilog" Version="2.10.0" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Erc.Households.CalculateStrategies.Core\Erc.Households.CalculateStrategies.Core.csproj" />
     <ProjectReference Include="..\Erc.Households.Server.DataAccess.EF\Erc.Households.EF.PostgreSQL.csproj" />
   </ItemGroup>

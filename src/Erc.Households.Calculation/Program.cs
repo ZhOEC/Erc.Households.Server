@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Erc.Households.CalculateStrategies.ElectricPower;
 using Erc.Households.CalculateStrategies.NaturalGas;
 using Erc.Households.EF.PostgreSQL;
@@ -11,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 
 namespace Erc.Households.Calculation
 {
@@ -18,13 +16,20 @@ namespace Erc.Households.Calculation
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var host = CreateHostBuilder(args).Build();
+            Log.Information("String Erc CalculationService host...");
+            host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
+                    Log.Logger = new LoggerConfiguration()
+                          .ReadFrom.Configuration(hostContext.Configuration)
+                          .Enrich.FromLogContext()
+                          .CreateLogger();
+                    
                     services.AddMassTransit(s =>
                     {
                         s.AddConsumers(System.Reflection.Assembly.GetExecutingAssembly());

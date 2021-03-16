@@ -26,20 +26,7 @@ namespace Erc.Households.Domain.Billing
             LazyLoader = lazyLoader;
         }
 
-        //public Invoice(int accountingPointId, int periodId, DateTime fromDate, DateTime toDate, int tariffId, Usage usageT1, InvoiceType type = InvoiceType.Common,  string note = null, decimal? exemptionCoeff = null)
-        //    : this(accountingPointId, periodId, fromDate, toDate, tariffId, usageT1, null, null, type, note, exemptionCoeff)
-        //{
-        //}
-
-        //public Invoice(int accountingPointId, int periodId, DateTime fromDate, DateTime toDate, int tariffId, Usage usageT1, Usage usageT2, InvoiceType type = InvoiceType.Common,  string note = null, decimal? exemptionCoeff = null)
-        //    : this(accountingPointId, periodId, fromDate, toDate, tariffId, usageT1, usageT2, null, type, note, exemptionCoeff)
-        //{
-
-        //}
-
-        //public Invoice() { }
-
-        public Invoice(Guid dsoCalculationId, AccountingPoint accountingPoint, DateTime fromDate, DateTime toDate, Usage usageT1, Usage usageT2 = null, Usage usageT3 = null)
+        public Invoice(Guid dsoCalculationId, AccountingPoint accountingPoint, DateTime fromDate, DateTime toDate, ZoneRecord zoneRecord, Usage usageT1, Usage usageT2 = null, Usage usageT3 = null)
         {
             DsoConsumptionId = dsoCalculationId;
             AccountingPoint = accountingPoint;
@@ -53,12 +40,7 @@ namespace Erc.Households.Domain.Billing
             Tariff = accountingPoint.TariffsHistory.OrderByDescending(t => t.StartDate).FirstOrDefault(t => t.StartDate < toDate).Tariff;
             IncomingBalance = accountingPoint.Debt;
             Type = accountingPoint.BranchOffice.CurrentPeriod.StartDate == fromDate ? InvoiceType.Common : InvoiceType.Recalculation;
-            ZoneRecord = usageT2 switch
-            {
-                not null when usageT3 is null => ZoneRecord.Two,
-                not null when usageT3 is not null => ZoneRecord.Three,
-                _ => ZoneRecord.None
-            };
+            ZoneRecord = zoneRecord;
         }
 
         public Invoice(int accountingPointId, int periodId, DateTime fromDate, DateTime toDate, int tariffId, Usage usageT1, Usage usageT2 = null, Usage usageT3 = null, InvoiceType type = InvoiceType.Common, string note = null, decimal? exemptionCoeff = null)
@@ -110,15 +92,15 @@ namespace Erc.Households.Domain.Billing
         
         public Usage GetUsage(Expression<Func<Usage>> expression) => expression.Compile().Invoke();
         
-        public IEnumerable<Usage> Usages
-        {
-            get
-            {
-                yield return UsageT1;
-                yield return UsageT2;
-                yield return UsageT3;
-            }
-        }
+        //public IEnumerable<Usage> Usages
+        //{
+        //    get
+        //    {
+        //        yield return UsageT1;
+        //        yield return UsageT2;
+        //        yield return UsageT3;
+        //    }
+        //}
 
         public decimal TotalUnits { get; private set; }
         public decimal? ExemptionCoeff { get; private set; }
@@ -166,17 +148,31 @@ namespace Erc.Households.Domain.Billing
 
         public async Task CalculateAsync(ICalculateStrategy calculateStrategy)
         {
-            await calculateStrategy.Calculate(new CalculationRequest 
-            { 
-                FromDate = FromDate, 
-                ToDate = ToDate, 
-                UsageT1 = UsageT1, 
-                UsageT2 = UsageT2, 
-                UsageT3 = UsageT3, 
+            decimal? exemptionDiscountRatio = null;
+            int? excemptionLimit = null;
+            var exemption = AccountingPoint.Exemptions.FirstOrDefault(t => t.EffectiveDate <= FromDate && (t.EndDate ?? DateTime.MaxValue) > ToDate);
+            ExemptionDiscountNorms discountNorms = null;
+            if (exemption is not null)
+            {
+                exemptionDiscountRatio = exemption.Category.Coeff;
+                if (exemptionDiscountRatio.HasValue)
+                {
+                    discountNorms = AccountingPoint.UsageCategory.ExemptionDiscountNorms.OrderByDescending(n => n.EffectivetDate).First(n => n.EffectivetDate <= FromDate);
+                }
+            }
+            await calculateStrategy.Calculate(new CalculationRequest
+            {
+                FromDate = FromDate,
+                ToDate = ToDate,
+                UsageT1 = UsageT1,
+                UsageT2 = UsageT2,
+                UsageT3 = UsageT3,
                 Tariff = Tariff,
                 AccountingPointId = AccountingPointId,
                 ZoneRecord = ZoneRecord,
-                InvoiceType = Type
+                InvoiceType = Type,
+                ExcemptionDiscountPercent = exemptionDiscountRatio,
+                ExemptionDiscountNorms = discountNorms
             });
             TotalUnits = UsageT1.Units + (UsageT2?.Units ?? 0) + (UsageT3?.Units ?? 0);
             TotalDiscount = UsageT1.Discount + (UsageT2?.Discount ?? 0) + (UsageT3?.Discount ?? 0);

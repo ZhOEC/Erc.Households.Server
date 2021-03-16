@@ -2,7 +2,7 @@
 using Erc.Households.Domain.Shared;
 using Erc.Households.Domain.Shared.Billing;
 using Erc.Households.Domain.Shared.Tariffs;
-using Erc.Households.EF.PostgreSQL;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +16,7 @@ namespace Erc.Households.CalculateStrategies.ElectricPower
         
         IEnumerable<(Usage invalidUsageT1, Usage invalidUsageT2, Usage invalidUsageT3)> _invalidUsages;
         Func<int, DateTime, Task<IEnumerable<(Usage invalidUsageT1, Usage invalidUsageT2, Usage invalidUsageT3)>>> _invalidUsageLoader;
+        ILogger _logger = Log.ForContext<ElectricPowerCalculateStrategy>();
 
         public ElectricPowerCalculateStrategy(Func<int, DateTime, Task<IEnumerable<(Usage invalidUsageT1, Usage invalidUsageT2, Usage invalidUsageT3)>>> invalidUsageLoader)
         {
@@ -24,6 +25,7 @@ namespace Erc.Households.CalculateStrategies.ElectricPower
 
         public async Task Calculate(CalculationRequest calculationRequest)
         {
+            Log.Debug($"Start processing calculation request: {calculationRequest}");
             if (calculationRequest.InvoiceType == InvoiceType.Recalculation)
             {
                 _invalidUsages = await _invalidUsageLoader?.Invoke(calculationRequest.AccountingPointId, calculationRequest.FromDate);

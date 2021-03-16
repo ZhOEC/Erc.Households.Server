@@ -5,7 +5,6 @@ namespace Erc.Households.Domain.Shared.Billing
 {
     public class Usage
     {
-        private List<UsageCalculation> _calculations = new List<UsageCalculation>();
         public Usage(decimal units, decimal kz)
         {
             Units = units;
@@ -20,12 +19,13 @@ namespace Erc.Households.Domain.Shared.Billing
         public int DiscountUnits { get; private set; }
         public decimal Kz { get; private set; } 
         public decimal DiscountWeight { get; private set; }
-        public ZoneNumber Zone { get; private set; }
+        
+        private List<UsageCalculation> _calculations = new();
         public IEnumerable<UsageCalculation> Calculations 
         { 
-            get => _calculations; 
-            private set => _calculations = value.ToList(); 
-        }
+            get => _calculations;
+            set => _calculations = value.ToList();
+        } 
 
         public void AddCalculation(UsageCalculation usageCalculation, bool isCorrerctive = false)
         {
