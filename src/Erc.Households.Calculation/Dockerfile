@@ -3,10 +3,10 @@ ARG HTTP_PROXY=http://10.67.2.49:50514
 ARG HTTPS_PROXY=http://10.67.2.49:50514
 ARG NO_PROXY=http://10.67.1.234
 
-FROM mcr.microsoft.com/dotnet/core/runtime:3.1-buster-slim AS base
+FROM mcr.microsoft.com/dotnet/core/runtime:latest AS base
 WORKDIR /app
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:latest AS build
 WORKDIR /src
 COPY . .
 RUN dotnet restore --configfile NuGet.Config ./"Erc.Households.Calculation/Erc.Households.Calculation.csproj"
