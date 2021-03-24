@@ -1,4 +1,5 @@
 ﻿using Erc.Households.CalculateStrategies.Core;
+using Erc.Households.Domain.Shared.Billing;
 using System;
 
 namespace Erc.Households.Api.Responses

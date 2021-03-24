@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using System;
 using Erc.Households.Domain;
+using Erc.Households.Domain.Shared;
 
 namespace Erc.Households.Notifications
 {

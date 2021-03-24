@@ -2,7 +2,7 @@
 
 namespace Erc.Households.Api.Queries
 {
-    public class GetPersonById : IRequest<Domain.Person> 
+    public class GetPersonById : IRequest<Domain.Shared.Person> 
     {
         public GetPersonById(int id)
         {

@@ -1,10 +1,11 @@
 ﻿using Erc.Households.Domain;
 using Erc.Households.Domain.AccountingPoints;
-using Erc.Households.Domain.Addresses;
 using Erc.Households.Domain.Billing;
-using Erc.Households.Domain.Exemptions;
 using Erc.Households.Domain.Payments;
 using Erc.Households.Domain.Shared;
+using Erc.Households.Domain.Shared.AccountingPoints;
+using Erc.Households.Domain.Shared.Addresses;
+using Erc.Households.Domain.Shared.Exemptions;
 using Erc.Households.Domain.Shared.Tariffs;
 using Erc.Households.Domain.Taxes;
 using Microsoft.EntityFrameworkCore;
@@ -211,28 +212,6 @@ namespace Erc.Households.EF.PostgreSQL
                 entity.HasOne(e => e.Tariff).WithMany();
                 entity.HasIndex(p => p.DsoConsumptionId).IsUnique();
             });
-
-            //modelBuilder.Entity<Contract>(e =>
-            //{
-            //    e.ToTable("contracts")
-            //        .Property(p => p.Logs).HasColumnType("jsonb");
-
-            //    e.Property(e => e.StartDate).HasColumnType("date");
-            //    e.Property(e => e.EndDate).HasColumnType("date");
-            //});
-
-            //modelBuilder.Entity<AccountingPointTariff>(e =>
-            //{
-            //    e.ToTable("accounting_point_tariffs");
-
-            //    e.Property(e => e.StartDate).HasColumnType("date");
-
-            //    e.Property(p => p.Logs).HasColumnType("jsonb");
-
-            //    e.HasOne(p => p.Tariff)
-            //        .WithMany()
-            //        .HasForeignKey(p => p.TariffId);
-            //});
 
             modelBuilder.Entity<AccountingPointDebtHistory>(entity =>
             {
@@ -539,7 +518,7 @@ namespace Erc.Households.EF.PostgreSQL
                 //    },
                 //    { 1, Commodity.ElectricPower, "Населення (загальний тариф)",  JsonSerializer.Serialize(new[] { new TariffRate { Id = 1, StartDate = new DateTime(2019, 1, 1), Value = 0.9m, ConsumptionLimit = 100 }, new TariffRate { StartDate = new DateTime(2019, 1, 1), Value = 1.68m } })},
                 //    { 101, Commodity.NaturalGas, "Природний газ для населення", null },
-                //    { 4, Commodity.ElectricPower, "Багатодітні, прийомні сім'ї та дитячі будинки сімейного типу", JsonSerializer.Serialize(new[] { new TariffRate { Id = 1, StartDate = new DateTime(2019, 1, 1), Value = 1.68m } }) }
+                //    { 4, Commodity.ElectricPower, "Багатодітні, прийомні сім'ї та дитячі будинки сімейного типу", JsonSerializer.Serialize(new[] { new TariffRate { Id = 1, StartDate = new DateTime(2019, 1, 1), Value = 0.9m } }) }
                 //}
             });
 

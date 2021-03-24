@@ -1,4 +1,4 @@
-﻿using Erc.Households.Domain;
+﻿using Erc.Households.Domain.Shared;
 using MediatR;
 using System;
 

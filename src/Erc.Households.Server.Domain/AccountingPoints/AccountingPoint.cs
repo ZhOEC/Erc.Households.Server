@@ -1,8 +1,9 @@
-﻿using Erc.Households.Domain.Addresses;
-using Erc.Households.Domain.Billing;
+﻿using Erc.Households.Domain.Billing;
 using Erc.Households.Domain.Extensions;
 using Erc.Households.Domain.Payments;
 using Erc.Households.Domain.Shared;
+using Erc.Households.Domain.Shared.AccountingPoints;
+using Erc.Households.Domain.Shared.Addresses;
 using Erc.Households.Domain.Shared.Tariffs;
 using Erc.Households.Events;
 using System;
@@ -15,11 +16,7 @@ namespace Erc.Households.Domain.AccountingPoints
     {
         readonly List<Contract> _contractsHistory = new List<Contract>();
         private readonly List<AccountingPointTariff> _tariffsHistory = new List<AccountingPointTariff>();
-        private List<Payment> _payments = new List<Payment>();
-        private List<Invoice> _invoices = new List<Invoice>();
-        private List<AccountingPointExemption> _exemptions = new List<AccountingPointExemption>();
 
-        BranchOffice _branchOffice;
         Person _owner;
         Address _address;
         DistributionSystemOperator _distributionSystemOperator;
@@ -59,6 +56,9 @@ namespace Erc.Households.Domain.AccountingPoints
         public decimal Debt { get; private set; }
         public ZoneRecord ZoneRecord { get; private set; }
         public Commodity Commodity { get; private set; }
+        public bool? IsGasWaterHeaterInstalled { get; init; }
+        public bool? IsCentralizedWaterSupply { get; init; }
+        public bool? IsCentralizedHotWaterSupply { get; init; }
         public DistributionSystemOperator DistributionSystemOperator
         {
             get => LazyLoader.Load(this, ref _distributionSystemOperator);
@@ -72,18 +72,24 @@ namespace Erc.Households.Domain.AccountingPoints
         public BuildingType BuildingType { get; private set; }
         public UsageCategory UsageCategory { get; private set; }
 
+        public bool CanBeUsedElectricWaterHeater => UsageCategoryId > 1 || (IsCentralizedWaterSupply ?? false);
+        public bool IsElectricHeatig => UsageCategory.Id > 2;
+
+        private List<Invoice> _invoices = new();
         public IReadOnlyCollection<Invoice> Invoices
         {
             get => LazyLoader.Load(this, ref _invoices);
             private set { _invoices = value.ToList(); }
         }
-
+        
+        private List<AccountingPointExemption> _exemptions = new();
         public IReadOnlyCollection<AccountingPointExemption> Exemptions
         {
             get => LazyLoader.Load(this, ref _exemptions);
             private set { _exemptions = value.ToList(); }
         }
 
+        private List<Payment> _payments = new();
         public IReadOnlyCollection<Payment> Payments
         {
             get => LazyLoader.Load(this, ref _payments);
@@ -102,6 +108,7 @@ namespace Erc.Households.Domain.AccountingPoints
             private set { _owner = value; }
         }
 
+        private BranchOffice _branchOffice;
         public BranchOffice BranchOffice
         {
             get => LazyLoader.Load(this, ref _branchOffice);
@@ -160,7 +167,7 @@ namespace Erc.Households.Domain.AccountingPoints
             _payments.Add(payment);
         }
 
-        public void AddInvoice(Invoice invoice)
+        public void ApplyInvoice(Invoice invoice)
         {
             _invoices.Add(invoice);
             Debt += invoice.TotalAmountDue;

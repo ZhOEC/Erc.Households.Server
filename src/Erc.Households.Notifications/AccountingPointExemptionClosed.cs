@@ -1,4 +1,5 @@
 ﻿using Erc.Households.Domain.AccountingPoints;
+using Erc.Households.Domain.Shared.AccountingPoints;
 using MediatR;
 using System;
 

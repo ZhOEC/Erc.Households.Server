@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Erc.Households.CalculateStrategies.Core;
 using Erc.Households.Domain.Billing;
 using Erc.Households.Domain.Shared;
+using Erc.Households.Domain.Shared.Billing;
 using Erc.Households.Domain.Shared.Tariffs;
 using Erc.Households.EF.PostgreSQL;
 using Erc.Households.ModelLogs;

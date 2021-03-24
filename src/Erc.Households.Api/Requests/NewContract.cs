@@ -6,6 +6,6 @@ namespace Erc.Households.Api.Requests
     {
         public DateTime ContractStartDate { get; set; }
         public bool SendPaperBill { get; set; }
-        public Domain.Person Owner { get; set; }
+        public Domain.Shared.Person Owner { get; set; }
     }
 }

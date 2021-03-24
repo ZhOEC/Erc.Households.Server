@@ -1,9 +1,7 @@
 ﻿using Erc.Households.Commands;
-using Erc.Households.Domain.AccountingPoints;
 using Erc.Households.EF.PostgreSQL;
 using Erc.Households.Notifications;
 using MediatR;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 

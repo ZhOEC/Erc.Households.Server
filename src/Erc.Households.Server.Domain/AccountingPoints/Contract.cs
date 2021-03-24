@@ -1,4 +1,5 @@
 ﻿using Erc.Households.Domain.Extensions;
+using Erc.Households.Domain.Shared;
 using Erc.Households.ModelLogs;
 using System;
 

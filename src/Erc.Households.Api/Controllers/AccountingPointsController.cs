@@ -68,7 +68,12 @@ namespace Erc.Households.Api.Controllers
                 newAccountingPoint.Eic, newAccountingPoint.Name, newAccountingPoint.Commodity, newAccountingPoint.ContractStartDate,
                 newAccountingPoint.TariffId, newAccountingPoint.Address, newAccountingPoint.Owner,
                 newAccountingPoint.BranchOfficeId, newAccountingPoint.DistributionSystemOperatorId, User.Identity.Name, newAccountingPoint.BuildingTypeId,
-                newAccountingPoint.UsageCategoryId, newAccountingPoint.SendPaperBill);
+                newAccountingPoint.UsageCategoryId, newAccountingPoint.SendPaperBill)
+            {
+                IsCentralizedHotWaterSupply = newAccountingPoint.IsCentralizedHotWaterSupply,
+                IsCentralizedWaterSupply = newAccountingPoint.IsCentralizedWaterSupply,
+                IsGasWaterHeaterInstalled = newAccountingPoint.IsGasWaterHeaterInstalled
+            };
 
             await _unitOfWork.AccountingPointRepository.AddNewAsync(accountingPoint);
             await _unitOfWork.SaveWorkAsync();

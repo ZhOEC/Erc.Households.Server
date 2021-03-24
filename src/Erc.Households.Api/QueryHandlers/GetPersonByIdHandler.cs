@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Erc.Households.Api.QueryHandlers
 {
-    public class GetPersonByIdHandler : IRequestHandler<GetPersonById, Domain.Person>
+    public class GetPersonByIdHandler : IRequestHandler<GetPersonById, Domain.Shared.Person>
     {
         private readonly ErcContext _ercContext;
         readonly IMapper _mapper;
@@ -20,7 +20,7 @@ namespace Erc.Households.Api.QueryHandlers
             _mapper = mapper;
         }
 
-        public async Task<Domain.Person> Handle(GetPersonById request, CancellationToken cancellationToken)
+        public async Task<Domain.Shared.Person> Handle(GetPersonById request, CancellationToken cancellationToken)
         {
             return await _ercContext.People
                 .AsNoTracking()

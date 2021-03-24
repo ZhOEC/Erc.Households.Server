@@ -1,10 +1,6 @@
-﻿using Erc.Households.Domain.AccountingPoints;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
+﻿using System;
 
-namespace Erc.Households.Domain.AccountingPoints
+namespace Erc.Households.Domain.Shared.AccountingPoints
 {
     public class AccountingPointExemption
     {

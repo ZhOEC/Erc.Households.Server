@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Erc.Households.Domain.Addresses
+namespace Erc.Households.Domain.Shared.Addresses
 {
     public class City
     {

@@ -1,10 +1,9 @@
-﻿using Erc.Households.Domain;
-using Erc.Households.Domain.Shared;
+﻿using Erc.Households.Domain.Shared;
 using System;
 
 namespace Erc.Households.Api.Requests
-{ 
-    public class NewAccountingPoint
+{
+    public record NewAccountingPoint
     {
         public string Eic { get; set; }
         public string Name { get; set; }
@@ -16,8 +15,11 @@ namespace Erc.Households.Api.Requests
         public int BuildingTypeId { get; set; }
         public int UsageCategoryId { get; set; }
         public bool SendPaperBill { get; set; }
-        public Domain.Addresses.Address Address { get; set; }
-        public Domain.Person Owner { get; set; }
+        public Domain.Shared.Addresses.Address Address { get; set; }
+        public Person Owner { get; set; }
         public Commodity Commodity { get; set; }
+        public bool? IsGasWaterHeaterInstalled { get; set; }
+        public bool? IsCentralizedWaterSupply { get; set; }
+        public bool? IsCentralizedHotWaterSupply { get; set; }
     }
 }
