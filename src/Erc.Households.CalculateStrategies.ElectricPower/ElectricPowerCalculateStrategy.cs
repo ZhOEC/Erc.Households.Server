@@ -116,7 +116,7 @@ namespace Erc.Households.CalculateStrategies.ElectricPower
                         units = zoneLimit;
                 }
 
-                var discountUnits = 0;
+                int? discountUnits = null;
                 var discount = 0m;
                 if (calculationRequest.ExemptionData != null)
                 {
@@ -128,18 +128,18 @@ namespace Erc.Households.CalculateStrategies.ElectricPower
                         var alreadyDiscountedInUsage = usage.Calculations.Where(c => c.PriceValue != tr.Value).Sum(c => c.DiscountUnits);
                         discountUnits -= alreadyDiscountedInUsage;
                     }
-                    if (discountUnits > units || discountUnits == 0)
+                    if (discountUnits > units || !discountUnits.HasValue)
                         discountUnits = (int)units;
 
-                    discount = decimal.Round(discountUnits * tr.Value * usage.Kz * (calculationRequest.ExemptionData.ExemptionPercent > 1 ? (calculationRequest.ExemptionData.ExemptionPercent / 100) : calculationRequest.ExemptionData.ExemptionPercent), 2, MidpointRounding.AwayFromZero);
+                    discount = decimal.Round(discountUnits.Value * tr.Value * usage.Kz * (calculationRequest.ExemptionData.ExemptionPercent > 1 ? (calculationRequest.ExemptionData.ExemptionPercent / 100) : calculationRequest.ExemptionData.ExemptionPercent), 2, MidpointRounding.AwayFromZero);
                 }
 
                 usage.AddCalculation(new UsageCalculation
                 {
                     Units = units,
                     Charge = Math.Round(units * tr.Value * usage.Kz, 2, MidpointRounding.AwayFromZero),
-                    Discount =  discount,
-                    DiscountUnits = discountUnits,
+                    Discount = discount,
+                    DiscountUnits = discountUnits ?? 0,
                     PriceValue = tr.Value
                 });
             }

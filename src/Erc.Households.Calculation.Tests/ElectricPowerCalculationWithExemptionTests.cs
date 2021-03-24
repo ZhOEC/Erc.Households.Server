@@ -373,5 +373,83 @@ namespace Erc.Households.Calculation.Tests
              )
              .Should().Be(calculationRequest.Tariff.Rates.First(t => t.Value == 0.9m).ConsumptionLimit);
         }
+
+        [Fact]
+        public void Calculate_Regular_Invoice_With_Two_blocks_Tariff_with_exemption()
+        {
+            var calculateStrategy = new ElectricPowerCalculateStrategy(null);
+            var calculationRequest = new CalculationRequest
+            {
+                AccountingPointId = 1,
+                FromDate = new DateTime(2021, 1, 1),
+                InvoiceType = Domain.Shared.InvoiceType.Common,
+                Tariff = new Tariff
+                {
+                    Rates = new[]
+                    {
+                        new TariffRate
+                        {
+                            StartDate = new DateTime(2021, 1, 1),
+                            Value = 1.68m
+                        },
+                        new TariffRate
+                        {
+                            StartDate = new DateTime(2021, 1, 1),
+                            Value = 0.9m,
+                            ConsumptionLimit=100
+                        }
+                    }
+                },
+                ToDate = new DateTime(2021, 2, 1),
+                UsageT1 = new Usage(200, 1m, 1m),
+                ZoneRecord = Domain.Shared.ZoneRecord.None,
+                ExemptionData = new ExemptionData
+                {
+                    CanBeUsedElectricWaterHeater = false,
+                    ExemptionPercent = .50m,
+                    NumberOfPeople = 1,
+                    UseDiscountLimit = true,
+                    ExemptionDiscountNorms = new ExemptionDiscountNorms[]
+                    {
+                        new ExemptionDiscountNorms(
+                            effectiveDate: new DateTime(2019, 1, 1),
+                            baseUnits: 70,
+                            baseUnitsWithoutHotWater: 100,
+                            basePerson: 1,
+                            unitsPerPerson:30,
+                            maxUnits: 190,
+                            maxUnitsWithoutHotWater: 250,
+                            baseSquareMeter: 10.5m,
+                            squareMeterPerPerson: 21m,
+                            unitsPerSquareMeter: 30)
+                    }
+                }
+            };
+
+            calculateStrategy.Calculate(calculationRequest).Wait();
+
+            calculationRequest.UsageT1.Should().BeEquivalentTo(new
+            {
+                Charge = 258m,
+                Units = 200,
+                Discount = 31.5m,
+                DiscountUnits = 70,
+                Calculations = new[]
+                {
+                    new { PriceValue = 0.9m, Units = 100, Charge = 90m, Discount = 31.5m, DiscountUnits = 70},
+                    new { PriceValue = 1.68m, Units = 100, Charge = 168m, Discount = 0m, DiscountUnits = 0}
+                }
+            });
+            calculationRequest.UsageT1.Charge.Should().Be(calculationRequest.UsageT1.Calculations.Sum(c => c.Charge));
+            calculationRequest.UsageT1.Units.Should().Be(calculationRequest.UsageT1.Calculations.Sum(c => c.Units));
+            calculationRequest.UsageT1.Discount.Should().Be(calculationRequest.UsageT1.Calculations.Sum(c => c.Discount));
+            calculationRequest.UsageT1.DiscountUnits.Should().Be(calculationRequest.UsageT1.Calculations.Sum(c => c.DiscountUnits));
+
+            (
+                calculationRequest.UsageT1.Calculations.Where(c => c.PriceValue == 0.9m).Sum(c => c.Units)
+               
+             )
+             .Should().Be(calculationRequest.Tariff.Rates.First(t => t.Value == 0.9m).ConsumptionLimit);
+        }
     }
 }
