@@ -1,7 +1,7 @@
 ﻿using Erc.Households.Domain.Shared.Billing;
 using System.Collections.Generic;
 
-namespace Erc.Households.Domain.AccountingPoints
+namespace Erc.Households.Domain.Shared.AccountingPoints
 {
     public class UsageCategory
     {

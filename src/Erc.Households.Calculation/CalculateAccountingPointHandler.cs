@@ -31,8 +31,9 @@ namespace Erc.Households.Calculation
         {
             if (await _ercContext.Invoices.AnyAsync(i => i.DsoConsumptionId == context.Message.Id))
                 return;
-
+            
             var ac = await _ercContext.AccountingPoints
+                .Include(ap=>ap.BuildingType)
                 .Include(ac => ac.BranchOffice.CurrentPeriod)
                 .Include(ac=> ac.UsageCategory)
                 .Include(a => a.Exemptions)
@@ -52,6 +53,7 @@ namespace Erc.Households.Calculation
             var fromDate = context.Message.FromDate ?? ac.BranchOffice.CurrentPeriod.StartDate;
             var toDate = context.Message.ToDate ?? ac.BranchOffice.CurrentPeriod.EndDate.AddDays(1);
             var tariff = ac.TariffsHistory.OrderByDescending(t => t.StartDate).FirstOrDefault(t => t.StartDate < toDate).Tariff;
+
             var zoneRecord = context.Message.ZoneRecord switch
             {
                 2 => ZoneRecord.Two,
@@ -59,31 +61,37 @@ namespace Erc.Households.Calculation
                 _ => ZoneRecord.None
             };
 
-            var usageT1 = new Usage(context.Message.UsageT1,
-                zoneRecord switch
-                {
-                    ZoneRecord.Two => 0.5m,
-                    ZoneRecord.Three => 0.4m,
-                    _ => 1
-                })
-
+            var coeffs = _ercContext.ZoneCoeffs.OrderByDescending(zc => zc.StartDate).Where(zc => zc.StartDate <= fromDate && zc.ZoneRecord == zoneRecord);
+            
+            var T1Coeffs = coeffs.First(zc => zc.ZoneNumber == ZoneNumber.T1);
+            var usageT1 = new Usage(context.Message.UsageT1, T1Coeffs.Value, T1Coeffs.DiscountWeight)
             {
                 PresentMeterReading = context.Message.PresentMeterReadingT1,
                 PreviousMeterReading = context.Message.PreviousMeterReadingT1,
             };
 
-            var usageT2 = zoneRecord != ZoneRecord.None ? new Usage(context.Message.UsageT2 ?? 0, 1)
-            {
-                PresentMeterReading = context.Message.PresentMeterReadingT2,
-                PreviousMeterReading = context.Message.PreviousMeterReadingT2,
-            } : null;
+            Usage usageT2 = null;
+            Usage usageT3 = null;
 
-            var usageT3 = zoneRecord == ZoneRecord.Three ? new Usage(context.Message.UsageT3 ?? 0, 1.5m)
+            if (zoneRecord != ZoneRecord.None)
             {
-                PresentMeterReading = context.Message.PresentMeterReadingT3,
-                PreviousMeterReading = context.Message.PreviousMeterReadingT3,
-            } : null;
+                var T2Coeffs = coeffs.First(zc => zc.ZoneNumber == ZoneNumber.T2);
+                usageT2 = new Usage(context.Message.UsageT2 ?? 0, T2Coeffs.Value, T2Coeffs.DiscountWeight)
+                {
+                    PresentMeterReading = context.Message.PresentMeterReadingT2,
+                    PreviousMeterReading = context.Message.PreviousMeterReadingT2,
+                };
 
+                if (zoneRecord == ZoneRecord.Three)
+                {
+                    var T3Coeffs = coeffs.First(zc => zc.ZoneNumber == ZoneNumber.T3);
+                    usageT3 = new Usage(context.Message.UsageT3 ?? 0, T3Coeffs.Value, T3Coeffs.DiscountWeight)
+                    {
+                        PresentMeterReading = context.Message.PresentMeterReadingT3,
+                        PreviousMeterReading = context.Message.PreviousMeterReadingT3,
+                    };
+                }
+            }
             var newInvoice = new Invoice(context.Message.Id, ac, fromDate, toDate, zoneRecord, usageT1, usageT2, usageT3);
             
             try

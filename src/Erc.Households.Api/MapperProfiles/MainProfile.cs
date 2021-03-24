@@ -12,10 +12,10 @@ namespace Erc.Households.Api.MapperProfiles
 				.ForMember(x => x.City, x => x.MapFrom(y => y.Address.Street.City))
 				.ForMember(x => x.ContractStartDate, x => x.MapFrom(y => y.CurrentContract.StartDate));
 
-			CreateMap<Domain.Addresses.Address, Responses.Address>()
+			CreateMap<Domain.Shared.Addresses.Address, Responses.Address>()
 				.ForMember(x => x.CityId, x => x.MapFrom(y => y.Street.City.Id));
 			
-			CreateMap<Domain.Person, Responses.Person>();
+			CreateMap<Domain.Shared.Person, Responses.Person>();
 			
 			CreateMap<Domain.BranchOffice, Responses.BranchOffice>();
 			
@@ -26,12 +26,12 @@ namespace Erc.Households.Api.MapperProfiles
 			CreateMap<Domain.Payments.Payment, Responses.Payment>()
 				.ForMember(x => x.AccountingPointName, x => x.MapFrom(y => y.AccountingPoint.Name));
 			
-			CreateMap<Domain.AccountingPoints.UsageCategory, Responses.UsageCategory>();
+			CreateMap<Domain.Shared.AccountingPoints.UsageCategory, Responses.UsageCategory>();
 
 			CreateMap<Domain.Billing.Invoice, Responses.Invoice>()
 				.ForMember(i => i.Type, s => s.MapFrom(_ => "Звичайний"));
 			
-			CreateMap<Domain.AccountingPoints.AccountingPointExemption, Responses.AccountingPointExemption>()
+			CreateMap<Domain.Shared.AccountingPoints.AccountingPointExemption, Responses.AccountingPointExemption>()
 				.ForMember(r=>r.CategoryName, mo=>mo.MapFrom(s=>$"{s.Category.Name} ({s.Category.Coeff:#.#}%)"));
 
 			CreateMap<Domain.Taxes.TaxInvoice, Responses.TaxInvoice>(); 

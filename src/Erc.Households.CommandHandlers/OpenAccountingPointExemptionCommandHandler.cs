@@ -1,4 +1,5 @@
 ﻿using Erc.Households.Domain.AccountingPoints;
+using Erc.Households.Domain.Shared.AccountingPoints;
 using Erc.Households.EF.PostgreSQL;
 using Erc.Households.Notifications;
 using MediatR;

@@ -326,28 +326,28 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 keyColumn: "id",
                 keyValue: 1,
                 column: "exemption_discount_norms",
-                value: JsonSerializer.Serialize(new[] { new { EffectiveDate = new DateTime(2019, 1, 1), BaseUnits = 70, BaseUnitsWithoutHotWater = 100, BasePerson = 1, UnitsPerPerson = 30, MaxKWh = 190, MaxUnitsWithoutHotWater = 220 } }));
+                value: JsonSerializer.Serialize(new[] { new { EffectiveDate = new DateTime(2019, 1, 1), BaseUnits = 70, BaseUnitsWithoutHotWater = 100, BasePerson = 1, UnitsPerPerson = 30, MaxUnits = 190, MaxUnitsWithoutHotWater = 220 } }));
 
             migrationBuilder.UpdateData(
                 table: "usage_categories",
                 keyColumn: "id",
                 keyValue: 2,
                 column: "exemption_discount_norms",
-                value: JsonSerializer.Serialize(new[] { new { EffectiveDate = new DateTime(2019, 1, 1), BaseUnits = 110, BaseUnitsWithoutHotWater = 130, BasePerson = 1, UnitsPerPerson = 30, MaxKWh = 230, MaxUnitsWithoutHotWater = 250 } }));
+                value: JsonSerializer.Serialize(new[] { new { EffectiveDate = new DateTime(2019, 1, 1), BaseUnits = 110, BaseUnitsWithoutHotWater = 130, BasePerson = 1, UnitsPerPerson = 30, MaxUnits = 230, MaxUnitsWithoutHotWater = 250 } }));
 
             migrationBuilder.UpdateData(
                 table: "usage_categories",
                 keyColumn: "id",
                 keyValue: 3,
                 column: "exemption_discount_norms",
-                value: JsonSerializer.Serialize(new[] { new { EffectiveDate = new DateTime(2019, 1, 1), BaseUnits = 70, BaseUnitsWithoutHotWater = 100, BasePerson = 1, UnitsPerPerson = 30, MaxKWh = 190, MaxUnitsWithoutHotWater = 220, BaseSquareMeter = 10.5m, SquareMeterPerPerson = 21m, UnitsPerSquareMeter = 30 } }));
+                value: JsonSerializer.Serialize(new[] { new { EffectiveDate = new DateTime(2019, 1, 1), BaseUnits = 70, BaseUnitsWithoutHotWater = 100, BasePerson = 1, UnitsPerPerson = 30, MaxUnits = 190, MaxUnitsWithoutHotWater = 220, BaseSquareMeter = 10.5m, SquareMeterPerPerson = 21m, UnitsPerSquareMeter = 30 } }));
 
             migrationBuilder.UpdateData(
                 table: "usage_categories",
                 keyColumn: "id",
                 keyValue: 4,
                 column: "exemption_discount_norms",
-                value: JsonSerializer.Serialize(new[] { new { EffectiveDate = new DateTime(2019, 1, 1), BaseUnits = 110, BaseUnitsWithoutHotWater = 130, BasePerson = 1, UnitsPerPerson = 30, MaxKWh = 230, MaxUnitsWithoutHotWater = 250, BaseSquareMeter = 10.5m, SquareMeterPerPerson = 21m, UnitsPerSquareMeter = 30 } }));
+                value: JsonSerializer.Serialize(new[] { new { EffectiveDate = new DateTime(2019, 1, 1), BaseUnits = 110, BaseUnitsWithoutHotWater = 130, BasePerson = 1, UnitsPerPerson = 30, MaxUnits = 230, MaxUnitsWithoutHotWater = 250, BaseSquareMeter = 10.5m, SquareMeterPerPerson = 21m, UnitsPerSquareMeter = 30 } }));
             /* initial data
                   { 4, JsonSerializer.Serialize(new[] { new { EffectiveDate = new DateTime(2019, 1, 1), BaseKWh = 110, BaseKWhWithoutHotWater = 130, BasePerson = 1, KWhPerPerson = 30, MaxKWh = 230, MaxKWhWithoutHotWater = 250, BaseSquareMeter = 10.5m, SquareMeterPerPerson = 21m, KWhPerSquareMeter = 30 } }), "Електроопалювальна установка та електроплита" },
                   { 3, JsonSerializer.Serialize(new[] { new { EffectiveDate = new DateTime(2019, 1, 1), BaseKWh = 70, BaseKWhWithoutHotWater = 100, BasePerson = 1, KWhPerPerson = 30, MaxKWh = 190, MaxKWhWithoutHotWater = 220, BaseSquareMeter = 10.5m, SquareMeterPerPerson = 21m, KWhPerSquareMeter = 30 } }), "Електроопалювальна установка" },

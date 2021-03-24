@@ -5,10 +5,11 @@ namespace Erc.Households.Domain.Shared.Billing
 {
     public class Usage
     {
-        public Usage(decimal units, decimal kz)
+        public Usage(decimal units, decimal kz = 1, decimal discountWeight = 1)
         {
             Units = units;
             Kz = kz;
+            DiscountWeight = discountWeight;
         }
 
         public int? PresentMeterReading { get; init; }
@@ -17,15 +18,15 @@ namespace Erc.Households.Domain.Shared.Billing
         public decimal Charge { get; private set; }
         public decimal Discount { get; private set; }
         public int DiscountUnits { get; private set; }
-        public decimal Kz { get; private set; } 
+        public decimal Kz { get; private set; }
         public decimal DiscountWeight { get; private set; }
-        
+
         private List<UsageCalculation> _calculations = new();
-        public IEnumerable<UsageCalculation> Calculations 
-        { 
+        public IEnumerable<UsageCalculation> Calculations
+        {
             get => _calculations;
             set => _calculations = value.ToList();
-        } 
+        }
 
         public void AddCalculation(UsageCalculation usageCalculation, bool isCorrerctive = false)
         {
@@ -34,7 +35,9 @@ namespace Erc.Households.Domain.Shared.Billing
             Discount += usageCalculation.Discount;
             DiscountUnits += usageCalculation.DiscountUnits;
             if (isCorrerctive)
+            {
                 Units += usageCalculation.Units;
+            }
         }
 
         public void AddInvalidInvoicesUnits(decimal units) => Units += units;

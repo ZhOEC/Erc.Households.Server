@@ -1,7 +1,7 @@
-﻿using Erc.Households.Domain.Addresses;
+﻿using Erc.Households.Domain.Shared.Addresses;
 using System;
 
-namespace Erc.Households.Domain
+namespace Erc.Households.Domain.Shared
 {
     public class Person
     {

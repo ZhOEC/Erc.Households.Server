@@ -13,11 +13,12 @@ namespace Erc.Households.CalculateStrategies.ElectricPower
 {
     public class ElectricPowerCalculateStrategy : ICalculateStrategy
     {
-        
+        private static DateTime GetHatingSeasonStartDate(int year) => new(year, 10, 16);
+        private static DateTime GetHatingSeasonEndDate(int year) => new(year, 4, 15);
+
         IEnumerable<(Usage invalidUsageT1, Usage invalidUsageT2, Usage invalidUsageT3)> _invalidUsages;
         Func<int, DateTime, Task<IEnumerable<(Usage invalidUsageT1, Usage invalidUsageT2, Usage invalidUsageT3)>>> _invalidUsageLoader;
-        ILogger _logger = Log.ForContext<ElectricPowerCalculateStrategy>();
-
+       
         public ElectricPowerCalculateStrategy(Func<int, DateTime, Task<IEnumerable<(Usage invalidUsageT1, Usage invalidUsageT2, Usage invalidUsageT3)>>> invalidUsageLoader)
         {
             _invalidUsageLoader = invalidUsageLoader;
@@ -29,7 +30,7 @@ namespace Erc.Households.CalculateStrategies.ElectricPower
             if (calculationRequest.InvoiceType == InvoiceType.Recalculation)
             {
                 _invalidUsages = await _invalidUsageLoader?.Invoke(calculationRequest.AccountingPointId, calculationRequest.FromDate);
-                foreach(var usages in _invalidUsages)
+                foreach (var usages in _invalidUsages)
                 {
                     calculationRequest.UsageT1.AddInvalidInvoicesUnits(usages.invalidUsageT1.Units);
                     if (usages.invalidUsageT2 is not null) calculationRequest.UsageT2.AddInvalidInvoicesUnits(usages.invalidUsageT2.Units);
@@ -50,7 +51,7 @@ namespace Erc.Households.CalculateStrategies.ElectricPower
                 if (calculationRequest.UsageT3?.Units > calculationRequest.UsageT3?.Calculations.Sum(c => c.Units)) CalculateUsageInternal(() => calculationRequest.UsageT3, tr);
             }
 
-            if (_invalidUsages?.Any()??false)
+            if (_invalidUsages?.Any() ?? false)
             {
                 foreach (var calculation in _invalidUsages.SelectMany(ii => ii.invalidUsageT1.Calculations))
                 {
@@ -97,10 +98,10 @@ namespace Erc.Households.CalculateStrategies.ElectricPower
                 var zoneName = ((MemberExpression)usageExpr.Body).Member.Name[5..];
                 var consumptionMonthLimit = int.MaxValue;
                 if (tr.ConsumptionLimit.HasValue || tr.HeatingConsumptionLimit.HasValue)
-                    consumptionMonthLimit = GetConsumptionMonthLimitInternal(tr, calculationRequest.FromDate, calculationRequest.ToDate);
-                
+                    consumptionMonthLimit = GetConsumptionMonthLimit(tr, calculationRequest.FromDate, calculationRequest.ToDate);
+
                 var units = usage.Units - usage.Calculations.Sum(c => c.Units);
-                
+
                 if (consumptionMonthLimit < int.MaxValue)
                 {
                     var zoneLimit = zoneName switch
@@ -115,18 +116,36 @@ namespace Erc.Households.CalculateStrategies.ElectricPower
                         units = zoneLimit;
                 }
 
+                var discountUnits = 0;
+                var discount = 0m;
+                if (calculationRequest.ExemptionData != null)
+                {
+                    var exemptionConsumptionLimit = GetExemtionLimit(calculationRequest.ExemptionData, calculationRequest.FromDate, calculationRequest.ToDate);
+
+                    if (exemptionConsumptionLimit < int.MaxValue)
+                    {
+                        discountUnits = (int)decimal.Round(exemptionConsumptionLimit * usage.DiscountWeight, MidpointRounding.AwayFromZero);
+                        var alreadyDiscountedInUsage = usage.Calculations.Where(c => c.PriceValue != tr.Value).Sum(c => c.DiscountUnits);
+                        discountUnits -= alreadyDiscountedInUsage;
+                    }
+                    if (discountUnits > units || discountUnits == 0)
+                        discountUnits = (int)units;
+
+                    discount = decimal.Round(discountUnits * tr.Value * usage.Kz * (calculationRequest.ExemptionData.ExemptionPercent > 1 ? (calculationRequest.ExemptionData.ExemptionPercent / 100) : calculationRequest.ExemptionData.ExemptionPercent), 2, MidpointRounding.AwayFromZero);
+                }
+
                 usage.AddCalculation(new UsageCalculation
                 {
                     Units = units,
                     Charge = Math.Round(units * tr.Value * usage.Kz, 2, MidpointRounding.AwayFromZero),
-                    //Discount = decimal.Round(units * tr.Value * UsageT1.Kz * UsageT1.DiscountWeight, 2, MidpointRounding.AwayFromZero) * (ExemptionCoeff ?? 1),
-                    DiscountUnits = 0,
+                    Discount =  discount,
+                    DiscountUnits = discountUnits,
                     PriceValue = tr.Value
                 });
             }
         }
 
-        static private int GetConsumptionMonthLimitInternal(TariffRate rate, DateTime fromDate, DateTime toDate)
+        static private int GetConsumptionMonthLimit(TariffRate rate, DateTime fromDate, DateTime toDate)
         {
             if (rate.HeatingConsumptionLimit.HasValue)
             {
@@ -137,6 +156,39 @@ namespace Erc.Households.CalculateStrategies.ElectricPower
             }
 
             return rate.ConsumptionLimit ?? int.MaxValue;
+        }
+
+        private static int GetExemtionLimit(ExemptionData exemptionData, DateTime fromDate, DateTime toDate)
+        {
+            decimal limit = 0;
+            var heatingSeasonStart = GetHatingSeasonStartDate(fromDate.Year);
+            var heatingSeasonEnd = GetHatingSeasonEndDate(fromDate.Year);
+
+            ExemptionDiscountNorms discountNorms = exemptionData.ExemptionDiscountNorms.OrderByDescending(n => n.EffectiveDate).First(n => n.EffectiveDate <= fromDate);
+            if (exemptionData.IsElectricHeatig && (toDate>heatingSeasonStart || fromDate < heatingSeasonEnd))
+            {
+                limit = (discountNorms.SquareMeterPerPerson.Value * exemptionData.NumberOfPeople + discountNorms.BaseSquareMeter.Value) * discountNorms.UnitsPerSquareMeter.Value * exemptionData.HeatingCorrection;
+                if (fromDate.Month == heatingSeasonStart.Month)
+                    limit *= ((decimal)16) / 31;
+                if (fromDate.Month == heatingSeasonEnd.Month)
+                    limit *= 0.5m;
+
+                limit = decimal.Round(limit, MidpointRounding.AwayFromZero);
+            }
+            else
+            {
+                if (exemptionData.UseDiscountLimit)
+                {
+                    var canBeUsedElectricWaterHeater = !exemptionData.IsCentralizedHotWaterSupply && !exemptionData.IsGasWaterHeaterInstalled && exemptionData.CanBeUsedElectricWaterHeater;
+                    var maxLimit = canBeUsedElectricWaterHeater ? discountNorms.MaxUnitsWithoutHotWater : discountNorms.MaxUnits;
+                    limit = (canBeUsedElectricWaterHeater ? discountNorms.BaseUnitsWithoutHotWater : discountNorms.BaseUnits) + (exemptionData.NumberOfPeople - discountNorms.BasePerson) * discountNorms.UnitsPerPerson;
+                    if (limit > maxLimit)
+                        limit = maxLimit;
+                }
+                else
+                    limit = int.MaxValue;
+            }
+            return (int)limit;
         }
     }
 }

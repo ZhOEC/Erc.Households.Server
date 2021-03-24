@@ -1,5 +1,5 @@
 ﻿using Erc.Households.Commands;
-using Erc.Households.Domain.Addresses;
+using Erc.Households.Domain.Shared.Addresses;
 using Erc.Households.EF.PostgreSQL;
 using Erc.Households.Events.AccountingPoints;
 using MediatR;

@@ -1,10 +1,10 @@
-﻿using Erc.Households.Domain.Addresses;
-using Erc.Households.Domain.Shared;
+﻿using Erc.Households.Domain.Shared;
+using Erc.Households.Domain.Shared.Addresses;
 using System;
 
 namespace Erc.Households.Api.Responses
 {
-    public class AccountingPoint
+    public record AccountingPoint
     {
         public int Id { get; set; }
         public int BranchOfficeId { get; private set; }
@@ -16,7 +16,6 @@ namespace Erc.Households.Api.Responses
         public Address Address { get; private set; }
         public DateTime ContractStartDate { get; private set; }
         public bool SendPaperBill { get; private set; }
-
         public string BranchOfficeName { get; set; }
         public string Name { get; set; }
         public string DistributionSystemOperatorName { get; set; }
@@ -31,6 +30,9 @@ namespace Erc.Households.Api.Responses
         public decimal Debt { get; set; }
         public AccountingPointExemption Exemption { get; set; }
         public Commodity Commodity { get; private set; }
+        public bool? IsGasWaterHeaterInstalled { get; private set; }
+        public bool? IsCentralizedWaterSupply { get; private set; }
+        public bool? IsCentralizedHotWaterSupply { get; private set; }
     }
 
     public class AccountingPointExemption

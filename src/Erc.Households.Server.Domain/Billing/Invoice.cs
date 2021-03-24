@@ -3,6 +3,7 @@ using Erc.Households.Domain.AccountingPoints;
 using Erc.Households.Domain.Extensions;
 using Erc.Households.Domain.Payments;
 using Erc.Households.Domain.Shared;
+using Erc.Households.Domain.Shared.AccountingPoints;
 using Erc.Households.Domain.Shared.Billing;
 using Erc.Households.Domain.Shared.Tariffs;
 using System;
@@ -148,18 +149,8 @@ namespace Erc.Households.Domain.Billing
 
         public async Task CalculateAsync(ICalculateStrategy calculateStrategy)
         {
-            decimal? exemptionDiscountRatio = null;
-            int? excemptionLimit = null;
             var exemption = AccountingPoint.Exemptions.FirstOrDefault(t => t.EffectiveDate <= FromDate && (t.EndDate ?? DateTime.MaxValue) > ToDate);
-            ExemptionDiscountNorms discountNorms = null;
-            if (exemption is not null)
-            {
-                exemptionDiscountRatio = exemption.Category.Coeff;
-                if (exemptionDiscountRatio.HasValue)
-                {
-                    discountNorms = AccountingPoint.UsageCategory.ExemptionDiscountNorms.OrderByDescending(n => n.EffectivetDate).First(n => n.EffectivetDate <= FromDate);
-                }
-            }
+
             await calculateStrategy.Calculate(new CalculationRequest
             {
                 FromDate = FromDate,
@@ -171,9 +162,20 @@ namespace Erc.Households.Domain.Billing
                 AccountingPointId = AccountingPointId,
                 ZoneRecord = ZoneRecord,
                 InvoiceType = Type,
-                ExcemptionDiscountPercent = exemptionDiscountRatio,
-                ExemptionDiscountNorms = discountNorms
+                ExemptionData = exemption != null ? new ExemptionData
+                {
+                    ExemptionDiscountNorms = AccountingPoint.UsageCategory.ExemptionDiscountNorms,
+                    ExemptionPercent = exemption.Category.Coeff,
+                    HeatingCorrection = AccountingPoint.BuildingType.HeataingCorrection,
+                    IsCentralizedHotWaterSupply = AccountingPoint.IsCentralizedHotWaterSupply ?? true,
+                    CanBeUsedElectricWaterHeater = AccountingPoint.CanBeUsedElectricWaterHeater,
+                    IsGasWaterHeaterInstalled = AccountingPoint.IsGasWaterHeaterInstalled ?? true,
+                    NumberOfPeople = exemption.PersonsNumber > 0 ? exemption.PersonsNumber : 1,
+                    IsElectricHeatig = AccountingPoint.UsageCategory.Id > 2,
+                    UseDiscountLimit = exemption.Category.HasLimit ?? exemption.HasLimit
+                } : null
             });
+
             TotalUnits = UsageT1.Units + (UsageT2?.Units ?? 0) + (UsageT3?.Units ?? 0);
             TotalDiscount = UsageT1.Discount + (UsageT2?.Discount ?? 0) + (UsageT3?.Discount ?? 0);
             TotalCharge = UsageT1.Charge + (UsageT2?.Charge ?? 0) + (UsageT3?.Charge ?? 0);

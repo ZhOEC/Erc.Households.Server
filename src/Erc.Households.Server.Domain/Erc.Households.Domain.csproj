@@ -12,5 +12,8 @@
     <ProjectReference Include="..\Erc.Households.Server.ModelLogs\Erc.Households.Server.ModelLogs.csproj" />
     <ProjectReference Include="..\Erc.Households.Domain.Shared\Erc.Households.Domain.Shared.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Exemptions\" />
+  </ItemGroup>
 
 </Project>

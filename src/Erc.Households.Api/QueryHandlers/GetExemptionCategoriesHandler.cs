@@ -1,4 +1,4 @@
-﻿using Erc.Households.Domain.Exemptions;
+﻿using Erc.Households.Domain.Shared.Exemptions;
 using Erc.Households.EF.PostgreSQL;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

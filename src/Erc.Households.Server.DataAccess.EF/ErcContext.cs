@@ -1,10 +1,11 @@
 ﻿using Erc.Households.Domain;
 using Erc.Households.Domain.AccountingPoints;
-using Erc.Households.Domain.Addresses;
 using Erc.Households.Domain.Billing;
-using Erc.Households.Domain.Exemptions;
 using Erc.Households.Domain.Payments;
 using Erc.Households.Domain.Shared;
+using Erc.Households.Domain.Shared.AccountingPoints;
+using Erc.Households.Domain.Shared.Addresses;
+using Erc.Households.Domain.Shared.Exemptions;
 using Erc.Households.Domain.Shared.Tariffs;
 using Erc.Households.Domain.Taxes;
 using Microsoft.EntityFrameworkCore;

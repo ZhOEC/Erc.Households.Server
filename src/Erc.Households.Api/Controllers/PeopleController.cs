@@ -1,6 +1,7 @@
 ﻿using Erc.Households.Api.Queries;
 using Erc.Households.Commands;
 using Erc.Households.Domain;
+using Erc.Households.Domain.Shared;
 using Erc.Households.EF.PostgreSQL;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

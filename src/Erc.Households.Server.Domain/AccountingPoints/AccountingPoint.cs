@@ -1,8 +1,9 @@
-﻿using Erc.Households.Domain.Addresses;
-using Erc.Households.Domain.Billing;
+﻿using Erc.Households.Domain.Billing;
 using Erc.Households.Domain.Extensions;
 using Erc.Households.Domain.Payments;
 using Erc.Households.Domain.Shared;
+using Erc.Households.Domain.Shared.AccountingPoints;
+using Erc.Households.Domain.Shared.Addresses;
 using Erc.Households.Domain.Shared.Tariffs;
 using Erc.Households.Events;
 using System;
@@ -55,9 +56,9 @@ namespace Erc.Households.Domain.AccountingPoints
         public decimal Debt { get; private set; }
         public ZoneRecord ZoneRecord { get; private set; }
         public Commodity Commodity { get; private set; }
-        public bool? IsGasWaterHeaterInstalled { get; private set; }
-        public bool? IsCentralizedWaterSupply { get; private set; }
-        public bool? IsCentralizedHotWaterSupply { get; private set; }
+        public bool? IsGasWaterHeaterInstalled { get; init; }
+        public bool? IsCentralizedWaterSupply { get; init; }
+        public bool? IsCentralizedHotWaterSupply { get; init; }
         public DistributionSystemOperator DistributionSystemOperator
         {
             get => LazyLoader.Load(this, ref _distributionSystemOperator);
@@ -70,6 +71,9 @@ namespace Erc.Households.Domain.AccountingPoints
         public AccountingPointExemption Exemption => Exemptions.FirstOrDefault(t => t.EffectiveDate <= DateTime.Today && (t.EndDate ?? DateTime.MaxValue) > DateTime.Today);
         public BuildingType BuildingType { get; private set; }
         public UsageCategory UsageCategory { get; private set; }
+
+        public bool CanBeUsedElectricWaterHeater => UsageCategoryId > 1 || (IsCentralizedWaterSupply ?? false);
+        public bool IsElectricHeatig => UsageCategory.Id > 2;
 
         private List<Invoice> _invoices = new();
         public IReadOnlyCollection<Invoice> Invoices

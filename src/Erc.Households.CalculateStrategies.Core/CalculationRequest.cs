@@ -16,7 +16,6 @@ namespace Erc.Households.CalculateStrategies.Core
         public Tariff Tariff { get; init; }
         public InvoiceType InvoiceType { get; init; }
         public ZoneRecord ZoneRecord { get; init; }
-        public ExemptionDiscountNorms ExemptionDiscountNorms { get; init; }
-        public decimal? ExcemptionDiscountPercent { get; init; }
+        public ExemptionData ExemptionData { get; init; }
     }
 }
