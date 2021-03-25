@@ -98,14 +98,13 @@ namespace Erc.Households.Calculation
             {
                 await newInvoice.CalculateAsync(calculateStrategy);
                 ac.ApplyInvoice(newInvoice);
+                await _ercContext.SaveChangesAsync();
             }
             catch (Exception e)
             {
-                Log.Error(e, $"Error calculating AccountingPoint {context.Message}");
+                Log.Error(e, "Error calculating AccountingPoint {@Message}", context.Message);
                 throw;
             }
-
-            await _ercContext.SaveChangesAsync();
         }
     }
 }
