@@ -42,7 +42,8 @@ namespace Erc.Households.Calculation
                                 c.Password(rabbitMq["Password"]);
                             });
                           
-                            cfg.UseConcurrencyLimit(1);
+                            if (hostContext.HostingEnvironment.IsDevelopment()) cfg.UseConcurrencyLimit(1);
+
                             cfg.ConfigureEndpoints(ctx);
                         });
                     });
