@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Erc.Households.Api\Erc.Households.Api.csproj" />
+    <ProjectReference Include="..\Erc.Households.Server.Domain.Shared\Erc.Households.Domain.Shared.csproj" />
     <ProjectReference Include="..\Erc.Households.Tariffs\Erc.Households.Domain.Shared.csproj" />
   </ItemGroup>
 

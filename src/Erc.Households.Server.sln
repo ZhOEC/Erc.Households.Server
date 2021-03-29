@@ -41,8 +41,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.CalculateStr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.CalculateStrategies.NaturalGas", "Erc.Households.CalculateStrategies.Gas\Erc.Households.CalculateStrategies.NaturalGas.csproj", "{60DD1C3D-18B2-44A2-AA4C-C7ADBA89513B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Domain.Shared", "Erc.Households.Tariffs\Erc.Households.Domain.Shared.csproj", "{82224981-D118-4078-9F81-3D6D9CBC0142}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Domain.Extensions", "Erc.Households.Domain.Extensions\Erc.Households.Domain.Extensions.csproj", "{8C5AA73B-E237-42B5-8E9F-253F1E674FBD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.ConsumptionParser.Core", "Erc.Households.ConsumptionParser.Core\Erc.Households.ConsumptionParser.Core.csproj", "{B3455674-A8BD-4DBC-973E-34A4DEF806AA}"
@@ -51,7 +49,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.ConsumptionP
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.PrintBills.Api", "Erc.Households.PrintBills.Api\Erc.Households.PrintBills.Api.csproj", "{E724382E-6DDE-4A8B-A3BD-D967AF06E9A1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Erc.Households.Reports", "Erc.Households.Reports\Erc.Households.Reports.csproj", "{A538E087-C9C4-4F71-A016-70B343F6C6E0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Reports", "Erc.Households.Reports\Erc.Households.Reports.csproj", "{A538E087-C9C4-4F71-A016-70B343F6C6E0}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Domain.Shared", "Erc.Households.Server.Domain.Shared\Erc.Households.Domain.Shared.csproj", "{FEB89426-C67C-4BDA-AC2A-759D0190B9D6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -131,10 +131,6 @@ Global
 		{60DD1C3D-18B2-44A2-AA4C-C7ADBA89513B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60DD1C3D-18B2-44A2-AA4C-C7ADBA89513B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60DD1C3D-18B2-44A2-AA4C-C7ADBA89513B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{82224981-D118-4078-9F81-3D6D9CBC0142}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{82224981-D118-4078-9F81-3D6D9CBC0142}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{82224981-D118-4078-9F81-3D6D9CBC0142}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{82224981-D118-4078-9F81-3D6D9CBC0142}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8C5AA73B-E237-42B5-8E9F-253F1E674FBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8C5AA73B-E237-42B5-8E9F-253F1E674FBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C5AA73B-E237-42B5-8E9F-253F1E674FBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -155,6 +151,10 @@ Global
 		{A538E087-C9C4-4F71-A016-70B343F6C6E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A538E087-C9C4-4F71-A016-70B343F6C6E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A538E087-C9C4-4F71-A016-70B343F6C6E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FEB89426-C67C-4BDA-AC2A-759D0190B9D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FEB89426-C67C-4BDA-AC2A-759D0190B9D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FEB89426-C67C-4BDA-AC2A-759D0190B9D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FEB89426-C67C-4BDA-AC2A-759D0190B9D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

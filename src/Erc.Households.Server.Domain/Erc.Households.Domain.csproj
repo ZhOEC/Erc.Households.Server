@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Erc.Households.CalculateStrategies.Core\Erc.Households.CalculateStrategies.Core.csproj" />
+    <ProjectReference Include="..\Erc.Households.Server.Domain.Shared\Erc.Households.Domain.Shared.csproj" />
     <ProjectReference Include="..\Erc.Households.Server.Events\Erc.Households.Events.csproj" />
     <ProjectReference Include="..\Erc.Households.Server.ModelLogs\Erc.Households.Server.ModelLogs.csproj" />
     <ProjectReference Include="..\Erc.Households.Tariffs\Erc.Households.Domain.Shared.csproj" />
