@@ -169,8 +169,7 @@ namespace Erc.Households.PrintBills.Api.Services
                     left join contracts cntr on ap.id = cntr.accounting_point_id
                 where ap.branch_office_id = case when @branchOfficeId is null then ap.branch_office_id else @branchOfficeId end
                     and inv.period_id = case when @periodId is null then inv.period_id else @periodId end
-                    and inv.id = case when @id is null then inv.id else @id end         
-                    limit 100", @params);
+                    and inv.id = case when @id is null then inv.id else @id end", @params);
 
             var ms = new MemoryStream();
             if (fileType == FileType.Csv) ms = CsvHandler(bills);
@@ -190,11 +189,11 @@ namespace Erc.Households.PrintBills.Api.Services
                 var billsT2 = bills.Cast<BillElectricity>().Where(x => x.UsageT2 != null && x.UsageT3 is null).ToList();
                 var billsT3 = bills.Cast<BillElectricity>().Where(x => x.UsageT2 != null && x.UsageT3 != null).ToList();
 
-                if (billsT3.Count() == 0)
+                if (billsT3.Count == 0)
                     template.Workbook.Worksheet(3).Delete();
-                if (billsT2.Count() == 0)
+                if (billsT2.Count == 0)
                     template.Workbook.Worksheet(2).Delete();
-                if (billsT1.Count() == 0)
+                if (billsT1.Count == 0)
                     template.Workbook.Worksheet(1).Delete();
 
                 template.AddVariable("bill_t1", billsT1);
