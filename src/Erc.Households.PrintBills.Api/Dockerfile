@@ -1,8 +1,8 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
 FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS base
-ENV http_proxy "http://10.67.2.49:50514"
-ENV https_proxy "http://10.67.2.49:50514"
+ARG http_proxy
+ARG https_proxy
 RUN apt-get update && apt-get install -y libgdiplus
 
 WORKDIR /app
