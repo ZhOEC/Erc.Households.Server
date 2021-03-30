@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Erc.Households.PrintBills.Api.Models
 {
-    public class Bill
+    public class BillNaturalGas
     {
         public string CompanyFullName { get; set; }
         public string CompanyShortName { get; set; }

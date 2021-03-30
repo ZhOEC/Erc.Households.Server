@@ -26,7 +26,7 @@ namespace Erc.Households.Api.Controllers
             var wr = new StreamWriter(ms, Encoding.GetEncoding(1251));
             using var con = _ercContext.Database.GetDbConnection();
             using var cmd = con.CreateCommand();
-            cmd.CommandText = @"select 
+            cmd.CommandText = $@"select 
                         ap.name, COALESCE(p.tax_code, p.id_card_number), to_char(c.start_date,'DD.MM.YYYY'), a.zip, cities.name, s.name, a.building, coalesce(a.apt, ''), tv.value
                         from accounting_points ap
                         join people p on p.id=ap.owner_id
@@ -37,7 +37,7 @@ namespace Erc.Households.Api.Controllers
                         join accounting_point_tariffs apt on apt.accounting_point_id = ap.id 
                         join (
                         select id, rates.""Value"" as value, rates.""StartDate"" as start_date from tariffs, jsonb_to_recordset(tariffs.rates) as rates(""Id"" int, ""Value"" decimal(9,6), ""StartDate"" date)
-                        ) tv on tv.id = apt.tariff_id and to_char(tv.start_date,'DD.MM.YYYY')= '01.11.2020' and apt.start_date <= tv.start_date
+                        ) tv on tv.id = apt.tariff_id and to_char(tv.start_date,'DD.MM.YYYY')='{date:dd.MM.yyyy}' and apt.start_date <= tv.start_date
                         where branch_office_id = 101 order by cities.district_id";
             await con.OpenAsync();
             using var dr = await cmd.ExecuteReaderAsync();

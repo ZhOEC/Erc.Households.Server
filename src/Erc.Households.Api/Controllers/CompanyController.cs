@@ -19,7 +19,7 @@ namespace Erc.Households.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetComapny(int id) => Ok(await _mediator.Send(new GetCompanyById(id)));
+        public async Task<IActionResult> GetCompany(int id) => Ok(await _mediator.Send(new GetCompanyById(id)));
 
         [HttpPut("{id}")]
         public async Task<Unit> Update(Company company)

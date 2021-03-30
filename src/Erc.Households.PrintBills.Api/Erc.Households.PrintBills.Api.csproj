@@ -13,9 +13,22 @@
 
   <ItemGroup>
     <PackageReference Include="ClosedXML" Version="0.95.4" />
+<<<<<<< HEAD
     <PackageReference Include="Dapper" Version="2.0.78" />
     <PackageReference Include="Npgsql" Version="5.0.3" />
+=======
+    <PackageReference Include="ClosedXML.Report" Version="0.2.1" />
+    <PackageReference Include="Dapper" Version="2.0.35" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Npgsql" Version="4.1.5" />
+>>>>>>> remotes/origin/print-bills
     <PackageReference Include="OpenXml.ReportBuilderXLS" Version="1.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Erc.Households.Api\Erc.Households.Api.csproj" />
+    <ProjectReference Include="..\Erc.Households.Server.Domain.Shared\Erc.Households.Domain.Shared.csproj" />
+    <ProjectReference Include="..\Erc.Households.Tariffs\Erc.Households.Domain.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>
