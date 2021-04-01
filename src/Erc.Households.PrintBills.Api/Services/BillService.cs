@@ -76,7 +76,7 @@ namespace Erc.Households.PrintBills.Api.Services
                     join accounting_points ap on ap.id = inv.accounting_point_id
                     join branch_offices on ap.branch_office_id = branch_offices.id
                         join company on branch_offices.company_id = company.id
-                        join periods on branch_offices.current_period_id = periods.id
+                        join periods on periods.id = inv.period_id
                     join
                         (
                             select addresses.id, cities.name as cityName, streets.name as streetName, building, apt
@@ -97,17 +97,15 @@ namespace Erc.Households.PrintBills.Api.Services
                 and inv.period_id = case when @periodId is null then inv.period_id else @periodId end
                 and inv.id = case when @id is null then inv.id else @id end", @params);
 
-            var ms = new MemoryStream();
-            if (fileType == FileType.Csv) ms = CsvHandler(bills);
-            else if (fileType == FileType.Excel) ms = XlsxHandler(bills);
-
-            return ms;
+            if (fileType == FileType.Csv) return CsvHandler(bills);
+            else if (fileType == FileType.Excel) return XlsxHandler(bills);
+            else return null;
         }
 
         private async Task<Stream> GetElectricityBillsInternalAsync(SqlParams @params, FileType fileType = FileType.Excel)
         {
             var bills = await _dbConnection.QueryAsync<BillElectricity>(@$"
-                select
+                select 
                     ap.id as AccountinPointId
                    ,company.name as CompanyFullName
                    ,company.short_name as CompanyShortName
@@ -118,6 +116,7 @@ namespace Erc.Households.PrintBills.Api.Services
                    ,branch_offices.name as BranchOfficeName
                    ,branch_offices.address as BranchOfficeAddress
                    ,branch_offices.iban as BranchOfficeIban
+                   ,branch_offices.privat_bank_id as BranchOfficePrivatBankId
                    ,branch_offices.bank_full_name as BranchOfficeBankFullName
                    ,ap.name as AccountingPointName
                    ,address.zip as Zip
@@ -127,6 +126,7 @@ namespace Erc.Households.PrintBills.Api.Services
                    ,concat(people.last_name, ' ', people.first_name, ' ', people.patronymic) as OwnerFullName
                    ,periods.name as PeriodName
                    ,apdh.debt_value as AccountingPointDebtHistory
+				   ,ec.coeff as ExemptionCoeff
                    ,payments.sumAmount as PaymentsSumByPeriod
                    ,payments_compensation.SumAmount AS CompensationSumByPeriod
                    ,inv.total_units as InvoiceTotalUnits
@@ -140,26 +140,28 @@ namespace Erc.Households.PrintBills.Api.Services
                    ,inv.usage_t3 as UsageT3
                 from invoices inv
                     join accounting_points ap on ap.id = inv.accounting_point_id
+                    	left join accounting_point_exemptions ape on ape.accounting_point_id = ap.id
+						left join exemption_categories ec on ec.id = ape.exemption_category_id					
                     join branch_offices on ap.branch_office_id = branch_offices.id
                     join company on branch_offices.company_id = company.id
                     join periods on inv.period_id = periods.id
                     join
-                        (
-                            select addresses.id, cities.name as cityName, streets.name as streetName, building, apt, zip
-                            from addresses
-                            join streets ON addresses.street_id = streets.id
-                            join cities ON streets.city_id = cities.id
-                        ) as address ON ap.address_id = address.id
-                    JOIN people ON ap.owner_id = people.id
-                    LEFT JOIN accounting_point_debt_history as apdh on ap.id = apdh.accounting_point_id and apdh.period_id = inv.period_id
-                    LEFT JOIN LATERAL
+                    (
+                        select addresses.id, cities.name as cityName, streets.name as streetName, building, apt, zip
+                        from addresses
+                        join streets ON addresses.street_id = streets.id
+                        join cities ON streets.city_id = cities.id
+                    ) as address ON ap.address_id = address.id
+                    join people ON ap.owner_id = people.id
+                    left join accounting_point_debt_history as apdh on ap.id = apdh.accounting_point_id and apdh.period_id = inv.period_id
+                    left join lateral
                     (
                       select p.accounting_point_id, SUM(p.amount) AS SumAmount
                       from payments as p
                       where period_id = inv.period_id AND status = 1 and p.accounting_point_id = inv.accounting_point_id AND p.type <> 2
                       group by p.accounting_point_id
                     ) payments ON TRUE
-                    LEFT JOIN LATERAL
+                    left join lateral
                     (
                       select SUM(p.amount) AS SumAmount
                       from payments as p
@@ -171,14 +173,12 @@ namespace Erc.Households.PrintBills.Api.Services
                     and inv.period_id = case when @periodId is null then inv.period_id else @periodId end
                     and inv.id = case when @id is null then inv.id else @id end", @params);
 
-            var ms = new MemoryStream();
-            if (fileType == FileType.Csv) ms = CsvHandler(bills);
-            else if (fileType == FileType.Excel) ms = XlsxHandler(bills);
-
-            return ms;
+            if (fileType == FileType.Csv) return CsvHandler(bills);
+            else if (fileType == FileType.Excel) return XlsxHandler(bills);
+            else return null;
         }
 
-        private MemoryStream XlsxHandler(IEnumerable<object> bills)
+        private static MemoryStream XlsxHandler(IEnumerable<object> bills)
         {
             var ms = new MemoryStream();
             if (bills is IEnumerable<BillElectricity>)
@@ -189,16 +189,14 @@ namespace Erc.Households.PrintBills.Api.Services
                 var billsT2 = bills.Cast<BillElectricity>().Where(x => x.UsageT2 != null && x.UsageT3 is null).ToList();
                 var billsT3 = bills.Cast<BillElectricity>().Where(x => x.UsageT2 != null && x.UsageT3 != null).ToList();
 
+                template.AddVariable("bill_t1", billsT1);
+                template.AddVariable("bill_t2", billsT2);
+                template.AddVariable("bill_t3", billsT3);
+
                 if (billsT3.Count == 0)
                     template.Workbook.Worksheet(3).Delete();
                 if (billsT2.Count == 0)
                     template.Workbook.Worksheet(2).Delete();
-                if (billsT1.Count == 0)
-                    template.Workbook.Worksheet(1).Delete();
-
-                template.AddVariable("bill_t1", billsT1);
-                template.AddVariable("bill_t2", billsT2);
-                template.AddVariable("bill_t3", billsT3);
 
                 template.Generate();
                 template.SaveAs(ms);
@@ -230,7 +228,7 @@ namespace Erc.Households.PrintBills.Api.Services
             return ms;
         }
 
-        private MemoryStream CsvHandler(IEnumerable<object> bills)
+        private static MemoryStream CsvHandler(IEnumerable<object> bills)
         {
             var ms = new MemoryStream();
             var wr = new StreamWriter(ms, Encoding.GetEncoding(1251));
@@ -273,12 +271,12 @@ namespace Erc.Households.PrintBills.Api.Services
                             $"\"{x.UsageT3?.Charge}\";" +
                             $"\"{x.UsageT3?.Discount}\";" +
                             $"\"{x.UsageT3?.DiscountUnits}\";" +
-                            //$"\"{}\";" + // % discount
+                            $"\"{x.ExemptionCoeff}\";" +
                             $"\"{x.City}\";" +
                             $"\"{x.InvoiceTotalAmountDue}\";" +
                             $"\"{x.DiscountUnitsSum}\";" +
                             $"\"{x.DiscountSum}\";" +
-                            //$"\"{}\";" + // qr code
+                            $"\"{x.QrPrivatBank}\";" +
                             $"\"{x.InvoiceTotalUnits}\";" +
                             $"\"{x.Eic}\";" +
                             $"\"{x.CompanyFullName}\";" +
@@ -286,9 +284,8 @@ namespace Erc.Households.PrintBills.Api.Services
                             $"\"{x.BranchOfficeName}\";" +
                             $"\"{x.BranchOfficeAddress}\";" +
                             $"\"{x.BranchOfficeBankFullName}\";" +
-                            //$"\"{}\";" + // mfo
                             $"\"{x.BranchOfficeIban}\";" +
-                            //$"\"{}\";" + //compensation
+                            $"\"{x.CompensationSumByPeriod}\";" +
                             $"\"{x.ContractStartDate}\";" +
                             $"\"{x.AccountingPointDebtHistory}\";" +
                             $"\"{x.PaymentsSumByPeriod}\";" +

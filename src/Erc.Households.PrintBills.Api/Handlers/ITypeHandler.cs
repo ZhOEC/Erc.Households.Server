@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Data;
 
-namespace Erc.Households.PrintBills.Api
+namespace Erc.Households.PrintBills.Api.Handlers
 {
 	public class JsonObjectTypeHandler : SqlMapper.ITypeHandler
 	{

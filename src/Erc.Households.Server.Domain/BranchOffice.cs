@@ -18,6 +18,7 @@ namespace Erc.Households.Domain
         public string BankFullName { get; set; }
         public string ChiefName { get; set; }
         public string BookkeeperName { get; set; }
+        public int? PrivatBankId { get; set; }
         public Period CurrentPeriod { get; private set; }
         public Company Company { get; private set; }
 

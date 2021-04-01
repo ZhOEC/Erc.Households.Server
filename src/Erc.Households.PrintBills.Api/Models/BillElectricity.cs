@@ -22,18 +22,21 @@ namespace Erc.Households.PrintBills.Api.Models
         public string BranchOfficeAddress { get; set; }
         public string BranchOfficeIban { get; set; }
         public string BranchOfficeBankFullName { get; set; }
+        public int BranchOfficePrivatBankId { get; set; }
         public string Eic { get; set; }
         public string AccountingPointAddress { get; set; }
         public string PeriodName { get; set; }
         public string PeriodShortDate { get; set; }
         public string ContractStartDate { get; set; }
         public decimal? AccountingPointDebtHistory { get; set; }
+        public decimal? ExemptionCoeff { get; set; }
         public decimal? PaymentsSumByPeriod { get; set; }
         public decimal? CompensationSumByPeriod { get; set; }
         public decimal? InvoiceTotalUnits { get; set; }
         public decimal InvoiceTotalAmountDue { get; set; }
         public int DiscountUnitsSum { get; set; }
         public decimal? DiscountSum { get; set; }
+        public string QrPrivatBank => $"EK_V3_ls_{AccountingPointName}_{BranchOfficePrivatBankId}";
         public string Barcode => $"*1+{AccountinPointId.To36()}+{Convert.ToInt32(Math.Floor(InvoiceTotalAmountDue)).To36()}+{Convert.ToInt32((InvoiceTotalAmountDue - Convert.ToInt32(Math.Floor(InvoiceTotalAmountDue))) * 100).To36()}*";
         public int ZoneCount {
             get {

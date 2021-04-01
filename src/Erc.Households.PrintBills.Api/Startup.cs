@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text;
 using Dapper;
 using Erc.Households.Domain.Shared;
+using Erc.Households.PrintBills.Api.Handlers;
 using Erc.Households.PrintBills.Api.Models;
 using Erc.Households.PrintBills.Api.Services;
 using Microsoft.AspNetCore.Builder;

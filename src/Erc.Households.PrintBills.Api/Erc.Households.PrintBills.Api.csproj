@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Erc.Households.Api\Erc.Households.Api.csproj" />
+    <ProjectReference Include="..\Erc.Households.Domain.Shared\Erc.Households.Domain.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>
