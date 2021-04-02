@@ -2,15 +2,18 @@
 
 namespace Erc.Households.Api.Requests
 {
-    public class UpdatedAccountingPoint
+    public record UpdatedAccountingPoint
     {
-        public int Id { get; set; }
-        public string Eic { get; set; }
-        public string Name { get; set; }
-        public int BranchOfficeId { get; set; }
-        public int DistributionSystemOperatorId { get; set; }
-        public Address Address { get; set; }
-        public int BuildingTypeId { get; set; }
-        public int UsageCategoryId { get; set; }
+        public int Id { get; init; }
+        public string Eic { get; init; }
+        public string Name { get; init; }
+        public int BranchOfficeId { get; init; }
+        public int DistributionSystemOperatorId { get; init; }
+        public Address Address { get; init; }
+        public int BuildingTypeId { get; init; }
+        public int UsageCategoryId { get; init; }
+        public bool? IsGasWaterHeaterInstalled { get; init; }
+        public bool? IsCentralizedWaterSupply { get; init; }
+        public bool? IsCentralizedHotWaterSupply { get; init; }
     }
 }

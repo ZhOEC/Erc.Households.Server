@@ -3,7 +3,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
+namespace System.Runtime.CompilerServices
+{
+    internal static class IsExternalInit { }
+}
 namespace Erc.Households.WebApi
 {
     public class Program

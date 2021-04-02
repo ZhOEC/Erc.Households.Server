@@ -30,13 +30,13 @@ namespace Erc.Households.CommandHandlers
             {
                 Id =
                     (await _ercContext.Addresses
-                    .Where(a => a.StreetId == request.StreetId && a.Building == request.Building && ((a.Apt ?? string.Empty) == (request.Apt ?? string.Empty)))
+                    .Where(a => a.StreetId == request.Address.StreetId && a.Building == request.Address.Building && ((a.Apt ?? string.Empty) == (request.Address.Apt ?? string.Empty)))
                     .Select(a => (int?)a.Id)
                     .FirstOrDefaultAsync()) ?? 0,
-                StreetId = request.StreetId,
-                Building = request.Building,
-                Apt = request.Apt,
-                Zip = request.Zip
+                StreetId = request.Address.StreetId,
+                Building = request.Address.Building,
+                Apt = request.Address.Apt,
+                Zip = request.Address.Zip
             };
 
             ap.SetNewAddress(address);
