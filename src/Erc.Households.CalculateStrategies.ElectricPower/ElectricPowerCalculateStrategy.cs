@@ -107,8 +107,8 @@ namespace Erc.Households.CalculateStrategies.ElectricPower
                     var zoneLimit = zoneName switch
                     {
                         "T1" when calculationRequest.ZoneRecord == ZoneRecord.None => consumptionMonthLimit - calculationRequest.UsageT1.Calculations.Where(c => c.PriceValue == tr.Value).Sum(c => c.Units),
-                        "T2" when calculationRequest.ZoneRecord == ZoneRecord.Two => consumptionMonthLimit - calculationRequest.UsageT1.Calculations.Where(c => c.PriceValue == tr.Value).Single().Units,
-                        "T3" => consumptionMonthLimit - (calculationRequest.UsageT1.Calculations.Where(c => c.PriceValue == tr.Value).Single().Units + calculationRequest.UsageT2.Calculations.Where(c => c.PriceValue == tr.Value).Single().Units),
+                        "T2" when calculationRequest.ZoneRecord == ZoneRecord.Two => consumptionMonthLimit - (calculationRequest.UsageT1.Calculations.Where(c => c.PriceValue == tr.Value).SingleOrDefault()?.Units??0),
+                        "T3" => consumptionMonthLimit - ((calculationRequest.UsageT1.Calculations.Where(c => c.PriceValue == tr.Value).SingleOrDefault()?.Units ?? 0) + (calculationRequest.UsageT2.Calculations.Where(c => c.PriceValue == tr.Value).SingleOrDefault()?.Units ?? 0)),
                         _ => (int)decimal.Round(consumptionMonthLimit * (usage.Units / (calculationRequest.UsageT1.Units + (calculationRequest.UsageT2?.Units ?? 0) + (calculationRequest.UsageT3?.Units ?? 0))), MidpointRounding.AwayFromZero)
                     };
 

@@ -2,36 +2,22 @@
 
 namespace Erc.Households.Commands
 {
-    public class UpdateAccountingPointCommand : IRequest<Unit>
+    public record UpdateAccountingPointCommand : IRequest
     {
-        public UpdateAccountingPointCommand(int id, string eic, string name, int branchOfficeId, int distributionSystemOperatorId,
-                                            int streetId, string building, string apt, string zip, int buildingTypeId, int usageCategoryId)
-        {
-            Id = id;
-            Eic = eic;
-            Name = name;
-            BranchOfficeId = branchOfficeId;
-            DistributionSystemOperatorId = distributionSystemOperatorId;
-            StreetId = streetId;
-            Building = building;
-            Apt = apt;
-            Zip = zip;
-            BuildingTypeId = buildingTypeId;
-            UsageCategoryId = usageCategoryId;
-
-        }
-
-        public int Id { get; private set; }
-        public string Eic { get; private set; }
-        public string Name { get; private set; }
-        public int BranchOfficeId { get; private set; }
-        public int DistributionSystemOperatorId { get; private set; }
-        public int ZoneRecord { get; private set; }
-        public int StreetId { get; private set; } 
-        public string Building { get; private set; } 
-        public string Apt { get; private set; }
-        public string Zip { get; private set; }
-        public int BuildingTypeId { get; private set; }
-        public int UsageCategoryId { get; private set; }
+        public int Id { get; init; }
+        public string Eic { get; init; }
+        public string Name { get; init; }
+        public int DistributionSystemOperatorId { get; init; }
+        public int ZoneRecord { get; init; }
+        public int StreetId { get; init; } 
+        public string Building { get; init; } 
+        public string Apt { get; init; }
+        public string Zip { get; init; }
+        public int BuildingTypeId { get; init; }
+        public int UsageCategoryId { get; init; }
+        public Domain.Shared.Addresses.Address Address { get; init; }
+        public bool? IsGasWaterHeaterInstalled { get; init; }
+        public bool? IsCentralizedWaterSupply { get; init; }
+        public bool? IsCentralizedHotWaterSupply { get; init; }
     }
 }

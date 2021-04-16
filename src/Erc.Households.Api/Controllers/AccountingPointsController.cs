@@ -131,12 +131,9 @@ namespace Erc.Households.Api.Controllers
                 .ContinueWith(_ => Ok());
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAccountingPoint(UpdatedAccountingPoint updatedAccountingPoint)
+        public async Task<IActionResult> UpdateAccountingPoint(UpdateAccountingPointCommand updatedAccountingPoint)
         {
-            await _mediator.Send(new UpdateAccountingPointCommand(
-                updatedAccountingPoint.Id, updatedAccountingPoint.Eic, updatedAccountingPoint.Name, updatedAccountingPoint.BranchOfficeId, updatedAccountingPoint.DistributionSystemOperatorId, 
-                updatedAccountingPoint.Address.StreetId, updatedAccountingPoint.Address.Building, updatedAccountingPoint.Address.Apt, updatedAccountingPoint.Address.Zip, 
-                updatedAccountingPoint.BuildingTypeId, updatedAccountingPoint.UsageCategoryId));
+            await _mediator.Send(updatedAccountingPoint);
 
             await _unitOfWork.SaveWorkAsync();
 

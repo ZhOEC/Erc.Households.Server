@@ -22,7 +22,10 @@ namespace Erc.Households.CommandHandlers
 
         public async Task<Unit> Handle(UpdateAccountingPointCommand request, CancellationToken cancellationToken)
         {
-            var ap = await _ercContext.AccountingPoints.FirstOrDefaultAsync(x => x.Id == request.Id);
+            var ap = await _ercContext.AccountingPoints
+                .Include(ap=>ap.BranchOffice)
+                .FirstOrDefaultAsync(x => x.Id == request.Id);
+           
             if (ap is null)
                 throw new Exception("Accounting point not exist");
 
@@ -30,13 +33,13 @@ namespace Erc.Households.CommandHandlers
             {
                 Id =
                     (await _ercContext.Addresses
-                    .Where(a => a.StreetId == request.StreetId && a.Building == request.Building && ((a.Apt ?? string.Empty) == (request.Apt ?? string.Empty)))
+                    .Where(a => a.StreetId == request.Address.StreetId && a.Building == request.Address.Building && ((a.Apt ?? string.Empty) == (request.Address.Apt ?? string.Empty)))
                     .Select(a => (int?)a.Id)
                     .FirstOrDefaultAsync()) ?? 0,
-                StreetId = request.StreetId,
-                Building = request.Building,
-                Apt = request.Apt,
-                Zip = request.Zip
+                StreetId = request.Address.StreetId,
+                Building = request.Address.Building,
+                Apt = request.Address.Apt,
+                Zip = request.Address.Zip
             };
 
             ap.SetNewAddress(address);
