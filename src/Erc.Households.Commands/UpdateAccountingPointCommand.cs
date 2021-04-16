@@ -7,7 +7,6 @@ namespace Erc.Households.Commands
         public int Id { get; init; }
         public string Eic { get; init; }
         public string Name { get; init; }
-        public int BranchOfficeId { get; init; }
         public int DistributionSystemOperatorId { get; init; }
         public int ZoneRecord { get; init; }
         public int StreetId { get; init; } 

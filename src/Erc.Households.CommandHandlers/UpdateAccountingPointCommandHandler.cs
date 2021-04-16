@@ -22,7 +22,10 @@ namespace Erc.Households.CommandHandlers
 
         public async Task<Unit> Handle(UpdateAccountingPointCommand request, CancellationToken cancellationToken)
         {
-            var ap = await _ercContext.AccountingPoints.FirstOrDefaultAsync(x => x.Id == request.Id);
+            var ap = await _ercContext.AccountingPoints
+                .Include(ap=>ap.BranchOffice)
+                .FirstOrDefaultAsync(x => x.Id == request.Id);
+           
             if (ap is null)
                 throw new Exception("Accounting point not exist");
 
