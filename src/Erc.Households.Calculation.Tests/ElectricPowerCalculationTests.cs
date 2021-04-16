@@ -153,6 +153,68 @@ namespace Erc.Households.Calculation.Tests
         }
 
         [Fact]
+        public void Calculate_Regular_Invoice_With_Regular_Tariff_Three_Zone_with_zero_consumption()
+        {
+            var calculateStrategy = new ElectricPowerCalculateStrategy(null);
+            var calculationRequest = new CalculationRequest
+            {
+                AccountingPointId = 1,
+                FromDate = new DateTime(2021, 1, 1),
+                InvoiceType = Domain.Shared.InvoiceType.Common,
+                Tariff = new Tariff
+                {
+                    Rates = new[] { 
+                        new TariffRate
+                        {
+                            StartDate = new DateTime(2021, 1, 1),
+                            Value = 1.68m
+                        },
+                        new TariffRate
+                        {
+                            StartDate = new DateTime(2021, 1, 1),
+                            Value = .9m,
+                            ConsumptionLimit = 100
+                        }
+                    }
+                },
+                ToDate = new DateTime(2021, 2, 1),
+                UsageT1 = new Usage(0, .4m, .46m),
+                UsageT2 = new Usage(24, 1, .33m),
+                UsageT3 = new Usage(6, 1.5m, .21m),
+                ZoneRecord = Domain.Shared.ZoneRecord.Three
+            };
+
+            calculateStrategy.Calculate(calculationRequest).Wait();
+
+            calculationRequest.UsageT1.Should().BeEquivalentTo(new
+            {
+                Charge = 0,
+                Units = 0,
+            });
+
+            calculationRequest.UsageT2.Should().BeEquivalentTo(new
+            {
+                Charge = .9m * 24,
+                Units = 24,
+                Calculations = new[]
+                {
+                    new { PriceValue = 0.9m, Units = 24, Charge = .9m*24}
+                }
+            });
+
+            calculationRequest.UsageT3.Should().BeEquivalentTo(new
+            {
+                Charge = 6 * .9m * 1.5m,
+                Units = 6,
+                Calculations = new[]
+                {
+                    new { PriceValue = .9m, Units = 6, Charge = 6*.9m*1.5m}
+                }
+            });
+        }
+
+
+        [Fact]
         public void Calculate_Regular_Invoice_With_Two_blocks_Tariff_One_Zone()
         {
             var calculateStrategy = new ElectricPowerCalculateStrategy(null);
