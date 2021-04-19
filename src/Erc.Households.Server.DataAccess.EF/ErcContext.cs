@@ -526,6 +526,7 @@ namespace Erc.Households.EF.PostgreSQL
             {
                 entity.Property(p => p.Id)
                     .HasIdentityOptions(300000);
+                entity.HasIndex(p => new { p.PeriodId, p.BranchOfficeId }).IsUnique();
 
                 entity.Property(p => p.LiabilitySum).HasColumnType("decimal(19,2)");
                 entity.Property(p => p.TaxSum).HasColumnType("decimal(19,6)");

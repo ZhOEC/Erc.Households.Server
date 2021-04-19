@@ -6,6 +6,7 @@ namespace Erc.Households.Domain.Taxes
     public class TaxInvoice
     {
         public int Id { get; set; }
+        public int PeriodId { get; set; }
         public DateTime LiabilityDate { get; set; }
         public decimal LiabilitySum { get; set; }
         public decimal EnergyAmount { get; set; }
