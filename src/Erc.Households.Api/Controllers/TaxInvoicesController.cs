@@ -4,7 +4,6 @@ using Erc.Households.Api.Queries;
 using Erc.Households.Api.Queries.TaxInvoices;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
-using System.Net.Mime;
 
 namespace Erc.Households.Api.Controllers
 {
@@ -28,10 +27,10 @@ namespace Erc.Households.Api.Controllers
             return Ok(taxInvoices);
         }
 
-        [HttpGet("{id}/download")]
+        [HttpGet("{id}/export")]
         public async Task<IActionResult> GetTaxInvoiceById(int id)
         {
-            var xmlData = await _mediator.Send(new GetTaxIonviceById(id));
+            var xmlData = await _mediator.Send(new GetTaxInvoiceById(id));
             var ms = new TaxInvoiceXmlExporter().Export(xmlData);
             ms.Position = 0;
 

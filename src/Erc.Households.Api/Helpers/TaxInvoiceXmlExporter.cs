@@ -8,9 +8,9 @@ namespace Erc.Households.Api.Helpers
 {
     public class TaxInvoiceXmlExporter
     {
-        public Stream Export(Requests.DownloadTaxInvoice taxInvoice) => taxInvoice.Type == TaxInvoiceType.CompensationDso ? ExportByCompensationPayments(taxInvoice) : ExportByCustomerPayments(taxInvoice);
+        public Stream Export(Requests.ExportTaxInvoice taxInvoice) => taxInvoice.Type == TaxInvoiceType.CompensationDso ? ExportByCompensationPayments(taxInvoice) : ExportByCustomerPayments(taxInvoice);
 
-        protected Stream ExportByCustomerPayments(Requests.DownloadTaxInvoice taxInvoice)
+        protected Stream ExportByCustomerPayments(Requests.ExportTaxInvoice taxInvoice)
         {
             MemoryStream ms = new MemoryStream();
 
@@ -84,7 +84,7 @@ namespace Erc.Households.Api.Helpers
             WriteTabElement(writer, "TAB1_A10", taxInvoice.LiabilitySum.ToString("#.00").Replace(',', '.'), "1");
             WriteTabElement(writer, "TAB1_A20", taxInvoice.TaxSum.ToString("#.000000").Replace(',', '.'), "1");
             WriteTabElement(writer, "TAB1_A13", taxInvoice.Type == TaxInvoiceType.Gas ? "газ" : "електрична енергія", "1");
-            WriteTabElement(writer, "TAB1_A131",  taxInvoice.Type == TaxInvoiceType.Gas ? "2711210000" : "2716000000", "1");
+            WriteTabElement(writer, "TAB1_A131", taxInvoice.Type == TaxInvoiceType.Gas ? "2711210000" : "2716000000", "1");
             WriteTabElement(writer, "TAB1_A14", taxInvoice.Type == TaxInvoiceType.Gas ? "м³" : "кВт·год", "1");
             WriteTabElement(writer, "TAB1_A141", "0415", "1");
             WriteTabElement(writer, "TAB1_A15", taxInvoice.EnergyAmount.ToString(), "1");
@@ -105,7 +105,7 @@ namespace Erc.Households.Api.Helpers
             return ms;
         }
 
-        protected Stream ExportByCompensationPayments(Requests.DownloadTaxInvoice taxInvoice)
+        protected Stream ExportByCompensationPayments(Requests.ExportTaxInvoice taxInvoice)
         {
             MemoryStream ms = new MemoryStream();
 

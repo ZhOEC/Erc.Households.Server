@@ -10,6 +10,8 @@ using Erc.Households.Api.UserNotifications;
 using System.Threading.Tasks;
 using MediatR;
 using Erc.Households.Commands;
+using Erc.Households.Api.Queries;
+using Erc.Households.Api.Queries.TaxInvoices;
 
 namespace Erc.Households.Api.Controllers
 {
@@ -37,6 +39,25 @@ namespace Erc.Households.Api.Controllers
         public IActionResult GetAll()
         {
             return Ok(_mapper.Map<IEnumerable<Responses.BranchOffice>>(_branchOfficeService.GetList(UserGroups)).OrderBy(bo => bo.Id < 0 ? 0 : 1).ThenBy(bo => bo.Name));
+        }
+
+        [HttpGet("availables-to-create-tax-invoice")]
+        public IActionResult AvailablesToCreateTaxInvoice()
+        {
+            var branchOfficesByUser = _branchOfficeService.GetList(UserGroups).ToList();
+            var bos = new List<object>();
+            branchOfficesByUser.ForEach(branchOffice => {
+                var previousPeriodByBranchOffice = _mediator.Send(new GetPeriods()).Result.OrderBy(y => y.Id).Where(period => period.Id != branchOffice.CurrentPeriodId).FirstOrDefault();
+                bos.Add(
+                    new
+                    {
+                        branchOffice,
+                        period = previousPeriodByBranchOffice,
+                        isDisabled = _mediator.Send(new GetTaxInvoiceByPeriodId(branchOffice.Id, previousPeriodByBranchOffice.Id)).Result == null
+                    });
+            });
+
+            return Ok(bos);
         }
 
         [HttpGet("{id}")]
