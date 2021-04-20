@@ -55,7 +55,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Reports", "E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.CalculateStrategies.ElectricPower", "Erc.Households.CalculateStrategies.ElectricPower\Erc.Households.CalculateStrategies.ElectricPower.csproj", "{9218EE85-3BE4-457C-A617-57DCA8F8382F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Calculation.Tests", "Erc.Households.Calculation.Tests\Erc.Households.Calculation.Tests.csproj", "{85EB59DF-3037-4F36-9167-982E89FF62D4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Erc.Households.Tests", "Erc.Households.Calculation.Tests\Erc.Households.Tests.csproj", "{85EB59DF-3037-4F36-9167-982E89FF62D4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

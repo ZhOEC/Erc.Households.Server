@@ -20,7 +20,7 @@ namespace Erc.Households.Domain
         public string BookkeeperName { get; set; }
         public int? PrivatBankId { get; set; }
         public Period CurrentPeriod { get; private set; }
-        public Company Company { get; private set; }
+        public Company Company { get; init; }
 
         public void StartNewPeriod(Period period)
         {

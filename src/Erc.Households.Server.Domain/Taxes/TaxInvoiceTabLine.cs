@@ -10,7 +10,7 @@ namespace Erc.Households.Domain.Taxes
         public string ProductName { get; init; } // "TAB1_A13", "електрична енергія"
         public string ProductCode { get; init; } // "TAB1_A131", "2716000000"
         public string Unit { get; init; } // "TAB1_A14", "кВт·год"
-        public string UnitCode { get; init; } // "TAB1_A141", "0415"
+        public string UnitCode { get; init; } // "TAB1_A141", "0415" 
         public decimal Quantity { get; init; } // "TAB1_A15"
         public decimal Price { get; init; } //"TAB1_A16"
         public decimal LiabilitiesAmount { get; init; } //"TAB1_A10" ToString("0.00").Replace(',', '.')
