@@ -99,7 +99,7 @@ namespace Erc.Households.Domain.Billing
         public decimal IncomingBalance { get; init; }
         public string CounterSerialNumber { get; private set; }
         public decimal TotalPaid => InvoicePaymentItems.Sum(i => i.Amount);
-        public bool IsPaid => TotalAmountDue == TotalPaid;
+        public bool IsPaid => TotalAmountDue <= TotalPaid;
         public int TariffId { get; private set; }
         public string Note { get; init; }
         public InvoiceType Type { get; init; } = InvoiceType.Common;

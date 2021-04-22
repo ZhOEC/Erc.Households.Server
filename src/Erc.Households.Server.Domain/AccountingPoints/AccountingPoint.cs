@@ -143,7 +143,7 @@ namespace Erc.Households.Domain.AccountingPoints
             _tariffsHistory.Add(new AccountingPointTariff(tariffId, date, currentUser));
         }
 
-        public void ProcessPayment(Payment payment)
+        public void ProcessPayment(Payment payment, bool updateDebt = true)
         {
             if (payment.Amount > 0)
             {
@@ -163,11 +163,13 @@ namespace Erc.Households.Domain.AccountingPoints
                     if (payment.IsFullyUsed) break;
                 }
             }
-            Debt -= payment.Amount;
+            
+            if (updateDebt) Debt -= payment.Amount;
+            
             _payments.Add(payment);
         }
 
-        public void ApplyInvoice(Invoice invoice)
+        public void AddInvoice(Invoice invoice)
         {
             _invoices.Add(invoice);
             Debt += invoice.TotalAmountDue;
