@@ -14,7 +14,7 @@ namespace Erc.Households.Domain.Shared.Tariffs
         public Commodity Commodity { get; set; }
         public IEnumerable<TariffRate> Rates
         {
-            get => _rates?.OrderBy(tr => tr.StartDate);
+            get => _rates?.OrderByDescending(tr => tr.StartDate);
             set => _rates = value.ToList();
         }
 

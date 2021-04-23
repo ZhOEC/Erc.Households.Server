@@ -172,6 +172,14 @@ namespace Erc.Households.Domain.AccountingPoints
         public void AddInvoice(Invoice invoice)
         {
             _invoices.Add(invoice);
+            if (invoice.TotalAmountDue > 0 && Debt < 0)
+            {
+                foreach (var p in Payments.Where(p => !p.IsFullyUsed).ToArray())
+                {
+                    invoice.Pay(p);
+                    if (invoice.IsPaid) break;
+                }
+            }
             Debt += invoice.TotalAmountDue;
         }
 

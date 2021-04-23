@@ -165,7 +165,6 @@ namespace Erc.Households.Domain.Billing
 
             TotalUnits = UsageT1.Units + (UsageT2?.Units ?? 0) + (UsageT3?.Units ?? 0);
             TotalDiscount = UsageT1.Discount + (UsageT2?.Discount ?? 0) + (UsageT3?.Discount ?? 0);
-            //TotalDiscountUnits = UsageT1.DiscountUnits + (UsageT2?.DiscountUnits ?? 0) + (UsageT3?.DiscountUnits ?? 0);
             TotalCharge = UsageT1.Charge + (UsageT2?.Charge ?? 0) + (UsageT3?.Charge ?? 0);
             TotalAmountDue = TotalCharge - TotalDiscount;
         }
