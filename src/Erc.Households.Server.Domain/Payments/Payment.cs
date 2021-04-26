@@ -48,14 +48,16 @@ namespace Erc.Households.Domain.Payments
     
         public void AddInvoicePaymentItem(InvoicePaymentItem invoicePaymentItem) => _invoicePaymentItems.Add(invoicePaymentItem);
 
-        public void Process()
+        public void Process(bool updateDebet = true)
         {
             if (AccountingPointId.HasValue)
             {
-                AccountingPoint.ProcessPayment(this);
+                AccountingPoint.ProcessPayment(this, updateDebet);
                 Status = PaymentStatus.Processed;
             }
             else throw new InvalidPaymentOperationException($"Неможливо обробити платіж {Id}. Абонента не знайдено");
         }
+
+        public void ClearInvoicePaymentItems() => _invoicePaymentItems.Clear();
     }
 }
