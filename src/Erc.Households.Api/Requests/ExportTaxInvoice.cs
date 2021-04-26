@@ -3,14 +3,14 @@ using System;
 
 namespace Erc.Households.Api.Requests
 {
-    public class DownloadTaxInvoice
+    public class ExportTaxInvoice
     {
         public int Id { get; set; }
         public TaxInvoiceType Type { get; set; }
         public DateTime LiabilityDate { get; set; }
         public decimal LiabilitySum { get; set; }
-        public decimal EnergyAmount { get; set; }
         public decimal TariffValue { get; set; }
+        public decimal EnergyAmount { get; set; }
         public decimal TaxSum { get; set; }
         public decimal FullSum { get; set; }
         public DateTime CreationDate { get; set; }

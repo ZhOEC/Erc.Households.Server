@@ -35,7 +35,7 @@ namespace Erc.Households.Api.MapperProfiles
 				.ForMember(r=>r.CategoryName, mo=>mo.MapFrom(s=>$"{s.Category.Name} ({s.Category.Coeff:#.#}%)"));
 
 			CreateMap<Domain.Taxes.TaxInvoice, Responses.TaxInvoice>(); 
-			CreateMap<Domain.Taxes.TaxInvoice, Requests.DownloadTaxInvoice>()
+			CreateMap<Domain.Taxes.TaxInvoice, Requests.ExportTaxInvoice>()
 				.ForMember(x => x.BranchOfficeId, x => x.MapFrom(y => y.BranchOffice.Id))
 				.ForMember(x => x.BranchOfficeName, x => x.MapFrom(y => y.BranchOffice.Name))
 				.ForMember(x => x.CompanyAddress, x => x.MapFrom(y => y.BranchOffice.Company.Address))

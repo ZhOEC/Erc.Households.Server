@@ -20,7 +20,8 @@ namespace Erc.Households.CommandHandlers
         {
             var batch = await _ercContext.PaymentBatches
                 .Include(pb=>pb.Payments)
-                    .ThenInclude(p=>p.AccountingPoint)
+                    .ThenInclude(p=>p.AccountingPoint.Invoices)
+                        .ThenInclude(i=>i.InvoicePaymentItems)
                 .FirstAsync(pb => pb.Id == request.Id);
             
             batch.ProcessAndClose();

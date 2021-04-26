@@ -9,7 +9,7 @@ namespace Erc.Households.BranchOfficeManagment.Core
         IEnumerable<BranchOffice> GetList(params int[] branchOfficeIds);
         IEnumerable<BranchOffice> GetList(IEnumerable<string> branchOfficeIds);
         BranchOffice GetOne(int id);
-        IEnumerable<Period> GetPeriods(int Id);
+        IEnumerable<Period> GetPeriods(int id);
         void StartNewPeriod(int branchOfficeId);
     }
 }

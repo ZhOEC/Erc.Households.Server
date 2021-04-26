@@ -2,11 +2,11 @@
 
 namespace Erc.Households.Api.Queries.TaxInvoices
 {
-    public class GetTaxIonviceById : IRequest<Requests.DownloadTaxInvoice>
+    public class GetTaxInvoiceById : IRequest<Requests.ExportTaxInvoice>
     {
         public int TaxInvoiceId { get; private set; }
 
-        public GetTaxIonviceById(int taxInvoiceId)
+        public GetTaxInvoiceById(int taxInvoiceId)
         {
             TaxInvoiceId = taxInvoiceId;
         }

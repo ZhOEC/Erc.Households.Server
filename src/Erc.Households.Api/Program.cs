@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Linq;
+
 namespace System.Runtime.CompilerServices
 {
     internal static class IsExternalInit { }
@@ -18,6 +20,17 @@ namespace Erc.Households.WebApi
             {
                 var db = scope.ServiceProvider.GetRequiredService<ErcContext>();
                 db.Database.Migrate();
+                //db.Database.ExecuteSqlRaw("delete from invoice_payment_item");
+                //foreach (var p in db.Payments
+                //    .Include(p => p.AccountingPoint.Invoices)
+                //        .ThenInclude(i => i.InvoicePaymentItems)
+                //        .OrderBy(p=>p.Id)
+                //    .ToArray())
+                //{
+                //    p.ClearInvoicePaymentItems();
+                //    p.Process(false);
+                //}
+                //db.SaveChanges();
             }
 
             host.Run();

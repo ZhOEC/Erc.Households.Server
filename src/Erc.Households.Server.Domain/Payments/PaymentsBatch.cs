@@ -51,7 +51,7 @@ namespace Erc.Households.Domain.Payments
             foreach (var payment in Payments)
                 payment.Process();
 
-            IsClosed = true;
+            Close();
         }
     }
 }

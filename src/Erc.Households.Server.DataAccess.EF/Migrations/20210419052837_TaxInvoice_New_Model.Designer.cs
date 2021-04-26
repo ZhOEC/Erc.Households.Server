@@ -9,15 +9,17 @@ using Erc.Households.EF.PostgreSQL;
 using Erc.Households.ModelLogs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace Erc.Households.EF.PostgreSQL.Migrations
 {
     [DbContext(typeof(ErcContext))]
-    partial class ErcContextModelSnapshot : ModelSnapshot
+    [Migration("20210419052837_TaxInvoice_New_Model")]
+    partial class TaxInvoice_New_Model
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1855,6 +1857,10 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("creation_date");
 
+                    b.Property<decimal>("EnergyAmount")
+                        .HasColumnType("numeric")
+                        .HasColumnName("energy_amount");
+
                     b.Property<decimal>("FullSum")
                         .HasColumnType("decimal(24,6)")
                         .HasColumnName("full_sum");
@@ -1866,14 +1872,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                     b.Property<decimal>("LiabilitySum")
                         .HasColumnType("decimal(19,2)")
                         .HasColumnName("liability_sum");
-
-                    b.Property<int>("PeriodId")
-                        .HasColumnType("integer")
-                        .HasColumnName("period_id");
-
-                    b.Property<decimal>("QuantityTotal")
-                        .HasColumnType("numeric")
-                        .HasColumnName("quantity_total");
 
                     b.Property<IEnumerable<TaxInvoiceTabLine>>("TabLines")
                         .HasColumnType("jsonb")
@@ -1892,10 +1890,6 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
 
                     b.HasIndex("BranchOfficeId")
                         .HasDatabaseName("ix_tax_invoices_branch_office_id");
-
-                    b.HasIndex("PeriodId", "BranchOfficeId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_tax_invoices_period_id_branch_office_id");
 
                     b.ToTable("tax_invoices");
                 });

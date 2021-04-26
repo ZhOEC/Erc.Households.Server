@@ -526,11 +526,12 @@ namespace Erc.Households.EF.PostgreSQL
             {
                 entity.Property(p => p.Id)
                     .HasIdentityOptions(300000);
+                entity.HasIndex(p => new { p.PeriodId, p.BranchOfficeId }).IsUnique();
 
                 entity.Property(p => p.LiabilitySum).HasColumnType("decimal(19,2)");
-                entity.Property(p => p.TariffValue).HasColumnType("decimal(9,8)");
                 entity.Property(p => p.TaxSum).HasColumnType("decimal(19,6)");
                 entity.Property(p => p.FullSum).HasColumnType("decimal(24,6)");
+                entity.Property(p => p.TabLines).HasColumnType("jsonb");
 
                 entity.HasOne(p => p.BranchOffice)
                     .WithMany()

@@ -97,7 +97,7 @@ namespace Erc.Households.Calculation
             try
             {
                 await newInvoice.CalculateAsync(calculateStrategy);
-                ac.ApplyInvoice(newInvoice);
+                ac.AddInvoice(newInvoice);
                 await _ercContext.SaveChangesAsync();
             }
             catch (Exception e)
