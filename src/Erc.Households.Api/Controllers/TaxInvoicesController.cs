@@ -4,6 +4,10 @@ using Erc.Households.Api.Queries;
 using Erc.Households.Api.Queries.TaxInvoices;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
+using Erc.Households.Domain.Taxes;
+using Erc.Households.EF.PostgreSQL;
+using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace Erc.Households.Api.Controllers
 {
@@ -11,10 +15,12 @@ namespace Erc.Households.Api.Controllers
     [ApiController]
     public class TaxInvoicesController : ErcControllerBase
     {
+        private readonly ErcContext _ercContext;
         readonly IMediator _mediator;
         
-        public TaxInvoicesController(IMediator mediator)
+        public TaxInvoicesController(ErcContext ercContext, IMediator mediator)
         {
+            _ercContext = ercContext;
             _mediator = mediator;
         }
 
@@ -35,6 +41,31 @@ namespace Erc.Households.Api.Controllers
             ms.Position = 0;
 
             return File(ms, "application/xml", $"{id}.xml");
+        }
+
+        [HttpPost("create")]
+        public async Task<IActionResult> Create(TaxInvoice taxInvoice)
+        {
+            await _ercContext.TaxInvoices.AddAsync(taxInvoice);
+            await _ercContext.SaveChangesAsync();
+            
+            return Ok();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var taxInvoice = await _ercContext.TaxInvoices.FirstOrDefaultAsync(x => x.Id == id);
+
+            if (taxInvoice is null)
+                return NotFound();
+            else if ((DateTime.Now - taxInvoice.CreationDate).TotalDays > 7)
+                return BadRequest("Податкова накладна занадто стара для цього");
+
+            _ercContext.Remove(taxInvoice);
+            await _ercContext.SaveChangesAsync();
+
+            return Ok();
         }
     }
 }

@@ -90,7 +90,7 @@ namespace Erc.Households.BranchOfficeManagment
                     period = new Period(start, end);
                     _dbContext.Entry(period).State = EntityState.Added;
                 }
-                _mediator.Send(new CreateTaxInvoiceCommand(branchOfficeId: branchOfficeId, branchOffice.CurrentPeriod.Id));
+                //_mediator.Send(new CreateTaxInvoiceCommand(branchOfficeId: branchOfficeId, branchOffice.CurrentPeriod.Id));
                 branchOffice.StartNewPeriod(period);
                  // The current period before switching to a new one
 

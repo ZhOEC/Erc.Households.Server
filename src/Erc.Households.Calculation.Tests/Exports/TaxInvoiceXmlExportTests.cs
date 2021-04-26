@@ -19,8 +19,7 @@ namespace Erc.Households.Tests.Exports
             var ti = new TaxInvoice
             {
                 Id = 111046,
-                CreationDate = new DateTime(2021, 3, 31),
-                EnergyAmount = 2342352,
+                QuantityTotal = 2342352,
                 FullSum = 4329482.36m,
                 LiabilityDate = new DateTime(2021, 3, 31),
                 LiabilitySum = 3607901.97m,
@@ -57,8 +56,7 @@ namespace Erc.Households.Tests.Exports
             var ti = new TaxInvoice
             {
                 Id = 111047,
-                CreationDate = new DateTime(2021, 3, 31),
-                EnergyAmount = 1,
+                QuantityTotal = 1,
                 FullSum = 3432.82m,
                 LiabilityDate = new DateTime(2021, 3, 31),
                 LiabilitySum = 2860.68m,

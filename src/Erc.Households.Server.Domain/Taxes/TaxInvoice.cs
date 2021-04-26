@@ -9,15 +9,15 @@ namespace Erc.Households.Domain.Taxes
     public class TaxInvoice
     {
         public int Id { get; init; }
+        public int BranchOfficeId { get; init; }
         public int PeriodId { get; init; }
         public DateTime LiabilityDate { get; init; }
         public decimal LiabilitySum { get; init; }
-        public decimal EnergyAmount { get; init; }
+        public decimal QuantityTotal { get; init; }
         public decimal TaxSum { get; init; }
-        public DateTime CreationDate { get; init; }
         public decimal FullSum { get; init; }
+        public DateTime CreationDate { get; private set; } = DateTime.Now;
         public TaxInvoiceType Type { get; init; }
-        public int BranchOfficeId { get; init; }
         public IEnumerable<TaxInvoiceTabLine> TabLines { get; init; }
         public BranchOffice BranchOffice { get; init; }
 

@@ -12,6 +12,7 @@ using MediatR;
 using Erc.Households.Commands;
 using Erc.Households.Api.Queries;
 using Erc.Households.Api.Queries.TaxInvoices;
+using Erc.Households.Api.Requests;
 
 namespace Erc.Households.Api.Controllers
 {
@@ -41,19 +42,19 @@ namespace Erc.Households.Api.Controllers
             return Ok(_mapper.Map<IEnumerable<Responses.BranchOffice>>(_branchOfficeService.GetList(UserGroups)).OrderBy(bo => bo.Id < 0 ? 0 : 1).ThenBy(bo => bo.Name));
         }
 
-        [HttpGet("availables-to-create-tax-invoice")]
-        public IActionResult AvailablesToCreateTaxInvoice()
+        [HttpGet("tax-invoice")]
+        public IActionResult DataForCreateTaxInvoice()
         {
             var branchOfficesByUser = _branchOfficeService.GetList(UserGroups).ToList();
-            var bos = new List<object>();
+            var bos = new List<CreateTaxInvoice>();
             branchOfficesByUser.ForEach(branchOffice => {
                 var previousPeriodByBranchOffice = _mediator.Send(new GetPeriods()).Result.OrderBy(y => y.Id).Where(period => period.Id != branchOffice.CurrentPeriodId).FirstOrDefault();
                 bos.Add(
-                    new
+                    new CreateTaxInvoice
                     {
-                        branchOffice,
-                        period = previousPeriodByBranchOffice,
-                        isDisabled = _mediator.Send(new GetTaxInvoiceByPeriodId(branchOffice.Id, previousPeriodByBranchOffice.Id)).Result == null
+                        BranchOffice = branchOffice,
+                        Period = previousPeriodByBranchOffice,
+                        IsDisabled = _mediator.Send(new GetTaxInvoiceByPeriodId(branchOffice.Id, previousPeriodByBranchOffice.Id)).Result != null
                     });
             });
 
