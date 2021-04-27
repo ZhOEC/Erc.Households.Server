@@ -48,7 +48,7 @@ namespace Erc.Households.Api.Controllers
             var branchOfficesByUser = _branchOfficeService.GetList(UserGroups).ToList();
             var bos = new List<CreateTaxInvoice>();
             branchOfficesByUser.ForEach(branchOffice => {
-                var previousPeriodByBranchOffice = _mediator.Send(new GetPeriods()).Result.OrderBy(y => y.Id).Where(period => period.Id != branchOffice.CurrentPeriodId).FirstOrDefault();
+                var previousPeriodByBranchOffice = _mediator.Send(new GetPeriods()).Result.OrderByDescending(y => y.Id).Where(period => period.Id != branchOffice.CurrentPeriodId).FirstOrDefault();
                 bos.Add(
                     new CreateTaxInvoice
                     {
