@@ -42,24 +42,24 @@ namespace Erc.Households.Api.Controllers
             return Ok(_mapper.Map<IEnumerable<Responses.BranchOffice>>(_branchOfficeService.GetList(UserGroups)).OrderBy(bo => bo.Id < 0 ? 0 : 1).ThenBy(bo => bo.Name));
         }
 
-        [HttpGet("tax-invoice")]
+        /*[HttpGet("tax-invoice")]
         public IActionResult DataForCreateTaxInvoice()
         {
             var branchOfficesByUser = _branchOfficeService.GetList(UserGroups).ToList();
             var bos = new List<CreateTaxInvoice>();
             branchOfficesByUser.ForEach(branchOffice => {
-                var previousPeriodByBranchOffice = _mediator.Send(new GetPeriods()).Result.OrderByDescending(y => y.Id).Where(period => period.Id != branchOffice.CurrentPeriodId).FirstOrDefault();
+                var previousPeriodByBranchOffice = _mediator.Send(new GetPeriods()).Result.OrderByDescending(y => y.Id).Where(period => period.Id < branchOffice.CurrentPeriodId).FirstOrDefault();
                 bos.Add(
                     new CreateTaxInvoice
                     {
                         BranchOffice = branchOffice,
-                        Period = previousPeriodByBranchOffice,
+                        PreviousPeriod = previousPeriodByBranchOffice,
                         IsDisabled = _mediator.Send(new GetTaxInvoiceByPeriodId(branchOffice.Id, previousPeriodByBranchOffice.Id)).Result != null
                     });
             });
 
             return Ok(bos);
-        }
+        }*/
 
         [HttpGet("{id}")]
         public IActionResult GetBranchOffice(int id) => Ok(_branchOfficeService.GetOne(id));
@@ -81,7 +81,7 @@ namespace Erc.Households.Api.Controllers
         }
 
         [HttpGet("{id}/periods")]
-        public IActionResult GetPeriodByBranchOffice(int id)
+        public IActionResult GetPeriodsByBranchOffice(int id)
         {
             return Ok(_branchOfficeService.GetPeriods(id));
         }
