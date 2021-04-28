@@ -17,7 +17,7 @@ namespace Erc.Households.Api.Controllers
     {
         private readonly ErcContext _ercContext;
         readonly IMediator _mediator;
-        
+
         public TaxInvoicesController(ErcContext ercContext, IMediator mediator)
         {
             _ercContext = ercContext;
@@ -33,8 +33,14 @@ namespace Erc.Households.Api.Controllers
             return Ok(taxInvoices);
         }
 
+        [HttpGet("{branchOfficeId}/{periodId}")]
+        public async Task<IActionResult> GetByPeriodId(int branchOfficeId, int periodId)
+        {
+            return Ok(await _mediator.Send(new GetTaxInvoiceByPeriodId(branchOfficeId, periodId)));
+        }
+
         [HttpGet("{id}/export")]
-        public async Task<IActionResult> GetTaxInvoiceById(int id)
+        public async Task<IActionResult> Export(int id)
         {
             var xmlData = await _mediator.Send(new GetTaxInvoiceById(id));
             var ms = new TaxInvoiceXmlExporter().Export(xmlData);

@@ -12,8 +12,8 @@ namespace Erc.Households.Domain.Taxes
         public int BranchOfficeId { get; init; }
         public int PeriodId { get; init; }
         public DateTime LiabilityDate { get; init; }
-        public decimal LiabilitySum { get; init; }
         public decimal QuantityTotal { get; init; }
+        public decimal LiabilitySum { get; init; }
         public decimal TaxSum { get; init; }
         public decimal FullSum { get; init; }
         public DateTime CreationDate { get; private set; } = DateTime.Now;
@@ -108,10 +108,12 @@ namespace Erc.Households.Domain.Taxes
                 WriteTabElement(writer, "TAB1_A13", tabLine.ProductName, "1"); //
                 if (Type == TaxInvoiceType.CompensationDso)
                     WriteTabElement(writer, "TAB1_A133", tabLine.ProductCode, "1"); // "TAB1_A133", "35.13",
-                else
+                else if (Type == TaxInvoiceType.Electricity)
                     WriteTabElement(writer, "TAB1_A131", tabLine.ProductCode, "1"); // "TAB1_A131", "2716000000"
+                else if (Type == TaxInvoiceType.Gas)
+                    WriteTabElement(writer, "TAB1_A131", tabLine.ProductCode, "1");
                 WriteTabElement(writer, "TAB1_A14", tabLine.Unit, "1"); // "TAB1_A14", "кВт·год" / компенсація: "TAB1_A14", "грн" / газ ? метр кубічний
-                WriteTabElement(writer, "TAB1_A141", tabLine.UnitCode, "1"); // "TAB1_A141", "0415"  or "TAB1_A141", "2454"
+                WriteTabElement(writer, "TAB1_A141", tabLine.UnitCode, "1"); // "TAB1_A141", compensation - "2454", electricity - "0415", gas - "0134"
                 WriteTabElement(writer, "TAB1_A15", tabLine.Quantity.ToString(), "1");
                 WriteTabElement(writer, "TAB1_A16", tabLine.Price.ToString("0.00######").Replace(',', '.'), "1");
             }

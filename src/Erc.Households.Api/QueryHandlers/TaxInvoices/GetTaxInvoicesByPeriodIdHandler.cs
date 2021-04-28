@@ -18,6 +18,6 @@ namespace Erc.Households.Api.QueryHandlers
         }
 
         public async Task<TaxInvoice> Handle(GetTaxInvoiceByPeriodId request, CancellationToken cancellationToken)
-            => await _ercContext.TaxInvoices.FirstOrDefaultAsync(x => x.BranchOfficeId == request.BranchOfficeId && x.PeriodId == request.PeriodId);
+            => await _ercContext.TaxInvoices.FirstOrDefaultAsync(x => x.BranchOfficeId == request.BranchOfficeId && x.PeriodId == request.PeriodId, cancellationToken: cancellationToken);
     }
 }
