@@ -195,5 +195,7 @@ namespace Erc.Households.Domain.AccountingPoints
                 _exemptions.Add(exemption);
             else throw new ArgumentOutOfRangeException(nameof(exemption.EffectiveDate), "Нова пільга не може бути відкрита у період дії іншої пільги.");
         }
+
+        public void RemovePayment(Payment payment) => Debt += payment.Amount;
     }
 }
