@@ -3,21 +3,23 @@ using Erc.Households.Domain.Taxes;
 using Erc.Households.EF.PostgreSQL;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Erc.Households.Api.QueryHandlers
 {
-    public class GetTaxInvoiceByPeriodIdHandler : IRequestHandler<GetTaxInvoiceByPeriodId, TaxInvoice>
+    public class GetTaxInvoicesByPeriodIdHandler : IRequestHandler<GetTaxInvoicesByPeriodId, IEnumerable<TaxInvoice>>
     {
         private readonly ErcContext _ercContext;
 
-        public GetTaxInvoiceByPeriodIdHandler(ErcContext ercContext)
+        public GetTaxInvoicesByPeriodIdHandler(ErcContext ercContext)
         {
             _ercContext = ercContext;
         }
 
-        public async Task<TaxInvoice> Handle(GetTaxInvoiceByPeriodId request, CancellationToken cancellationToken)
-            => await _ercContext.TaxInvoices.FirstOrDefaultAsync(x => x.BranchOfficeId == request.BranchOfficeId && x.PeriodId == request.PeriodId, cancellationToken: cancellationToken);
+        public async Task<IEnumerable<TaxInvoice>> Handle(GetTaxInvoicesByPeriodId request, CancellationToken cancellationToken)
+            => await _ercContext.TaxInvoices.Where(x => x.BranchOfficeId == request.BranchOfficeId && x.PeriodId == request.PeriodId).ToListAsync();
     }
 }
