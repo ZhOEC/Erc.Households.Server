@@ -36,7 +36,7 @@ namespace Erc.Households.Api.Controllers
         [HttpGet("{branchOfficeId}/{periodId}")]
         public async Task<IActionResult> GetByPeriodId(int branchOfficeId, int periodId)
         {
-            return Ok(await _mediator.Send(new GetTaxInvoiceByPeriodId(branchOfficeId, periodId)));
+            return Ok(await _mediator.Send(new GetTaxInvoicesByPeriodId(branchOfficeId, periodId)));
         }
 
         [HttpGet("{id}/export")]
