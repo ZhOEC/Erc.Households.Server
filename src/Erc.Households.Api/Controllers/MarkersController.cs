@@ -13,27 +13,27 @@ namespace Erc.Households.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TaxInvoicesController : ErcControllerBase
+    public class MarkersController : ErcControllerBase
     {
         private readonly ErcContext _ercContext;
         readonly IMediator _mediator;
 
-        public TaxInvoicesController(ErcContext ercContext, IMediator mediator)
+        public MarkersController(ErcContext ercContext, IMediator mediator)
         {
             _ercContext = ercContext;
             _mediator = mediator;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetPart(int branchOfficeId, int pageNumber, int pageSize)
+        public async Task<IActionResult> GetPart(int pageNumber, int pageSize)
         {
-            var taxInvoices = await _mediator.Send(new GetTaxInvoicesByPart(branchOfficeId, pageNumber, pageSize));
-            Response.Headers.Add("X-Total-Count", taxInvoices.TotalItemCount.ToString());
+            var markers = await _mediator.Send(new GetMarkersByPart(pageNumber, pageSize));
+            Response.Headers.Add("X-Total-Count", markers.TotalItemCount.ToString());
 
-            return Ok(taxInvoices);
+            return Ok(markers);
         }
 
-        [HttpGet("{branchOfficeId}/{periodId}")]
+        /*[HttpGet("{branchOfficeId}/{periodId}")]
         public async Task<IActionResult> GetByPeriodId(int branchOfficeId, int periodId)
         {
             return Ok(await _mediator.Send(new GetTaxInvoicesByPeriodId(branchOfficeId, periodId)));
@@ -72,6 +72,6 @@ namespace Erc.Households.Api.Controllers
             await _ercContext.SaveChangesAsync();
 
             return Ok();
-        }
+        }*/
     }
 }
