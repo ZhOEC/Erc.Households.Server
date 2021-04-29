@@ -530,6 +530,10 @@ namespace Erc.Households.EF.PostgreSQL
                 entity.Property(p => p.TaxSum).HasPrecision(19, 2);
                 entity.Property(p => p.FullSum).HasPrecision(19, 2);
                 entity.Property(p => p.TabLines).HasColumnType("jsonb");
+                entity.Property(e => e.LiabilityDate)
+                        .HasConversion(
+                            v => v.ToLocalTime().Date,
+                            v => v.Date);
 
                 entity.HasOne(p => p.BranchOffice)
                     .WithMany()
