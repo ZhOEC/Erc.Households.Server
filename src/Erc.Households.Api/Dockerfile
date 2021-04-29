@@ -16,6 +16,7 @@ FROM build AS publish
 RUN dotnet publish -c Release -o /app/publish
 
 FROM base AS final
+ENV TZ=Europe/Kiev
 WORKDIR /app
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Erc.Households.Api.dll"]
