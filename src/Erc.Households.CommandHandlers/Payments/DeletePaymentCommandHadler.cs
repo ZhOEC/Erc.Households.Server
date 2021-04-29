@@ -2,6 +2,7 @@
 using Erc.Households.Domain.Payments;
 using Erc.Households.EF.PostgreSQL;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -19,12 +20,12 @@ namespace Erc.Households.Api.QueryHandlers.Payments
 
         protected override async Task Handle(DeletePaymentCommand request, CancellationToken cancellationToken)
         {
-            var payment = await _ercContext.Payments.FindAsync(request.Id);
+            var payment = await _ercContext.Payments.Include(p => p.AccountingPoint.BranchOffice).FirstOrDefaultAsync(p => p.Id == request.Id);
 
             if (payment is null)  return;
 
-            if (payment.Status == PaymentStatus.Processed)
-                throw new Exception("The payment has been processed and cannot be removed");
+            if (payment.Status == PaymentStatus.Processed && payment.AccountingPoint.BranchOffice.CurrentPeriodId == payment.PeriodId)
+                payment.AccountingPoint.RemovePayment(payment);
 
             _ercContext.Remove(payment);
         }
