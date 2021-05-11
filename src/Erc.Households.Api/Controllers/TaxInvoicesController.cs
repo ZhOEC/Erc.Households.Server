@@ -8,6 +8,7 @@ using Erc.Households.Domain.Taxes;
 using Erc.Households.EF.PostgreSQL;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Text;
 
 namespace Erc.Households.Api.Controllers
 {
@@ -43,10 +44,7 @@ namespace Erc.Households.Api.Controllers
         public async Task<IActionResult> Export(int id)
         {
             var xmlData = await _mediator.Send(new GetTaxInvoiceById(id));
-            var ms = new TaxInvoiceXmlExporter().Export(xmlData);
-            ms.Position = 0;
-
-            return File(ms, "application/xml", $"{id}.xml");
+            return File(Encoding.GetEncoding(1251).GetBytes(xmlData), "application/xml", $"{id}.xml");
         }
 
         [HttpPost("create")]

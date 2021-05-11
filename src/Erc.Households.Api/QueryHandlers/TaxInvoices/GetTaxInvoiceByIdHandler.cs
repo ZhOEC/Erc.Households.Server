@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Erc.Households.Api.QueryHandlers.TaxInvoices
 {
-    public class GetTaxInvoiceByIdHandler : IRequestHandler<GetTaxInvoiceById, Requests.ExportTaxInvoice>
+    public class GetTaxInvoiceByIdHandler : IRequestHandler<GetTaxInvoiceById, string>
     {
         private readonly ErcContext _ercContext;
         readonly IMapper _mapper;
@@ -20,14 +20,9 @@ namespace Erc.Households.Api.QueryHandlers.TaxInvoices
             _mapper = mapper;
         }
 
-        public async Task<Requests.ExportTaxInvoice> Handle(GetTaxInvoiceById request, CancellationToken cancellationToken)
-        {
-            return await _ercContext.TaxInvoices
-                .Include(t => t.BranchOffice)
-                    .ThenInclude(t => t.Company)
-                .ProjectTo<Requests.ExportTaxInvoice>(_mapper.ConfigurationProvider)
-                .AsNoTracking()
-                .FirstOrDefaultAsync();
-        }
+        public async Task<string> Handle(GetTaxInvoiceById request, CancellationToken cancellationToken) => 
+            (await _ercContext.TaxInvoices
+                .Include(t => t.BranchOffice.Company)
+                .FirstAsync(ti => ti.Id == request.TaxInvoiceId)).ExportToXml();
     }
 }
