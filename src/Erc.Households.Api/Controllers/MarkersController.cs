@@ -1,13 +1,9 @@
 ﻿using System.Threading.Tasks;
-using Erc.Households.Api.Helpers;
 using Erc.Households.Api.Queries;
-using Erc.Households.Api.Queries.TaxInvoices;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;
-using Erc.Households.Domain.Taxes;
 using Erc.Households.EF.PostgreSQL;
-using Microsoft.EntityFrameworkCore;
-using System;
+using Erc.Households.Domain;
 
 namespace Erc.Households.Api.Controllers
 {
@@ -33,45 +29,41 @@ namespace Erc.Households.Api.Controllers
             return Ok(markers);
         }
 
-        /*[HttpGet("{branchOfficeId}/{periodId}")]
-        public async Task<IActionResult> GetByPeriodId(int branchOfficeId, int periodId)
+        [HttpPost]
+        public async Task<IActionResult> Add(Marker marker)
         {
-            return Ok(await _mediator.Send(new GetTaxInvoicesByPeriodId(branchOfficeId, periodId)));
-        }
-
-        [HttpGet("{id}/export")]
-        public async Task<IActionResult> Export(int id)
-        {
-            var xmlData = await _mediator.Send(new GetTaxInvoiceById(id));
-            var ms = new TaxInvoiceXmlExporter().Export(xmlData);
-            ms.Position = 0;
-
-            return File(ms, "application/xml", $"{id}.xml");
-        }
-
-        [HttpPost("create")]
-        public async Task<IActionResult> Create(TaxInvoice taxInvoice)
-        {
-            await _ercContext.TaxInvoices.AddAsync(taxInvoice);
+            await _ercContext.Markers.AddAsync(marker);
             await _ercContext.SaveChangesAsync();
-            
-            return Ok();
+
+            return Ok(marker);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(Marker marker)
+        {
+            var existingMarker = await _ercContext.Markers.FindAsync(marker.Id);
+
+            if (existingMarker == null)
+                return NotFound();
+
+            _ercContext.Entry(existingMarker).CurrentValues.SetValues(marker);
+            await _ercContext.SaveChangesAsync();
+
+            return Ok(existingMarker);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var taxInvoice = await _ercContext.TaxInvoices.FirstOrDefaultAsync(x => x.Id == id);
+            var existingMarker = await _ercContext.Markers.FindAsync(id);
 
-            if (taxInvoice is null)
+            if (existingMarker == null)
                 return NotFound();
-            else if ((DateTime.Now - taxInvoice.CreationDate).TotalDays > 7)
-                return BadRequest("Податкова накладна занадто стара для цього");
 
-            _ercContext.Remove(taxInvoice);
+            _ercContext.Remove(existingMarker);
             await _ercContext.SaveChangesAsync();
 
             return Ok();
-        }*/
+        }
     }
 }

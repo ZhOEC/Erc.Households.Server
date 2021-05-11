@@ -96,8 +96,8 @@ namespace Erc.Households.Domain.AccountingPoints
             private set { Payments = value.ToList(); }
         }
 
-        private List<Marker> _markers = new();
-        public IReadOnlyCollection<Marker> Markers
+        private List<AccountingPointMarker> _markers = new();
+        public IReadOnlyCollection<AccountingPointMarker> Markers
         {
             get => LazyLoader.Load(this, ref _markers);
             private set { Markers = value.ToList(); }
