@@ -31,7 +31,7 @@ namespace Erc.Households.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Unit>> Post(NewPayment newPayment)
+        public async Task<ActionResult> Post(NewPayment newPayment)
         {
             await _mediator.Send(new CreatePaymentCommand(newPayment.AccountingPointId, newPayment.PayDate, newPayment.Amount, 
                                                           newPayment.PayerInfo, newPayment.Type, newPayment.BatchId));
@@ -51,7 +51,7 @@ namespace Erc.Households.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             await _mediator.Send(new DeletePaymentCommand(id));
             await _unitOfWork.SaveWorkAsync();

@@ -3,7 +3,7 @@ using System;
 
 namespace Erc.Households.Commands
 {
-    public class OpenNewContractCommand : IRequest<Unit>
+    public class OpenNewContractCommand : IRequest
     {
         public OpenNewContractCommand(int accountingPointId, int personId, DateTime contractStartDate, bool sendPaperBill, string idCardNumber, DateTime idCardIssuanceDate, string idCardIssuer, DateTime? idCardExpDate,
             string taxCode, string firstName, string lastName, string patronymic, string[] mobilePhones, string email, string currentUser)

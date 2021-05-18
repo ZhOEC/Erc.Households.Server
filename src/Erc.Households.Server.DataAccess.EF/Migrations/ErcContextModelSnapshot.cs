@@ -1124,6 +1124,10 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         .HasColumnName("id")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
+                    b.Property<int>("Type")
+                        .HasColumnType("integer")
+                        .HasColumnName("type");
+
                     b.Property<string>("Value")
                         .HasMaxLength(150)
                         .HasColumnType("citext")

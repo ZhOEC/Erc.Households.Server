@@ -18,6 +18,6 @@ namespace Erc.Households.Api.Queries
         }
 
         public async Task<IPagedList<Marker>> Handle(GetMarkersByPart request, CancellationToken cancellationToken)
-            => await _ercContext.Markers.OrderByDescending(x => x.Id).ToPagedListAsync(request.PageNumber, request.PageSize);
+            => await _ercContext.Markers.OrderByDescending(x => x.Type).ToPagedListAsync(request.PageNumber, request.PageSize);
     }
 }

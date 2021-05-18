@@ -22,7 +22,8 @@ namespace Erc.Households.Api.QueryHandlers.Payments
         {
             var payment = await _ercContext.Payments.Include(p => p.AccountingPoint.BranchOffice).FirstOrDefaultAsync(p => p.Id == request.Id);
 
-            if (payment is null)  return;
+            if (payment is null)
+                throw new Exception("Payment not exist");
 
             if (payment.Status == PaymentStatus.Processed && payment.AccountingPoint.BranchOffice.CurrentPeriodId == payment.PeriodId)
                 payment.AccountingPoint.RemovePayment(payment);

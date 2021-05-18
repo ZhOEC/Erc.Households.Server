@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Erc.Households.CommandHandlers
 {
-    class OpenNewContractCommandHandler : IRequestHandler<OpenNewContractCommand, Unit>
+    public class OpenNewContractCommandHandler : AsyncRequestHandler<OpenNewContractCommand>
     {
         private readonly ErcContext _ercContext;
 
@@ -17,7 +17,7 @@ namespace Erc.Households.CommandHandlers
             _ercContext = ercContext;
         }
 
-        public async Task<Unit> Handle(OpenNewContractCommand request, CancellationToken cancellationToken)
+        protected override async Task Handle(OpenNewContractCommand request, CancellationToken cancellationToken)
         {
             var ap = await _ercContext.AccountingPoints.FindAsync(request.AccountingPointId);
             if (ap is null)
@@ -40,8 +40,6 @@ namespace Erc.Households.CommandHandlers
 
             _ercContext.Entry(ap.Owner).State = person.Id == 0 ? EntityState.Added : EntityState.Modified;
             ap.OpenNewContract(request.ContractStartDate, person, request.CurrentUser, request.SendPaperBill);
-
-            return Unit.Value;
         }
     }
 }

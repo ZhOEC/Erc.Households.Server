@@ -13,6 +13,7 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    type = table.Column<int>(type: "integer", nullable: false),
                     value = table.Column<string>(type: "citext", maxLength: 150, nullable: true)
                 },
                 constraints: table =>

@@ -204,5 +204,8 @@ namespace Erc.Households.Domain.AccountingPoints
         }
 
         public void RemovePayment(Payment payment) => Debt += payment.Amount;
+
+        public void AddMarker(AccountingPointMarker marker) => _markers.Add(marker);
+        public void RemoveMarker(AccountingPointMarker marker) => _markers.Remove(marker);
     }
 }

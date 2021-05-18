@@ -16,7 +16,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Erc.Households.EF.PostgreSQL.Migrations
 {
     [DbContext(typeof(ErcContext))]
-    [Migration("20210429135101_add-marker")]
+    [Migration("20210513085034_add-marker")]
     partial class addmarker
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1125,6 +1125,10 @@ namespace Erc.Households.EF.PostgreSQL.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("id")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer")
+                        .HasColumnName("type");
 
                     b.Property<string>("Value")
                         .HasMaxLength(150)

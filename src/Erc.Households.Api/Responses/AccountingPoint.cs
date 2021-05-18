@@ -1,6 +1,8 @@
-﻿using Erc.Households.Domain.Shared;
+﻿using Erc.Households.Domain.AccountingPoints;
+using Erc.Households.Domain.Shared;
 using Erc.Households.Domain.Shared.Addresses;
 using System;
+using System.Collections.Generic;
 
 namespace Erc.Households.Api.Responses
 {
@@ -30,6 +32,7 @@ namespace Erc.Households.Api.Responses
         public decimal Debt { get; set; }
         public AccountingPointExemption Exemption { get; set; }
         public Commodity Commodity { get; private set; }
+        public IReadOnlyCollection<AccountingPointMarker> Markers { get; private set; }
         public bool? IsGasWaterHeaterInstalled { get; private set; }
         public bool? IsCentralizedWaterSupply { get; private set; }
         public bool? IsCentralizedHotWaterSupply { get; private set; }
