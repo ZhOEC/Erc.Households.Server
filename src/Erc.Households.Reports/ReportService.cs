@@ -19,23 +19,17 @@ namespace Erc.Households.Reports
             _dbConnection = dbConnection;
         }
 
-        public async Task<Stream> CreateReportAsync(string slug, IDictionary<string, object> @params)
+        public async Task<Stream> CreateReportAsync(string slug, int branchOfficeId, int periodId, int[] dsoIds)
         {
-            switch (slug)
-                {
-                case "tobs":
-                    return await CreateTurnoverBalanceSheetAsync((int)@params["branchOfficeId"], (int)@params["periodId"]);
-                
-                case "tobspl":
-                    return await CreateTurnoverBalanceSheetPersonListAsync((int)@params["branchOfficeId"], (int)@params["periodId"]);
-
-
-                default:
-                    throw new ArgumentException(nameof(slug));
-            }
+            return slug switch
+            {
+                "tobs" => await CreateTurnoverBalanceSheetAsync(branchOfficeId, periodId, dsoIds),
+                "tobspl" => await CreateTurnoverBalanceSheetPersonListAsync(branchOfficeId, periodId, dsoIds),
+                _ => throw new ArgumentException("Undefined report slug", nameof(slug)),
+            };
         }
 
-        private async Task<Stream> CreateTurnoverBalanceSheetAsync(int branchOfficeId, int periodId)
+        private async Task<Stream> CreateTurnoverBalanceSheetAsync(int branchOfficeId, int periodId, int[] dsoIds)
         {
             var data = await _dbConnection.QueryFirstAsync(@"
     select
@@ -84,7 +78,7 @@ left join
                sum(case when apdh.debt_value < 0 then apdh.debt_value else 0 end) / 6 TaxStartCreditSum
         from accounting_point_debt_history apdh
             join accounting_points ap on apdh.accounting_point_id = ap.id
-        where ap.branch_office_id = @branchOfficeId
+        where ap.branch_office_id = @branchOfficeId and ap.distribution_system_operator_id = any (@dsoIds)
         group by apdh.period_id
     ) accounting_point_debt_history on per.id = accounting_point_debt_history.period_id
 left join
@@ -101,7 +95,7 @@ left join
                sum(inv.total_amount_due) / 6 TaxTotalAmountDueSum
         from invoices inv
             join accounting_points ap on inv.accounting_point_id = ap.id
-        where ap.branch_office_id = @branchOfficeId
+        where ap.branch_office_id = @branchOfficeId and ap.distribution_system_operator_id = any (@dsoIds)
         group by inv.period_id
         ) start_debit on start_debit.period_id = per.id
 left join
@@ -118,7 +112,7 @@ left join
                sum(case when pay.amount < 0 and pay.type = 3 then pay.amount else 0 end) / 6 TaxPaymentNotCurrentPeriodMinusSum
         from payments pay
             join accounting_points ap on pay.accounting_point_id = ap.id
-        where branch_office_id = @branchOfficeId
+        where branch_office_id = @branchOfficeId and ap.distribution_system_operator_id = any (@dsoIds)
         group by pay.period_id
     ) payments on per.id = payments.period_id
 left join lateral
@@ -131,10 +125,9 @@ left join lateral
         from accounting_points ap
             left join accounting_point_debt_history apdh on ap.id = apdh.accounting_point_id and apdh.period_id=(select min(id) from periods where id>@periodId)
             join branch_offices bo on ap.branch_office_id = bo.id
-        where bo.id = @branchOfficeId
-       
+        where bo.id = @branchOfficeId and ap.distribution_system_operator_id = any (@dsoIds)
     ) end_debit on true
- where per.id = @periodId", new { branchOfficeId, periodId });
+ where per.id = @periodId", new { branchOfficeId, periodId, dsoIds });
 
             var report = new XLTemplate(@"Templates/turnover_balance_sheet.xlsx");
             foreach (var obj in data as IDictionary<string, object>)
@@ -146,7 +139,7 @@ left join lateral
             return ms;
         }
 
-        private async Task<Stream> CreateTurnoverBalanceSheetPersonListAsync(int branchOfficeId, int periodId)
+        private async Task<Stream> CreateTurnoverBalanceSheetPersonListAsync(int branchOfficeId, int periodId, int[] dsoIds)
         {
             var data = await _dbConnection.QueryAsync<Person>(@"select bo.name bo_name, (select name from periods where id=@periodId) period_name
                 , ap.eic, ap.name, last_name||' '||first_name||' '||patronymic person, to_char(c.start_date,'DD.MM.YYYY') start_date
@@ -160,16 +153,16 @@ left join lateral
                 left join accounting_point_debt_history start_debt on ap.id=start_debt.accounting_point_id and start_debt.period_id=@periodId
                 left join accounting_point_debt_history end_debt on ap.id=end_debt.accounting_point_id and end_debt.period_id=(select min(id) from periods where id>@periodId)
                 join branch_offices bo on ap.branch_office_id=bo.id
-                where ap.branch_office_id=@branchOfficeId", new { branchOfficeId, periodId });
+                where ap.branch_office_id = @branchOfficeId and ap.distribution_system_operator_id = any (@dsoIds)", new { branchOfficeId, periodId, dsoIds });
 
             var report = new XLTemplate(@"Templates/turnover_balance_sheet_people.xlsx");
-            
+
             report.AddVariable(new
             {
-                data.First().period_name,
-                data.First().bo_name,
+                data.FirstOrDefault()?.period_name,
+                data.FirstOrDefault()?.bo_name,
                 People = data
-            }); 
+            });
             report.Generate();
             var ms = new MemoryStream();
             report.SaveAs(ms);
