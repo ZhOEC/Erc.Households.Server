@@ -4,8 +4,6 @@ FROM mcr.microsoft.com/dotnet/aspnet:5.0-buster-slim AS base
 EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
-ARG HTTP_PROXY=http://10.67.2.49:50514
-ARG HTTPS_PROXY=http://10.67.2.49:50514
 
 COPY . .
 WORKDIR "Erc.Households.Api"
