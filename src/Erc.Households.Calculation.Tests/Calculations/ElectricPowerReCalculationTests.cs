@@ -79,7 +79,11 @@ namespace Erc.Households.Calculation.Tests
         [Fact]
         public void Calculate_Corrective_Invoice_With_Regular_Tariff_Two_Zone()
         {
-            var usageT1 = new Usage(0, 0.5m, .67m);
+            var usageT1 = new Usage(0)
+            {
+                Kz = 0.5m,
+                DiscountWeight = .67m
+            };
             var invalidCalculationsT1 = new[] { new UsageCalculation
             {
                 Units = 100,
@@ -90,7 +94,11 @@ namespace Erc.Households.Calculation.Tests
             foreach (var calc in invalidCalculationsT1)
                 usageT1.AddCalculation(calc, true);
 
-            var usageT2 = new Usage(0, 1, .33m);
+            var usageT2 = new Usage(0)
+            {
+                Kz = 1,
+                DiscountWeight = .33m
+            };
             var invalidCalculationsT2 = new[] { new UsageCalculation
             {
                 Units = 1000,
@@ -117,8 +125,16 @@ namespace Erc.Households.Calculation.Tests
                     }
                 },
                 ToDate = new DateTime(2021, 2, 1),
-                UsageT1 = new Usage(-90, 0.5m, .67m),
-                UsageT2 = new Usage(-300, 1, .33m),
+                UsageT1 = new Usage(-90)
+                {
+                    Kz = 0.5m,
+                    DiscountWeight = .67m
+                },
+                UsageT2 = new Usage(-300)
+                {
+                    Kz = 1,
+                    DiscountWeight = .33m
+                },
                 ZoneRecord = Domain.Shared.ZoneRecord.Two
             };
 
@@ -150,7 +166,11 @@ namespace Erc.Households.Calculation.Tests
         [Fact]
         public void Calculate_Corrective_Invoice_With_Regular_Tariff_Three_Zone()
         {
-            var usageT1 = new Usage(0, 0.4m, .46m);
+            var usageT1 = new Usage(0)
+            {
+                Kz = 0.4m,
+                DiscountWeight = .46m
+            };
             var invalidCalculationsT1 = new[] { new UsageCalculation
             {
                 Units = 100,
@@ -161,7 +181,11 @@ namespace Erc.Households.Calculation.Tests
             foreach (var calc in invalidCalculationsT1)
                 usageT1.AddCalculation(calc, true);
 
-            var usageT2 = new Usage(0, 1, .33m);
+            var usageT2 = new Usage(0)
+            {
+                Kz = 1,
+                DiscountWeight = .33m
+            };
             var invalidCalculationsT2 = new[] { new UsageCalculation
             {
                 Units = 500,
@@ -172,7 +196,11 @@ namespace Erc.Households.Calculation.Tests
             foreach (var calc in invalidCalculationsT2)
                 usageT2.AddCalculation(calc, true);
 
-            var usageT3 = new Usage(0, 1.5m, .21m);
+            var usageT3 = new Usage(0)
+            {
+                Kz = 1.5m,
+                DiscountWeight = .21m
+            };
             var invalidCalculationsT3 = new[] { new UsageCalculation
             {
                 Units = 600,
@@ -202,9 +230,21 @@ namespace Erc.Households.Calculation.Tests
                     }
                 },
                 ToDate = new DateTime(2021, 2, 1),
-                UsageT1 = new Usage(-5, 0.4m, .46m),
-                UsageT2 = new Usage(-100, 1, .33m),
-                UsageT3 = new Usage(10, 1.5m, .21m),
+                UsageT1 = new Usage(-5)
+                {
+                    Kz = 0.4m,
+                    DiscountWeight = .46m
+                },
+                UsageT2 = new Usage(-100)
+                {
+                    Kz = 1,
+                    DiscountWeight = .33m
+                },
+                UsageT3 = new Usage(10)
+                {
+                    Kz = 1.5m,
+                    DiscountWeight = .21m
+                },
                 ZoneRecord = Domain.Shared.ZoneRecord.Three
             };
 
@@ -303,7 +343,11 @@ namespace Erc.Households.Calculation.Tests
         [Fact]
         public void Calculate_corrective_invoice_with_two_blocks_tariff_two_zones()
         {
-            var usageT1 = new Usage(0, 0.5m, .67m);
+            var usageT1 = new Usage(0)
+            {
+                Kz = 0.5m,
+                DiscountWeight = .67m
+            };
             var invalidCalculationsT1 = new[]
             {
                 new UsageCalculation { PriceValue = _regularPrice, Units = 371, Charge = 311.64m },
@@ -313,7 +357,11 @@ namespace Erc.Households.Calculation.Tests
             foreach (var calc in invalidCalculationsT1)
                 usageT1.AddCalculation(calc, true);
 
-            var usageT2 = new Usage(0, 1, .33m);
+            var usageT2 = new Usage(0)
+            {
+                Kz = 1,
+                DiscountWeight = .33m
+            };
             var invalidCalculationsT2 = new[]
             {
                 new UsageCalculation { PriceValue = _regularPrice, Units = 929, Charge = 1560.72m },
@@ -332,8 +380,16 @@ namespace Erc.Households.Calculation.Tests
                 InvoiceType = Domain.Shared.InvoiceType.Recalculation,
                 Tariff = _twoBlocksTariff,
                 ToDate = new DateTime(2021, 2, 1),
-                UsageT1 = new Usage(-250, 0.5m, .67m),
-                UsageT2 = new Usage(100, 1, .33m),
+                UsageT1 = new Usage(-250)
+                {
+                    Kz = 0.5m,
+                    DiscountWeight = .67m
+                },
+                UsageT2 = new Usage(100)
+                {
+                    Kz = 1,
+                    DiscountWeight = .33m
+                },
                 ZoneRecord = Domain.Shared.ZoneRecord.Two
             };
 
@@ -383,7 +439,11 @@ namespace Erc.Households.Calculation.Tests
         [Fact]
         public void Calculate_corrective_invoice_with_two_blocks_tariff_three_zones()
         {
-            var usageT1 = new Usage(0, 0.4m, .46m);
+            var usageT1 = new Usage(0)
+            {
+                Kz = 0.4m,
+                DiscountWeight = .46m
+            };
             var invalidCalculationsT1 = new[]
             {
                 new UsageCalculation { PriceValue = _regularPrice, Units = 450, Charge = 302.4m },
@@ -393,7 +453,11 @@ namespace Erc.Households.Calculation.Tests
             foreach (var calc in invalidCalculationsT1)
                 usageT1.AddCalculation(calc, true);
 
-            var usageT2 = new Usage(0, 1, .33m);
+            var usageT2 = new Usage(0)
+            {
+                Kz = 1,
+                DiscountWeight = .33m
+            };
             var invalidCalculationsT2 = new[]
             {
                 new UsageCalculation { PriceValue = _regularPrice, Units = 270, Charge = 453.6m },
@@ -403,7 +467,11 @@ namespace Erc.Households.Calculation.Tests
             foreach (var calc in invalidCalculationsT2)
                 usageT2.AddCalculation(calc, true);
 
-            var usageT3 = new Usage(0, 1.5m, .21m);
+            var usageT3 = new Usage(0)
+            {
+                Kz = 1.5m,
+                DiscountWeight = .21m
+            };
             var invalidCalculationsT3 = new[]
             {
                 new UsageCalculation { PriceValue = _regularPrice, Units = 180, Charge = 453.6m },
@@ -438,9 +506,21 @@ namespace Erc.Households.Calculation.Tests
                             }
                 },
                 ToDate = new DateTime(2021, 2, 1),
-                UsageT1 = new Usage(-333, 0.4m, .46m),
-                UsageT2 = new Usage(-200, 1, .33m),
-                UsageT3 = new Usage(-100, 1.5m, .21m),
+                UsageT1 = new Usage(-333)
+                {
+                    Kz = 0.4m,
+                    DiscountWeight = .46m
+                },
+                UsageT2 = new Usage(-200)
+                {
+                    Kz = 1,
+                    DiscountWeight = .33m
+                },
+                UsageT3 = new Usage(-100)
+                {
+                    Kz = 1.5m,
+                    DiscountWeight=.21m
+                },
                 ZoneRecord = Domain.Shared.ZoneRecord.Three
             };
 
