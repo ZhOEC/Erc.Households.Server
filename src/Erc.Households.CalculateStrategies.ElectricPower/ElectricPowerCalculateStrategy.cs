@@ -81,7 +81,7 @@ namespace Erc.Households.CalculateStrategies.ElectricPower
                     }
 
                     if (calculationRequest.ZoneRecord == ZoneRecord.Three)
-                        foreach (var calculation in _invalidUsages.SelectMany(ii => ii.invalidUsageT3?.Calculations))
+                        foreach (var calculation in _invalidUsages.Where(ii => ii.invalidUsageT3 is not null).SelectMany(ii => ii.invalidUsageT3?.Calculations))
                         {
                             calculationRequest.UsageT3.AddCalculation(new UsageCalculation
                             {
