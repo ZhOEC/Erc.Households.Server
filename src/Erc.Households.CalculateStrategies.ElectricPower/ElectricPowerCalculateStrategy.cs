@@ -17,9 +17,9 @@ namespace Erc.Households.CalculateStrategies.ElectricPower
         private static DateTime GetHatingSeasonEndDate(int year) => new(year, 4, 15);
 
         IEnumerable<(Usage invalidUsageT1, Usage invalidUsageT2, Usage invalidUsageT3)> _invalidUsages;
-        Func<int, DateTime, Task<IEnumerable<(Usage invalidUsageT1, Usage invalidUsageT2, Usage invalidUsageT3)>>> _invalidUsageLoader;
+        Func<int, DateTime, ZoneRecord, Task<IEnumerable<(Usage invalidUsageT1, Usage invalidUsageT2, Usage invalidUsageT3)>>> _invalidUsageLoader;
        
-        public ElectricPowerCalculateStrategy(Func<int, DateTime, Task<IEnumerable<(Usage invalidUsageT1, Usage invalidUsageT2, Usage invalidUsageT3)>>> invalidUsageLoader)
+        public ElectricPowerCalculateStrategy(Func<int, DateTime, ZoneRecord, Task<IEnumerable<(Usage invalidUsageT1, Usage invalidUsageT2, Usage invalidUsageT3)>>> invalidUsageLoader)
         {
             _invalidUsageLoader = invalidUsageLoader;
         }
@@ -29,7 +29,7 @@ namespace Erc.Households.CalculateStrategies.ElectricPower
             Log.Debug($"Start processing calculation request: {calculationRequest}");
             if (calculationRequest.InvoiceType == InvoiceType.Recalculation)
             {
-                _invalidUsages = await _invalidUsageLoader?.Invoke(calculationRequest.AccountingPointId, calculationRequest.FromDate);
+                _invalidUsages = await _invalidUsageLoader?.Invoke(calculationRequest.AccountingPointId, calculationRequest.FromDate, calculationRequest.ZoneRecord);
                 foreach (var usages in _invalidUsages)
                 {
                     calculationRequest.UsageT1.AddInvalidInvoicesUnits(usages.invalidUsageT1.Units);
@@ -53,7 +53,7 @@ namespace Erc.Households.CalculateStrategies.ElectricPower
 
             if (_invalidUsages?.Any() ?? false)
             {
-                foreach (var calculation in _invalidUsages.SelectMany(ii => ii.invalidUsageT1.Calculations))
+                foreach (var calculation in _invalidUsages.SelectMany(ii => ii.invalidUsageT1.Calculations).Where(c => c.Units != 0))
                 {
                     calculationRequest.UsageT1.AddCalculation(new UsageCalculation
                     {
@@ -66,7 +66,9 @@ namespace Erc.Households.CalculateStrategies.ElectricPower
                 }
 
                 if (calculationRequest.ZoneRecord != ZoneRecord.None)
-                    foreach (var calculation in _invalidUsages.SelectMany(ii => ii.invalidUsageT2?.Calculations))
+                {
+                    var u2 = _invalidUsages.Select(ii => ii.invalidUsageT2);
+                    foreach (var calculation in _invalidUsages.Where(ii=>ii.invalidUsageT2 is not null).SelectMany(ii => ii.invalidUsageT2?.Calculations))
                     {
                         calculationRequest.UsageT2.AddCalculation(new UsageCalculation
                         {
@@ -78,18 +80,19 @@ namespace Erc.Households.CalculateStrategies.ElectricPower
                         }, true);
                     }
 
-                if (calculationRequest.ZoneRecord == ZoneRecord.Three)
-                    foreach (var calculation in _invalidUsages.SelectMany(ii => ii.invalidUsageT3?.Calculations))
-                    {
-                        calculationRequest.UsageT3.AddCalculation(new UsageCalculation
+                    if (calculationRequest.ZoneRecord == ZoneRecord.Three)
+                        foreach (var calculation in _invalidUsages.SelectMany(ii => ii.invalidUsageT3?.Calculations))
                         {
-                            Charge = -calculation.Charge,
-                            Discount = -calculation.Discount,
-                            DiscountUnits = -calculation.DiscountUnits,
-                            PriceValue = calculation.PriceValue,
-                            Units = -calculation.Units
-                        }, true);
-                    }
+                            calculationRequest.UsageT3.AddCalculation(new UsageCalculation
+                            {
+                                Charge = -calculation.Charge,
+                                Discount = -calculation.Discount,
+                                DiscountUnits = -calculation.DiscountUnits,
+                                PriceValue = calculation.PriceValue,
+                                Units = -calculation.Units
+                            }, true);
+                        }
+                }
             }
 
             void CalculateUsageInternal(Expression<Func<Usage>> usageExpr, TariffRate tr)
