@@ -33,8 +33,8 @@ namespace Erc.Households.CalculateStrategies.ElectricPower
                 foreach (var usages in _invalidUsages)
                 {
                     calculationRequest.UsageT1.AddInvalidInvoicesUnits(usages.invalidUsageT1.Units);
-                    if (usages.invalidUsageT2 is not null) calculationRequest.UsageT2.AddInvalidInvoicesUnits(usages.invalidUsageT2.Units);
-                    if (usages.invalidUsageT3 is not null) calculationRequest.UsageT3.AddInvalidInvoicesUnits(usages.invalidUsageT3.Units);
+                    if (usages.invalidUsageT2 is not null) calculationRequest.UsageT2?.AddInvalidInvoicesUnits(usages.invalidUsageT2.Units);
+                    if (usages.invalidUsageT3 is not null) calculationRequest.UsageT3?.AddInvalidInvoicesUnits(usages.invalidUsageT3.Units);
                 }
             }
 

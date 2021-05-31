@@ -52,7 +52,7 @@ namespace Erc.Households.Calculation.Tests
             foreach (var calc in invalidCalculationsT1)
                 usageT1.AddCalculation(calc);
 
-            var calculateStrategy = new ElectricPowerCalculateStrategy((id, date) => Task.FromResult(new (Usage, Usage, Usage)[] { (usageT1, null, null) }.AsEnumerable()));
+            var calculateStrategy = new ElectricPowerCalculateStrategy((id, date, zoneRecord) => Task.FromResult(new (Usage, Usage, Usage)[] { (usageT1, null, null) }.AsEnumerable()));
             var calculationRequest = new CalculationRequest
             {
                 AccountingPointId = 1,

@@ -50,7 +50,7 @@ namespace Erc.Households.Calculation.Tests
             foreach (var calc in invalidCalculationsT1)
                 usageT1.AddCalculation(calc);
 
-            var calculateStrategy = new ElectricPowerCalculateStrategy((id, date) => Task.FromResult(new (Usage, Usage, Usage)[] { (usageT1, null, null) }.AsEnumerable()));
+            var calculateStrategy = new ElectricPowerCalculateStrategy((id, date, zoneRecord) => Task.FromResult(new (Usage, Usage, Usage)[] { (usageT1, null, null) }.AsEnumerable()));
             var calculationRequest = new CalculationRequest
             {
                 AccountingPointId = 1,
@@ -109,7 +109,7 @@ namespace Erc.Households.Calculation.Tests
             foreach (var calc in invalidCalculationsT2)
                 usageT2.AddCalculation(calc, true);
 
-            var calculateStrategy = new ElectricPowerCalculateStrategy((id, date) => Task.FromResult(new (Usage, Usage, Usage)[] { (usageT1, usageT2, null) }.AsEnumerable()));
+            var calculateStrategy = new ElectricPowerCalculateStrategy((id, date, zoneRecord) => Task.FromResult(new (Usage, Usage, Usage)[] { (usageT1, usageT2, null) }.AsEnumerable()));
             var calculationRequest = new CalculationRequest
             {
                 AccountingPointId = 1,
@@ -211,7 +211,7 @@ namespace Erc.Households.Calculation.Tests
             foreach (var calc in invalidCalculationsT3)
                 usageT3.AddCalculation(calc, true);
 
-            var calculateStrategy = new ElectricPowerCalculateStrategy((id, date) => Task.FromResult(new (Usage, Usage, Usage)[] { (usageT1, usageT2, usageT3) }.AsEnumerable()));
+            var calculateStrategy = new ElectricPowerCalculateStrategy((id, date, zoneRecord) => Task.FromResult(new (Usage, Usage, Usage)[] { (usageT1, usageT2, usageT3) }.AsEnumerable()));
 
             var calculationRequest = new CalculationRequest
             {
@@ -310,7 +310,7 @@ namespace Erc.Households.Calculation.Tests
             foreach (var calc in invalidCalculationsT1)
                 usageT1.AddCalculation(calc, true);
 
-            var calculateStrategy = new ElectricPowerCalculateStrategy((id, date) => Task.FromResult(new (Usage, Usage, Usage)[] { (usageT1, null, null) }.AsEnumerable()));
+            var calculateStrategy = new ElectricPowerCalculateStrategy((id, date, zoneRecord) => Task.FromResult(new (Usage, Usage, Usage)[] { (usageT1, null, null) }.AsEnumerable()));
 
             var calculationRequest = new CalculationRequest
             {
@@ -371,7 +371,7 @@ namespace Erc.Households.Calculation.Tests
             foreach (var calc in invalidCalculationsT2)
                 usageT2.AddCalculation(calc, true);
 
-            var calculateStrategy = new ElectricPowerCalculateStrategy((id, date) => Task.FromResult(new (Usage, Usage, Usage)[] { (usageT1, usageT2, null) }.AsEnumerable()));
+            var calculateStrategy = new ElectricPowerCalculateStrategy((id, date, zoneRecord) => Task.FromResult(new (Usage, Usage, Usage)[] { (usageT1, usageT2, null) }.AsEnumerable()));
 
             var calculationRequest = new CalculationRequest
             {
@@ -481,7 +481,7 @@ namespace Erc.Households.Calculation.Tests
             foreach (var calc in invalidCalculationsT3)
                 usageT3.AddCalculation(calc, true);
 
-            var calculateStrategy = new ElectricPowerCalculateStrategy((id, date) => Task.FromResult(new (Usage, Usage, Usage)[] { (usageT1, usageT2, usageT3) }.AsEnumerable()));
+            var calculateStrategy = new ElectricPowerCalculateStrategy((id, date, zoneRecord) => Task.FromResult(new (Usage, Usage, Usage)[] { (usageT1, usageT2, usageT3) }.AsEnumerable()));
 
             var calculationRequest = new CalculationRequest
             {
