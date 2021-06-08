@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Erc.Households.Api.Queries.AccountingPoints;
 using Erc.Households.Api.Responses;
 using Erc.Households.EF.PostgreSQL;

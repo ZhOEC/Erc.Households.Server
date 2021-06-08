@@ -43,11 +43,11 @@ namespace Erc.Households.DsoBridge
                             });
                             cfg.ReceiveEndpoint("consumption-calculated-ztoec", e =>
                             {
-                                e.PrefetchCount = 500;
+                                e.PrefetchCount = 3200;
                                 e.Batch<Ztoe.Shared.DsoEvents.Households.ConsumptionCalculated>( b =>
                                 {
-                                    b.MessageLimit = 100;
-                                    b.ConcurrencyLimit = 10;
+                                    b.MessageLimit = 200;
+                                    b.ConcurrencyLimit = 16;
 
                                     var sendEndpoint =  services.BuildServiceProvider().GetRequiredService<IErcBus>().GetSendEndpoint(new Uri("exchange:Erc.Households.Commands:CalculateAccountingPoint")).Result;
                                     b.Consumer(() => new EventHandlers.ConsumptionCalculatedHandler(sendEndpoint));

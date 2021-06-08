@@ -66,8 +66,16 @@ namespace Erc.Households.Calculation.Tests
                     }
                 },
                 ToDate = new DateTime(2021, 2, 1),
-                UsageT1 = new Usage(1000, 0.5m, .67m),
-                UsageT2 = new Usage(1000, 1, .33m),
+                UsageT1 = new Usage(1000) 
+                {
+                    Kz = 0.5m,
+                    DiscountWeight = .67m
+                },
+                UsageT2 = new Usage(1000)
+                {
+                    Kz = 1, 
+                    DiscountWeight = .33m
+                },
                 ZoneRecord = Domain.Shared.ZoneRecord.Two
             };
 
@@ -113,9 +121,21 @@ namespace Erc.Households.Calculation.Tests
                     }
                 },
                 ToDate = new DateTime(2021, 2, 1),
-                UsageT1 = new Usage(1001, .4m, .46m),
-                UsageT2 = new Usage(1000, 1, .33m),
-                UsageT3 = new Usage(1000, 1.5m, .21m),
+                UsageT1 = new Usage(1001)
+                {
+                    Kz = .4m,
+                    DiscountWeight = .46m
+                },
+                UsageT2 = new Usage(1000)
+                {
+                    Kz = 1,
+                    DiscountWeight = .33m
+                },
+                UsageT3 = new Usage(1000)
+                {
+                    Kz = 1.5m,
+                    DiscountWeight = .21m
+                },
                 ZoneRecord = Domain.Shared.ZoneRecord.Three
             };
 
@@ -178,9 +198,21 @@ namespace Erc.Households.Calculation.Tests
                     }
                 },
                 ToDate = new DateTime(2021, 2, 1),
-                UsageT1 = new Usage(0, .4m, .46m),
-                UsageT2 = new Usage(24, 1, .33m),
-                UsageT3 = new Usage(6, 1.5m, .21m),
+                UsageT1 = new Usage(0)
+                {
+                    Kz = .4m,
+                    DiscountWeight = .46m
+                },
+                UsageT2 = new Usage(24)
+                {
+                    Kz = 1,
+                    DiscountWeight = .33m
+                },
+                UsageT3 = new Usage(6)
+                {
+                    Kz = 1.5m,
+                    DiscountWeight = .21m
+                },
                 ZoneRecord = Domain.Shared.ZoneRecord.Three
             };
 
@@ -287,8 +319,16 @@ namespace Erc.Households.Calculation.Tests
                     }
                 },
                 ToDate = new DateTime(2021, 2, 1),
-                UsageT1 = new Usage(333, 0.5m, .67m),
-                UsageT2 = new Usage(444, 1, .33m),
+                UsageT1 = new Usage(333)
+                {
+                    Kz = 0.5m,
+                    DiscountWeight = .67m
+                },
+                UsageT2 = new Usage(444)
+                {
+                    Kz = 1,
+                    DiscountWeight = .33m
+                },
                 ZoneRecord = Domain.Shared.ZoneRecord.Two
             };
 
@@ -355,8 +395,16 @@ namespace Erc.Households.Calculation.Tests
                     }
                 },
                 ToDate = new DateTime(2021, 2, 1),
-                UsageT1 = new Usage(33, 0.5m, .67m),
-                UsageT2 = new Usage(44, 1, .33M),
+                UsageT1 = new Usage(33)
+                {
+                    Kz = 0.5m,
+                    DiscountWeight = .67m
+                },
+                UsageT2 = new Usage(44)
+                {
+                    Kz = 1,
+                    DiscountWeight = .33M
+                },
                 ZoneRecord = Domain.Shared.ZoneRecord.Two
             };
 
@@ -397,9 +445,21 @@ namespace Erc.Households.Calculation.Tests
                     }
                 },
                 ToDate = new DateTime(2021, 2, 1),
-                UsageT1 = new Usage(333, 0.4m, .46m),
-                UsageT2 = new Usage(200, 1, .33m),
-                UsageT3 = new Usage(100, 1.5m, .21m),
+                UsageT1 = new Usage(333)
+                {
+                    Kz = 0.4m,
+                    DiscountWeight = .46m
+                },
+                UsageT2 = new Usage(200)
+                {
+                    Kz = 1,
+                    DiscountWeight = .33m
+                },
+                UsageT3 = new Usage(100)
+                {
+                    Kz = 1.5m,
+                    DiscountWeight = .21m
+                },
                 ZoneRecord = Domain.Shared.ZoneRecord.Three
             };
 
@@ -479,9 +539,21 @@ namespace Erc.Households.Calculation.Tests
                     }
                 },
                 ToDate = new DateTime(2021, 2, 1),
-                UsageT1 = new Usage(33, 0.4m, .46m),
-                UsageT2 = new Usage(44, 1, .33m),
-                UsageT3 = new Usage(14, 1.5m, .21m),
+                UsageT1 = new Usage(33)
+                {
+                    Kz = 0.4m,
+                    DiscountWeight = .46m
+                },
+                UsageT2 = new Usage(44)
+                {
+                    Kz = 1,
+                    DiscountWeight = .33m
+                },
+                UsageT3 = new Usage(14)
+                {
+                    Kz = 1.5m,
+                    DiscountWeight = .21m
+                },
                 ZoneRecord = Domain.Shared.ZoneRecord.Three
             };
 
@@ -550,9 +622,21 @@ namespace Erc.Households.Calculation.Tests
                     }
                 },
                 ToDate = new DateTime(2021, 2, 1),
-                UsageT1 = new Usage(53, 0.4m, .46m),
-                UsageT2 = new Usage(49, 1, .33m),
-                UsageT3 = new Usage(0, 1.5m, .21m),
+                UsageT1 = new Usage(53)
+                {
+                    Kz = 0.4m,
+                    DiscountWeight = .46m
+                },
+                UsageT2 = new Usage(49)
+                {
+                    Kz = 1,
+                    DiscountWeight = .33m
+                },
+                UsageT3 = new Usage(0)
+                {
+                    Kz = 1.5m,
+                    DiscountWeight = .21m
+                },
                 ZoneRecord = Domain.Shared.ZoneRecord.Three
             };
 

@@ -1,8 +1,4 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
-ARG HTTP_PROXY=http://10.67.2.49:50514
-ARG HTTPS_PROXY=http://10.67.2.49:50514
-ARG NO_PROXY=http://10.67.1.234
-
 FROM mcr.microsoft.com/dotnet/runtime:5.0 AS base
 WORKDIR /app
 

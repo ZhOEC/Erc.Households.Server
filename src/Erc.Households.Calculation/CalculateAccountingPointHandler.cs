@@ -64,8 +64,10 @@ namespace Erc.Households.Calculation
             var coeffs = _ercContext.ZoneCoeffs.OrderByDescending(zc => zc.StartDate).Where(zc => zc.StartDate <= fromDate && zc.ZoneRecord == zoneRecord);
             
             var T1Coeffs = coeffs.First(zc => zc.ZoneNumber == ZoneNumber.T1);
-            var usageT1 = new Usage(context.Message.UsageT1, T1Coeffs.Value, T1Coeffs.DiscountWeight)
+            var usageT1 = new Usage(context.Message.UsageT1)
             {
+                Kz = T1Coeffs.Value,
+                DiscountWeight = T1Coeffs.DiscountWeight,
                 PresentMeterReading = context.Message.PresentMeterReadingT1,
                 PreviousMeterReading = context.Message.PreviousMeterReadingT1,
             };
@@ -76,8 +78,10 @@ namespace Erc.Households.Calculation
             if (zoneRecord != ZoneRecord.None)
             {
                 var T2Coeffs = coeffs.First(zc => zc.ZoneNumber == ZoneNumber.T2);
-                usageT2 = new Usage(context.Message.UsageT2 ?? 0, T2Coeffs.Value, T2Coeffs.DiscountWeight)
+                usageT2 = new Usage(context.Message.UsageT2 ?? 0)
                 {
+                    Kz=T2Coeffs.Value, 
+                    DiscountWeight = T2Coeffs.DiscountWeight,
                     PresentMeterReading = context.Message.PresentMeterReadingT2,
                     PreviousMeterReading = context.Message.PreviousMeterReadingT2,
                 };
@@ -85,8 +89,10 @@ namespace Erc.Households.Calculation
                 if (zoneRecord == ZoneRecord.Three)
                 {
                     var T3Coeffs = coeffs.First(zc => zc.ZoneNumber == ZoneNumber.T3);
-                    usageT3 = new Usage(context.Message.UsageT3 ?? 0, T3Coeffs.Value, T3Coeffs.DiscountWeight)
+                    usageT3 = new Usage(context.Message.UsageT3 ?? 0)
                     {
+                        Kz = T3Coeffs.Value,
+                        DiscountWeight = T3Coeffs.DiscountWeight,
                         PresentMeterReading = context.Message.PresentMeterReadingT3,
                         PreviousMeterReading = context.Message.PreviousMeterReadingT3,
                     };

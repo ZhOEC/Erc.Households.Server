@@ -1,6 +1,4 @@
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
-ARG HTTP_PROXY=http://10.67.2.49:50514
-ARG HTTPS_PROXY=http://10.67.2.49:50514
 
 COPY . .
 RUN dotnet restore "Erc.Households.Indexing/Erc.Households.Indexing.csproj"

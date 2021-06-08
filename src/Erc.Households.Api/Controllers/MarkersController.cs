@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using Erc.Households.Api.Queries;
 using Microsoft.AspNetCore.Mvc;
 using MediatR;

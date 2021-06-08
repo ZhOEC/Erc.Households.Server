@@ -52,7 +52,7 @@ namespace Erc.Households.Calculation.Tests
             foreach (var calc in invalidCalculationsT1)
                 usageT1.AddCalculation(calc);
 
-            var calculateStrategy = new ElectricPowerCalculateStrategy((id, date) => Task.FromResult(new (Usage, Usage, Usage)[] { (usageT1, null, null) }.AsEnumerable()));
+            var calculateStrategy = new ElectricPowerCalculateStrategy((id, date, zoneRecord) => Task.FromResult(new (Usage, Usage, Usage)[] { (usageT1, null, null) }.AsEnumerable()));
             var calculationRequest = new CalculationRequest
             {
                 AccountingPointId = 1,
@@ -120,8 +120,16 @@ namespace Erc.Households.Calculation.Tests
                     }
                 },
                 ToDate = new DateTime(2021, 2, 1),
-                UsageT1 = new Usage(1000, 0.5m, .67m),
-                UsageT2 = new Usage(1000, 1, .33m),
+                UsageT1 = new Usage(1000)
+                {
+                    Kz = 0.5m,
+                    DiscountWeight = .67m
+                },
+                UsageT2 = new Usage(1000)
+                {
+                    Kz = 1,
+                    DiscountWeight = .33m
+                },
                 ZoneRecord = Domain.Shared.ZoneRecord.Two,
                 ExemptionData = new ExemptionData
                 {
@@ -192,9 +200,21 @@ namespace Erc.Households.Calculation.Tests
                     }
                 },
                 ToDate = new DateTime(2021, 2, 1),
-                UsageT1 = new Usage(10, .4m, .46m),
-                UsageT2 = new Usage(30, 1, .33m),
-                UsageT3 = new Usage(1000, 1.5m, .21m),
+                UsageT1 = new Usage(10)
+                {
+                    Kz = .4m,
+                    DiscountWeight = .46m
+                },
+                UsageT2 = new Usage(30)
+                {
+                    Kz = 1,
+                    DiscountWeight = .33m
+                },
+                UsageT3 = new Usage(1000)
+                {
+                    Kz = 1.5m,
+                    DiscountWeight = .21m
+                },
                 ZoneRecord = Domain.Shared.ZoneRecord.Three,
                 ExemptionData = new ExemptionData
                 {
@@ -285,9 +305,21 @@ namespace Erc.Households.Calculation.Tests
                     }
                 },
                 ToDate = new DateTime(2021, 2, 1),
-                UsageT1 = new Usage(100, 0.4m, .46m),
-                UsageT2 = new Usage(100, 1, .33m),
-                UsageT3 = new Usage(100, 1.5m, .21m),
+                UsageT1 = new Usage(100)
+                {
+                    Kz = 0.4m,
+                    DiscountWeight = .46m
+                },
+                UsageT2 = new Usage(100)
+                {
+                    Kz = 1,
+                    DiscountWeight = .33m
+                },
+                UsageT3 = new Usage(100)
+                {
+                    Kz = 1.5m,
+                    DiscountWeight = .21m
+                },
                 ZoneRecord = Domain.Shared.ZoneRecord.Three,
                 ExemptionData = new ExemptionData
                 {
@@ -401,7 +433,11 @@ namespace Erc.Households.Calculation.Tests
                     }
                 },
                 ToDate = new DateTime(2021, 2, 1),
-                UsageT1 = new Usage(200, 1m, 1m),
+                UsageT1 = new Usage(200)
+                {
+                    Kz = 1m,
+                    DiscountWeight = 1m
+                },
                 ZoneRecord = Domain.Shared.ZoneRecord.None,
                 ExemptionData = new ExemptionData
                 {

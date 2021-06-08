@@ -5,11 +5,10 @@ namespace Erc.Households.Domain.Shared.Billing
 {
     public class Usage
     {
-        public Usage(decimal units, decimal kz = 1, decimal discountWeight = 1)
+        public Usage(decimal units, decimal charge = 0)
         {
             Units = units;
-            Kz = kz;
-            DiscountWeight = discountWeight;
+            Charge = charge;
         }
 
         public int? PresentMeterReading { get; init; }
@@ -18,8 +17,8 @@ namespace Erc.Households.Domain.Shared.Billing
         public decimal Charge { get; private set; }
         public decimal Discount { get; private set; }
         public int DiscountUnits { get; private set; }
-        public decimal Kz { get; private set; }
-        public decimal DiscountWeight { get; private set; }
+        public decimal Kz { get; init; } = 1;
+        public decimal DiscountWeight { get; init; } = 1;
 
         private List<UsageCalculation> _calculations = new();
         public IEnumerable<UsageCalculation> Calculations

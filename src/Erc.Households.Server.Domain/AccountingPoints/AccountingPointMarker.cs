@@ -1,4 +1,4 @@
-﻿namespace Erc.Households.Domain.AccountingPoints
+namespace Erc.Households.Domain.AccountingPoints
 {
     public class AccountingPointMarker
     {

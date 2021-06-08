@@ -1,4 +1,4 @@
-﻿using Erc.Households.Domain.AccountingPoints;
+using Erc.Households.Domain.AccountingPoints;
 
 namespace Erc.Households.Domain
 {

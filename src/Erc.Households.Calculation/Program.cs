@@ -36,6 +36,9 @@ namespace Erc.Households.Calculation
                         s.UsingRabbitMq((ctx, cfg) =>
                         {
                             var rabbitMq = hostContext.Configuration.GetSection("RabbitMQ");
+#if DEBUG
+                            cfg.PrefetchCount = 1;
+#endif
                             cfg.Host(rabbitMq["ConnectionString"], c =>
                             {
                                 c.Username(rabbitMq["Username"]);
@@ -52,10 +55,10 @@ namespace Erc.Households.Calculation
                        options.UseNpgsql(hostContext.Configuration.GetConnectionString("ErcContext")));
 
                     services.AddTransient<GasCalculateStrategy>();
-                    services.AddTransient(sp => new ElectricPowerCalculateStrategy(async (accountingPointId, fromDate) =>
+                    services.AddTransient(sp => new ElectricPowerCalculateStrategy(async (accountingPointId, fromDate, zoneRecord) =>
                     {
                         var ctx = sp.GetRequiredService<ErcContext>();
-                        return (await ctx.Invoices.Where(i => i.AccountingPointId == accountingPointId && i.FromDate == fromDate)
+                        return (await ctx.Invoices.Where(i => i.AccountingPointId == accountingPointId && i.FromDate == fromDate && i.ZoneRecord == zoneRecord)
                         .Select(i => new { i.UsageT1, i.UsageT2, i.UsageT3 })
                         .ToArrayAsync())
                         .Select(u => (u.UsageT1, u.UsageT2, u.UsageT3));
