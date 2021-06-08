@@ -9,7 +9,6 @@ namespace Erc.Households.Api.Responses
         public int Id { get; set; }
         public string Name { get; set; }
         public string Address { get; set; }
-        public string CurrentPeriodName { get; private set; }
         public Period CurrentPeriod { get; private set; }
         public IEnumerable<Commodity> AvailableCommodities { get; private set; }
 }

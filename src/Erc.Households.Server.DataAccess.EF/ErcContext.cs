@@ -50,6 +50,7 @@ namespace Erc.Households.EF.PostgreSQL
         public DbSet<TaxInvoice> TaxInvoices { get; set; }
         public DbSet<KFKPayment> KFKPayments { get; set; }
         public DbSet<Company> Company { get; set; }
+        public DbSet<Marker> Markers { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -545,6 +546,13 @@ namespace Erc.Households.EF.PostgreSQL
                 entity.HasOne(p => p.Period)
                     .WithMany()
                     .HasForeignKey(p => p.PeriodId);
+            });
+
+            modelBuilder.Entity<Marker>(entity =>
+            {
+                entity.Property(p => p.Value)
+                    .HasColumnType("citext")
+                    .HasMaxLength(150);
             });
         }
     }
