@@ -4,8 +4,11 @@ using System.Threading.Tasks;
 using Erc.Households.Api.Authorization;
 using Erc.Households.Api.Queries.AccountingPoints;
 using Erc.Households.Api.Requests;
+using Erc.Households.CommandHandlers.Markers;
 using Erc.Households.Commands;
+using Erc.Households.Commands.Markers;
 using Erc.Households.DataAccess.Core;
+using Erc.Households.Domain.AccountingPoints;
 using Erc.Households.Notifications;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -130,11 +133,24 @@ namespace Erc.Households.Api.Controllers
                 .Unwrap()
                 .ContinueWith(_ => Ok());
 
+        [HttpPost("{id}/add-marker")]
+        public async Task<IActionResult> AddMarker(int id, AccountingPointMarker marker) =>
+            await _mediator.Send(new AddMarkerAccountingPointCommand(id, marker.MarkerId, marker.Note))
+                .ContinueWith(_ => _unitOfWork.SaveWorkAsync())
+                .Unwrap()
+                .ContinueWith(_ => Ok());
+
+        [HttpDelete("{accountingPointId}/remove-marker")]
+        public async Task<IActionResult> Delete(int accountingPointId, int markerId) => 
+            await _mediator.Send(new DeleteMarkerAccountingPointCommand(accountingPointId, markerId))
+                .ContinueWith(_ => _unitOfWork.SaveWorkAsync())
+                .Unwrap()
+                .ContinueWith(_ => Ok());
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAccountingPoint(UpdateAccountingPointCommand updatedAccountingPoint)
         {
             await _mediator.Send(updatedAccountingPoint);
-
             await _unitOfWork.SaveWorkAsync();
 
             return Ok();

@@ -47,9 +47,12 @@ namespace Erc.Households.Reports
                 {
                     var svc = app.ApplicationServices.GetRequiredService<ReportService>();
                     var slug = context.Request.RouteValues["slug"].ToString();
-                    int.TryParse(context.Request.Query["period_id"], out int periodId);
-                    int.TryParse(context.Request.Query["branch_office_id"], out int branchOfficeId);
-                    var report = await svc.CreateReportAsync(slug, new Dictionary<string, object> { { nameof(periodId), periodId }, { nameof(branchOfficeId), branchOfficeId } });
+                    var branchOfficeId = int.Parse(context.Request.Query["branch_office_id"].ToString());
+                    var periodId = int.Parse(context.Request.Query["period_id"].ToString());
+                    var dsoIds = context.Request.Query["dso_ids"].Select(x => int.Parse(x)).ToArray();
+
+                    var report = await svc.CreateReportAsync(slug, branchOfficeId, periodId, dsoIds);
+
                     context.Response.ContentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
                     context.Response.Headers.Add("Content-Disposition", $"attachment;FileName={slug}_{periodId}_{branchOfficeId}_{(long)(DateTime.Now - new DateTime(2020, 10, 1)).TotalSeconds}.xlsx");
                     await report.CopyToAsync(context.Response.Body);

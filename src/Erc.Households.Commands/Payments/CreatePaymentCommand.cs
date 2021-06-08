@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Erc.Households.Commands.Payments
 {
-    public class CreatePaymentCommand : IRequest<Unit>
+    public class CreatePaymentCommand : IRequest
     {
         public CreatePaymentCommand(int accountingPointId, DateTime payDate, decimal amount, string payerInfo, int type, int? batchId = null)
         {
