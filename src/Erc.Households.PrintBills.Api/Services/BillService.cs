@@ -134,7 +134,7 @@ namespace Erc.Households.PrintBills.Api.Services
                    ,(inv.usage_t1 -> 'DiscountUnits')::numeric + (inv.usage_t2 -> 'DiscountUnits')::numeric + (inv.usage_t3 -> 'DiscountUnits')::numeric as DiscountUnitsSum
                    ,(inv.usage_t1 -> 'Discount')::decimal + (inv.usage_t2 -> 'Discount')::decimal + (inv.usage_t3 -> 'Discount')::decimal as DiscountSum
                    ,ap.debt as AccountingPointDebt
-                   ,to_char(cntr.start_date, 'dd.MM.yyyy') as ContractStartDate
+                   ,cntr.start_date as ContractStartDate  
                    ,inv.usage_t1 as UsageT1
                    ,inv.usage_t2 as UsageT2
                    ,inv.usage_t3 as UsageT3
@@ -233,6 +233,88 @@ namespace Erc.Households.PrintBills.Api.Services
             var ms = new MemoryStream();
             var wr = new StreamWriter(ms, Encoding.GetEncoding(1251));
 
+            var x = bills.Cast<BillElectricity>().FirstOrDefault();
+            wr.WriteLine("AccountingPointName;" +
+                            "PeriodName;" +
+                            "ZoneCount;" +
+                            "OwnerFullName;" +
+                            "AccountingPointAddress;" +
+                            "Zip;" +
+                            "InvoiceTotalAmountDue;" +
+                            "PaymentsSumByPeriod;" +
+                            "UsageT1.PresentMeterReading;" +
+                            "UsageT1.PreviousMeterReading;" +
+                            "UsageT2?.PresentMeterReading;" +
+                            "UsageT2?.PreviousMeterReading;" +
+                            "UsageT3?.PresentMeterReading;" +
+                            "UsageT3?.PreviousMeterReading;" +
+                            "UsageT1.Kz;" +
+                            "UsageT1.Units;" +
+                            "UsageT1.Charge;" +
+                            "UsageT1.Discount;" +
+                            "UsageT1.DiscountUnits;" +
+                            "UsageT2?.Kz;" +
+                            "UsageT2?.Units;" +
+                            "UsageT2?.Charge;" +
+                            "UsageT2?.Discount;" +
+                            "UsageT2?.DiscountUnits;" +
+                            "UsageT3?.Kz;" +
+                            "UsageT3?.Units;" +
+                            "UsageT3?.Charge;" +
+                            "UsageT3?.Discount;" +
+                            "UsageT3?.DiscountUnits;" +
+                            "ExemptionCoeff;" +
+                            "City;" +
+                            "DiscountUnitsSum;" +
+                            "DiscountSum;" +
+                            "QrPrivatBank;" +
+                            "InvoiceTotalUnits;" +
+                            "Eic;" +
+                            "CompanyFullName;" +
+                            "CompanyStateRegistryCode;" +
+                            "BranchOfficeName;" +
+                            "BranchOfficeAddress;" +
+                            "BranchOfficeBankFullName;" +
+                            "BranchOfficeIban;" +
+                            "CompensationSumByPeriod;" +
+                            "ContractStartDate;" +
+                            "AccountingPointDebtHistory;" +
+                            "PaymentsSumByPeriod;" +
+                            "Barcode;" +
+                            "UsageT1.GroupCalculations.ElementAtOrDefault(0)?.PriceValue;" +
+                            "UsageT1.GroupCalculations.ElementAtOrDefault(0)?.Units;" +
+                            "UsageT1.GroupCalculations.ElementAtOrDefault(0)?.Charge;" +
+                            "UsageT1.GroupCalculations.ElementAtOrDefault(0)?.DiscountUnits;" +
+                            "UsageT1.GroupCalculations.ElementAtOrDefault(0)?.Discount;" +
+                            "UsageT1.GroupCalculations.ElementAtOrDefault(1)?.PriceValue;" +
+                            "UsageT1.GroupCalculations.ElementAtOrDefault(1)?.Units;" +
+                            "UsageT1.GroupCalculations.ElementAtOrDefault(1)?.Charge;" +
+                            "UsageT1.GroupCalculations.ElementAtOrDefault(1)?.DiscountUnits;" +
+                            "UsageT1.GroupCalculations.ElementAtOrDefault(1)?.Discount;" +
+
+                            "UsageT2?.GroupCalculations.ElementAtOrDefault(0).PriceValue;" +
+                            "UsageT2?.GroupCalculations.ElementAtOrDefault(0).Units;" +
+                            "UsageT2?.GroupCalculations.ElementAtOrDefault(0).Charge;" +
+                            "UsageT2?.GroupCalculations.ElementAtOrDefault(0).DiscountUnits;" +
+                            "UsageT2?.GroupCalculations.ElementAtOrDefault(0).Discount;" +
+                            "UsageT2?.GroupCalculations.ElementAtOrDefault(1)?.PriceValue;" +
+                            "UsageT2?.GroupCalculations.ElementAtOrDefault(1)?.Units;" +
+                            "UsageT2?.GroupCalculations.ElementAtOrDefault(1)?.Charge;" +
+                            "UsageT2?.GroupCalculations.ElementAtOrDefault(1)?.DiscountUnits;" +
+                            "UsageT2?.GroupCalculations.ElementAtOrDefault(1)?.Discount;" +
+
+                            "UsageT3?.GroupCalculations.ElementAtOrDefault(0).PriceValue;" +
+                            "UsageT3?.GroupCalculations.ElementAtOrDefault(0).Units;" +
+                            "UsageT3?.GroupCalculations.ElementAtOrDefault(0).Charge;" +
+                            "UsageT3?.GroupCalculations.ElementAtOrDefault(0).DiscountUnits;" +
+                            "UsageT3?.GroupCalculations.ElementAtOrDefault(0).Discount;" +
+                            "UsageT3?.GroupCalculations.ElementAtOrDefault(1)?.PriceValue;" +
+                            "UsageT3?.GroupCalculations.ElementAtOrDefault(1)?.Units;" +
+                            "UsageT3?.GroupCalculations.ElementAtOrDefault(1)?.Charge;" +
+                            "UsageT3?.GroupCalculations.ElementAtOrDefault(1)?.DiscountUnits;" +
+                            "UsageT3?.GroupCalculations.ElementAtOrDefault(1)?.Discount;" +
+                            "ContractEndDate;");
+
             if (bills is IEnumerable<BillElectricity>)
             {
                 bills.Cast<BillElectricity>()
@@ -248,8 +330,6 @@ namespace Erc.Households.PrintBills.Api.Services
                             $"\"{x.Zip}\";" +
                             $"\"{x.InvoiceTotalAmountDue}\";" +
                             $"\"{x.PaymentsSumByPeriod}\";" +
-                            $"\"{x.UsageT1.PresentMeterReading}\";" +
-                            $"\"{x.UsageT1.PreviousMeterReading}\";" +
                             $"\"{x.UsageT1.PresentMeterReading}\";" +
                             $"\"{x.UsageT1.PreviousMeterReading}\";" +
                             $"\"{x.UsageT2?.PresentMeterReading}\";" +
@@ -273,7 +353,6 @@ namespace Erc.Households.PrintBills.Api.Services
                             $"\"{x.UsageT3?.DiscountUnits}\";" +
                             $"\"{x.ExemptionCoeff}\";" +
                             $"\"{x.City}\";" +
-                            $"\"{x.InvoiceTotalAmountDue}\";" +
                             $"\"{x.DiscountUnitsSum}\";" +
                             $"\"{x.DiscountSum}\";" +
                             $"\"{x.QrPrivatBank}\";" +
@@ -286,7 +365,7 @@ namespace Erc.Households.PrintBills.Api.Services
                             $"\"{x.BranchOfficeBankFullName}\";" +
                             $"\"{x.BranchOfficeIban}\";" +
                             $"\"{x.CompensationSumByPeriod}\";" +
-                            $"\"{x.ContractStartDate}\";" +
+                            $"\"{x.ContractStartDate:dd.MM.yyyy}\";" +
                             $"\"{x.AccountingPointDebtHistory}\";" +
                             $"\"{x.PaymentsSumByPeriod}\";" +
                             $"\"{x.Barcode}\";" +
@@ -322,7 +401,8 @@ namespace Erc.Households.PrintBills.Api.Services
                             $"\"{x.UsageT3?.GroupCalculations.ElementAtOrDefault(1)?.Charge}\";" +
                             $"\"{x.UsageT3?.GroupCalculations.ElementAtOrDefault(1)?.DiscountUnits}\";" +
                             $"\"{x.UsageT3?.GroupCalculations.ElementAtOrDefault(1)?.Discount}\";" +
-                            $"");
+                            $"\"{x.ContractEndDate:dd.MM.yyyy}\";" +
+                            "");
                     });
             }
             else if (bills is IEnumerable<BillNaturalGas>)

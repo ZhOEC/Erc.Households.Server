@@ -50,6 +50,7 @@ namespace Erc.Households.EF.PostgreSQL
         public DbSet<TaxInvoice> TaxInvoices { get; set; }
         public DbSet<KFKPayment> KFKPayments { get; set; }
         public DbSet<Company> Company { get; set; }
+        public DbSet<Marker> Markers { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -447,6 +448,13 @@ namespace Erc.Households.EF.PostgreSQL
                 entity.HasIndex(p => new { p.Name, p.BranchOfficeId }).IsUnique();
                 entity.HasIndex(p => p.Eic).IsUnique();
                 entity.HasCheckConstraint("CK_accounting_point_eic", "length(eic) = 16");
+
+                entity.OwnsMany(p => p.Markers, t =>
+                {
+                    t.ToTable("accounting_point_markers")
+                        .WithOwner()
+                        .HasForeignKey(p => p.AccountingPointId);
+                });
             });
 
             modelBuilder.Entity<DistributionSystemOperator>(entity =>
@@ -545,6 +553,13 @@ namespace Erc.Households.EF.PostgreSQL
                 entity.HasOne(p => p.Period)
                     .WithMany()
                     .HasForeignKey(p => p.PeriodId);
+            });
+
+            modelBuilder.Entity<Marker>(entity =>
+            {
+                entity.Property(p => p.Value)
+                    .HasColumnType("citext")
+                    .HasMaxLength(150);
             });
         }
     }

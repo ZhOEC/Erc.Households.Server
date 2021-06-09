@@ -20,7 +20,7 @@ namespace Erc.Households.Api.Controllers
         }
 
         [HttpGet("")]
-        public async Task<IActionResult> GetAll(Commodity commodity = Commodity.ElectricPower) 
-            => Ok(await _ercContext.DistributionSystemOperators.Where(d=>d.Commodity==commodity).ToArrayAsync());
+        public async Task<IActionResult> GetAll(Commodity commodity = Commodity.ElectricPower)
+            => Ok(await _ercContext.DistributionSystemOperators.Where(d => d.Commodity == commodity).ToArrayAsync());
     }
 }

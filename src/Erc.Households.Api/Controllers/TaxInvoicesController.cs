@@ -29,7 +29,7 @@ namespace Erc.Households.Api.Controllers
         public async Task<IActionResult> GetPart(int branchOfficeId, int pageNumber, int pageSize)
         {
             var taxInvoices = await _mediator.Send(new GetTaxInvoicesByPart(branchOfficeId, pageNumber, pageSize));
-            Response.Headers.Add("X-Total-Count", taxInvoices.Count.ToString());
+            Response.Headers.Add("X-Total-Count", taxInvoices.TotalItemCount.ToString());
 
             return Ok(taxInvoices);
         }

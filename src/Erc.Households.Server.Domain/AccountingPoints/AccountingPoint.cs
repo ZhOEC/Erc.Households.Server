@@ -96,6 +96,13 @@ namespace Erc.Households.Domain.AccountingPoints
             private set { Payments = value.ToList(); }
         }
 
+        private List<AccountingPointMarker> _markers = new();
+        public IReadOnlyCollection<AccountingPointMarker> Markers
+        {
+            get => LazyLoader.Load(this, ref _markers);
+            private set { Markers = value.ToList(); }
+        }
+
         public Address Address
         {
             get => LazyLoader.Load(this, ref _address);
@@ -197,5 +204,8 @@ namespace Erc.Households.Domain.AccountingPoints
         }
 
         public void RemovePayment(Payment payment) => Debt += payment.Amount;
+
+        public void AddMarker(AccountingPointMarker marker) => _markers.Add(marker);
+        public void RemoveMarker(AccountingPointMarker marker) => _markers.Remove(marker);
     }
 }

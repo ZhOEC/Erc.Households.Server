@@ -27,7 +27,7 @@ namespace Erc.Households.PrintBills.Api.Models
         public string AccountingPointAddress { get; set; }
         public string PeriodName { get; set; }
         public string PeriodShortDate { get; set; }
-        public string ContractStartDate { get; set; }
+        public DateTime ContractStartDate { get; set; }
         public decimal? AccountingPointDebtHistory { get; set; }
         public decimal? ExemptionCoeff { get; set; }
         public decimal? PaymentsSumByPeriod { get; set; }
@@ -53,6 +53,7 @@ namespace Erc.Households.PrintBills.Api.Models
         public Usage UsageT1 { get; set; }
         public Usage UsageT2 { get; set; }
         public Usage UsageT3 { get; set; }
+        public DateTime ContractEndDate => ContractStartDate.AddYears(1);
     }
 
     public class Usage

@@ -1,4 +1,4 @@
-﻿using AutoMapper;
+using AutoMapper;
 using Erc.Households.Api.Queries.AccountingPoints;
 using Erc.Households.Api.Responses;
 using Erc.Households.EF.PostgreSQL;
@@ -35,6 +35,8 @@ namespace Erc.Households.Api.QueryHandlers.AccountingPoints
                     .ThenInclude(e => e.Category)
                 .Include(a => a.Exemptions)
                     .ThenInclude(e => e.Person)
+                .Include(a => a.Markers)
+                    .ThenInclude(a => a.Marker)
                 .FirstAsync(a => a.Id == request.Id || a.Eic == request.Eic);
             
                 return _mapper.Map<AccountingPoint>(ap);

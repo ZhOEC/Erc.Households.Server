@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Erc.Households.CommandHandlers.Payments
 {
-    public class CreatePaymentCommandHandler : IRequestHandler<CreatePaymentCommand, Unit>
+    public class CreatePaymentCommandHandler : AsyncRequestHandler<CreatePaymentCommand>
     {
         private readonly ErcContext _ercContext;
 
@@ -18,7 +18,7 @@ namespace Erc.Households.CommandHandlers.Payments
             _ercContext = ercContext;
         }
 
-        public async Task<Unit> Handle(CreatePaymentCommand request, CancellationToken cancellationToken)
+        protected override async Task Handle(CreatePaymentCommand request, CancellationToken cancellationToken)
         {
             var accountingPoint = await _ercContext.AccountingPoints.Include(x => x.BranchOffice).FirstOrDefaultAsync(x => x.Id == request.AccountingPointId);
             if (accountingPoint is null)
@@ -36,7 +36,6 @@ namespace Erc.Households.CommandHandlers.Payments
                 );
 
             await _ercContext.Payments.AddAsync(payment);
-            return Unit.Value;
         }
     }
 }
