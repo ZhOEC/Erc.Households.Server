@@ -67,7 +67,8 @@ namespace Erc.Households.Domain.Taxes
             WriteTabElement(writer, "FIRM_NAME", $"{BranchOffice.Company.Name}{(string.Equals(BranchOffice.StringId, "co", StringComparison.OrdinalIgnoreCase) ? string.Empty : ", " + BranchOffice.Name)}"); 
             WriteTabElement(writer, "FIRM_PHON", BranchOffice.Company.TaxpayerPhone);
             WriteTabElement(writer, "N2_1", Id + "/" + BranchOfficeId);
-            WriteTabElement(writer, "N2_13", "");
+            if (BranchOfficeId < 100) 
+                WriteTabElement(writer, "N2_13", BranchOfficeId.ToString());
             WriteTabElement(writer, "N25", "1");
             WriteTabElement(writer, "N3", "Неплатник");
             WriteTabElement(writer, "N4", "100000000000");
@@ -114,7 +115,7 @@ namespace Erc.Households.Domain.Taxes
                 else if (Type == TaxInvoiceType.Gas)
                     WriteTabElement(writer, "TAB1_A131", tabLine.ProductCode, "1", (tabLine.RowNumber - 1).ToString()); // "TAB1_A131", "2711210000"
 
-                WriteTabElement(writer, "TAB1_A132", "1", "1", (tabLine.RowNumber - 1).ToString());
+                if (Type == TaxInvoiceType.Gas) WriteTabElement(writer, "TAB1_A132", "1", "1", (tabLine.RowNumber - 1).ToString());
                 WriteTabElement(writer, "TAB1_A14", tabLine.Unit, "1", (tabLine.RowNumber - 1).ToString()); // "TAB1_A14", "кВт·год" / компенсація: "TAB1_A14", "грн" / газ ? метр кубічний
                 WriteTabElement(writer, "TAB1_A141", tabLine.UnitCode, "1", (tabLine.RowNumber - 1).ToString()); // "TAB1_A141", compensation - "2454", electricity - "0415", gas - "0134"
                 WriteTabElement(writer, "TAB1_A15", tabLine.Quantity.ToString("0.000").Replace(',', '.'), "1", (tabLine.RowNumber - 1).ToString());
